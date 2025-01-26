@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f437d81aa15d9e84f83fe133ef879a1f, type: 3}
+  m_Name: Starter_RoomPool
+  m_EditorClassIdentifier: 
+  rooms:
+  - room: {fileID: 11400000, guid: 04baba11f9bbfce4591bec28583d9477, type: 2}
+    weight: 1
+  - room: {fileID: 11400000, guid: 36505e14bf3cbe04088f723850067955, type: 2}
+    weight: 1
+  - room: {fileID: 11400000, guid: e966fb6a06a8f3040bc545903300dba2, type: 2}
+    weight: 1
