@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemiesList:
-  - {fileID: 7284650608018115194, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
+  - {fileID: -3137686536588065982, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
   player: {fileID: 1038945344}
   playerChoiceText: {fileID: 816803615}
   enemyChoiceText: {fileID: 918154391}
