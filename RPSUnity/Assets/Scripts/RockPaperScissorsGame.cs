@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    public List<EnemyHandController> EnemiesList; //This is a list with enemies
-    public PlayerHandController player;     // Reference to the player script
+    public List<HandController> EnemiesList; //This is a list with enemies
+    public HandController player;     // Reference to the player script
     //public EnemyBehavior enemyBehavior; // Reference to the enemy script
     public TextMeshProUGUI playerChoiceText;
     public TextMeshProUGUI enemyChoiceText;
@@ -16,9 +16,8 @@ public class RockPaperScissorsGame : MonoBehaviour
     public UnityEngine.UI.Button scissorsButton;
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
-    private string storedEnemyChoice;
     private bool isRoundActive = false;
-    private EnemyHandController enemyHandController;  // Reference to enemy hand animations
+    private HandController enemyHandController;  // Reference to enemy hand animations
 
     void Start()
     {
@@ -36,34 +35,22 @@ public class RockPaperScissorsGame : MonoBehaviour
         playerChoiceText.text = "Player Chose: " + playerChoice;
 
         // Enemy chooses immediately
-        storedEnemyChoice = enemyHandController.MakeChoice();
+        var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
+        enemyHandController.StartShaking(storedEnemyChoice);
         enemyChoiceText.text = "Enemy Chose: " + storedEnemyChoice;
         Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
 
-        if (enemyHandController != null)
-        {
-            enemyHandController.StartShaking();
-            StartCoroutine(WaitForEnemyHand(playerChoice));
-        }
-        else
-        {
-            Debug.LogError("EnemyHandController is not assigned!");
-        }
+        StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
     }
 
-    private IEnumerator WaitForEnemyHand(string playerChoice)
+    private IEnumerator WaitForEnemyHand(string playerChoice, string enemyChoice)
     {
         yield return new WaitForSeconds(1.0f);  // Ensure animation finishes
 
-        Debug.Log("Updating enemy hand with choice: " + storedEnemyChoice);
-        enemyChoiceText.text = "Enemy Chose: " + storedEnemyChoice;
+        Debug.Log("Updating enemy hand with choice: " + enemyChoice);
+        enemyChoiceText.text = "Enemy Chose: " + enemyChoice;
 
-        if (enemyHandController != null)
-        {
-            enemyHandController.SetHandChoice(storedEnemyChoice);
-        }
-
-        DetermineOutcome(playerChoice, storedEnemyChoice);
+        DetermineOutcome(playerChoice, enemyChoice);
 
         yield return new WaitForSeconds(1.0f);  // Placeholder for future animations
         EnableButtons();

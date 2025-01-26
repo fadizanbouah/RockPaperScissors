@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHandController : MonoBehaviour
+public class HandController : MonoBehaviour
 {
     // Health properties
     public int health = 30;
@@ -21,6 +21,7 @@ public class PlayerHandController : MonoBehaviour
 
     // Reference to the health bar
     public HealthBar healthBar;
+    private string playerChoice;
 
     void Start()
     {
@@ -52,21 +53,20 @@ public class PlayerHandController : MonoBehaviour
         // Trigger the shaking animation
         handAnimator.SetTrigger("Shake");
 
+        playerChoice = choice;
+
         // Store the choice so the correct animation plays after shake
         Invoke(nameof(ChangeHandState), 1.0f);
-
-        PlayerPrefs.SetString("HandChoice", choice);
     }
 
     private void ChangeHandState()
     {
-        string selectedChoice = PlayerPrefs.GetString("HandChoice");
 
-        if (selectedChoice == "Paper")
+        if (playerChoice == "Paper")
         {
             handAnimator.SetTrigger("ChoosePaper");
         }
-        else if (selectedChoice == "Scissors")
+        else if (playerChoice == "Scissors")
         {
             handAnimator.SetTrigger("ChooseScissors");
         }

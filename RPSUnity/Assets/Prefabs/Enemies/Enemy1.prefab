@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 7679948664225929950}
   - component: {fileID: 8848665032231882639}
   - component: {fileID: 2415506765562498718}
-  - component: {fileID: 7284650608018115194}
+  - component: {fileID: -3137686536588065982}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -436,7 +436,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7284650608018115194
+--- !u!114 &-3137686536588065982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -445,17 +445,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 8428155265588346663}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eea213eab934df4e9e2037823681258, type: 3}
+  m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handSpriteRenderer: {fileID: 8848665032231882639}
-  paperHandSprite: {fileID: 21300000, guid: 8633d282acffbf34f8d736757869c4c1, type: 3}
-  scissorsHandSprite: {fileID: 21300000, guid: aef76f3c6b2704a419cb440358e9ed17, type: 3}
   health: 20
   maxHealth: 20
   rockDamage: 4
   paperDamage: 4
   scissorsDamage: 4
+  handAnimator: {fileID: 2415506765562498718}
+  handSpriteRenderer: {fileID: 8848665032231882639}
+  defaultHandSprite: {fileID: 21300000, guid: 76d62449ea51e6e47b5b74d744bfcd0d, type: 3}
+  paperHandSprite: {fileID: 21300000, guid: 8633d282acffbf34f8d736757869c4c1, type: 3}
+  scissorsHandSprite: {fileID: 21300000, guid: aef76f3c6b2704a419cb440358e9ed17, type: 3}
   healthBar: {fileID: 4552222775822232691}
 --- !u!1 &8532900606797542106
 GameObject:
