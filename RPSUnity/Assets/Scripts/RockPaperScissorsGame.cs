@@ -1,19 +1,16 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    public PlayerController player;     // Reference to the player script
-    public EnemyBehavior enemyBehavior; // Reference to the enemy script
-    public HealthBar playerHealthBar;   // Reference to the player's health bar
-    public HealthBar enemyHealthBar;    // Reference to the enemy's health bar
+    public List<EnemyHandController> EnemiesList; //This is a list with enemies
+    public PlayerHandController player;     // Reference to the player script
+    //public EnemyBehavior enemyBehavior; // Reference to the enemy script
     public TextMeshProUGUI playerChoiceText;
     public TextMeshProUGUI enemyChoiceText;
     public TextMeshProUGUI resultText;
-    public TextMeshProUGUI playerHealthText;
-    public TextMeshProUGUI enemyHealthText;
-    public EnemyHandController enemyHandController;  // Reference to enemy hand animations
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
@@ -21,10 +18,11 @@ public class RockPaperScissorsGame : MonoBehaviour
     private string[] choices = { "Rock", "Paper", "Scissors" };
     private string storedEnemyChoice;
     private bool isRoundActive = false;
+    private EnemyHandController enemyHandController;  // Reference to enemy hand animations
 
     void Start()
     {
-        UpdateHealthUI();
+        enemyHandController = Instantiate(EnemiesList[Random.Range(0, EnemiesList.Count)]);
     }
 
     public void PlayerSelect(string playerChoice)
@@ -38,7 +36,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         playerChoiceText.text = "Player Chose: " + playerChoice;
 
         // Enemy chooses immediately
-        storedEnemyChoice = enemyBehavior.MakeChoice();
+        storedEnemyChoice = enemyHandController.MakeChoice();
         enemyChoiceText.text = "Enemy Chose: " + storedEnemyChoice;
         Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
 
@@ -99,7 +97,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             }
 
             result = "You Win!";
-            enemyBehavior.TakeDamage(damage);
+            enemyHandController.TakeDamage(damage);
         }
         else
         {
@@ -107,13 +105,13 @@ public class RockPaperScissorsGame : MonoBehaviour
             switch (enemyChoice)
             {
                 case "Rock":
-                    damage = enemyBehavior.rockDamage;
+                    damage = enemyHandController.rockDamage;
                     break;
                 case "Paper":
-                    damage = enemyBehavior.paperDamage;
+                    damage = enemyHandController.paperDamage;
                     break;
                 case "Scissors":
-                    damage = enemyBehavior.scissorsDamage;
+                    damage = enemyHandController.scissorsDamage;
                     break;
             }
 
@@ -122,16 +120,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
 
         resultText.text = result;
-        UpdateHealthUI();
-    }
-
-    public void UpdateHealthUI()
-    {
-        playerHealthBar.SetHealth(player.health, player.maxHealth);
-        enemyHealthBar.SetHealth(enemyBehavior.health, enemyBehavior.maxHealth);
-
-        playerHealthText.text = player.health + " / " + player.maxHealth;
-        enemyHealthText.text = enemyBehavior.health + " / " + enemyBehavior.maxHealth;
     }
 
     private void DisableButtons()
