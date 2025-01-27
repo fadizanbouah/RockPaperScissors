@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    public List<HandController> EnemiesList; //This is a list with enemies
+    public List<HandController> EnemiesList; // This is a list with enemies
     public HandController player;     // Reference to the player script
-    //public EnemyBehavior enemyBehavior; // Reference to the enemy script
     public TextMeshProUGUI playerChoiceText;
     public TextMeshProUGUI enemyChoiceText;
     public TextMeshProUGUI resultText;
@@ -19,9 +18,44 @@ public class RockPaperScissorsGame : MonoBehaviour
     private bool isRoundActive = false;
     private HandController enemyHandController;  // Reference to enemy hand animations
 
-    void Start()
+    // New method to initialize the game
+    public void InitializeGame()
     {
-        enemyHandController = Instantiate(EnemiesList[Random.Range(0, EnemiesList.Count)]);
+        Debug.Log("Initializing game...");
+
+        // Ensure UI elements and gameplay objects are properly set up before starting
+        if (player == null)
+        {
+            Debug.LogError("Player reference is missing!");
+        }
+
+        if (EnemiesList == null || EnemiesList.Count == 0)
+        {
+            Debug.LogError("No enemies assigned to the list!");
+        }
+
+        DisableButtons();  // Disable buttons until the game starts
+    }
+
+    public void StartGame()
+    {
+        if (enemyHandController == null)
+        {
+            if (EnemiesList != null && EnemiesList.Count > 0)
+            {
+                enemyHandController = Instantiate(EnemiesList[Random.Range(0, EnemiesList.Count)]);
+            }
+            else
+            {
+                Debug.LogError("No enemies assigned to the list!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Enemy already exists. Skipping instantiation.");
+        }
+
+        EnableButtons();  // Enable buttons after game starts
     }
 
     public void PlayerSelect(string playerChoice)

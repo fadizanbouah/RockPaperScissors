@@ -882,6 +882,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918154389}
   m_CullTransparentMesh: 1
+--- !u!1 &1035648965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1035648966}
+  - component: {fileID: 1035648967}
+  m_Layer: 0
+  m_Name: GameStateManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1035648966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035648965}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 823.73596, y: 603.4951, z: -3.9202418}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1035648967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035648965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30f30373997cd7a42a30910f6f5aa75f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rockPaperScissorsGame: {fileID: 218203640}
 --- !u!114 &1038945344 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
@@ -1782,3 +1827,4 @@ SceneRoots:
   - {fileID: 82849530}
   - {fileID: 218203641}
   - {fileID: 3666811237365194487}
+  - {fileID: 1035648966}
