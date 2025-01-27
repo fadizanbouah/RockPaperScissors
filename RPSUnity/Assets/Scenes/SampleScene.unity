@@ -1748,6 +1748,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+      propertyPath: health
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+      propertyPath: maxHealth
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+      propertyPath: rockDamage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+      propertyPath: paperDamage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+      propertyPath: scissorsDamage
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

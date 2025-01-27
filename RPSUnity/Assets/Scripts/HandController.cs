@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class HandController : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class HandController : MonoBehaviour
     public HealthBar healthBar;
     private string playerChoice;
 
+    public delegate void OnDeathHandler(HandController hand);
+    public event OnDeathHandler OnDeath;
+
     void Start()
     {
         handSpriteRenderer.sprite = defaultHandSprite;
@@ -35,6 +39,47 @@ public class HandController : MonoBehaviour
         health -= damage;
         if (health < 0) health = 0;
         UpdateHealthBar();
+
+        if (health <= 0)
+        {
+            StartCoroutine(HandleDeathWithDelay());
+        }
+    }
+
+    private IEnumerator HandleDeathWithDelay()
+    {
+        // Allow player to see the current hand state before transitioning to the death animation
+        yield return new WaitForSeconds(1.0f);
+
+        Die();
+    }
+
+    private void Die()
+    {
+        Debug.Log(gameObject.name + " has been defeated!");
+
+        // Play the die animation if the animator is assigned
+        if (handAnimator != null && handAnimator.HasParameter("Die"))
+        {
+            handAnimator.SetTrigger("Die");
+        }
+        else
+        {
+            Debug.LogWarning("Die trigger not found or animator is not assigned on " + gameObject.name);
+        }
+
+        // Start coroutine to destroy the object after animation
+        StartCoroutine(DestroyAfterDelay(1.0f));
+
+        // Notify any listeners that this hand has died
+        OnDeath?.Invoke(this);
+    }
+
+    // Coroutine to destroy the hand after the animation
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 
     private void UpdateHealthBar()
@@ -61,7 +106,6 @@ public class HandController : MonoBehaviour
 
     private void ChangeHandState()
     {
-
         if (playerChoice == "Paper")
         {
             handAnimator.SetTrigger("ChoosePaper");
@@ -95,5 +139,21 @@ public class HandController : MonoBehaviour
     public void SelectScissors()
     {
         StartShaking("Scissors");
+    }
+}
+
+// Extension method to check if a parameter exists in the Animator
+public static class AnimatorExtensions
+{
+    public static bool HasParameter(this Animator animator, string paramName)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.name == paramName)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
