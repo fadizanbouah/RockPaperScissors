@@ -72,10 +72,21 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("Player selected: " + playerChoice);
         playerChoiceText.text = "Player Chose: " + playerChoice;
 
+        // Start player hand animation first
+        if (playerInstance != null)
+        {
+            playerInstance.StartShaking(playerChoice);
+        }
+        else
+        {
+            Debug.LogError("Player instance is null when trying to shake!");
+        }
+
         // Enemy chooses immediately
         var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
         enemyHandController.StartShaking(storedEnemyChoice);
         enemyChoiceText.text = "Enemy Chose: " + storedEnemyChoice;
+
         Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
 
         StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
