@@ -14,6 +14,8 @@ public class GameStateManager : MonoBehaviour
     public GameState currentState { get; private set; }
 
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Exposed field for assignment
+    [SerializeField] private HandController playerPrefab; // Assign the Player prefab here
+    private HandController playerInstance;
 
     private void Awake()
     {
@@ -53,7 +55,8 @@ public class GameStateManager : MonoBehaviour
 
                 if (rockPaperScissorsGame != null)
                 {
-                    rockPaperScissorsGame.InitializeGame(); // Initialize before starting
+                    InitializePlayer();
+                    rockPaperScissorsGame.InitializeGame(playerInstance);
                     rockPaperScissorsGame.StartGame();
                 }
                 else
@@ -66,6 +69,19 @@ public class GameStateManager : MonoBehaviour
                 Debug.Log("Entering Game Over State");
                 // Add logic for game over later
                 break;
+        }
+    }
+
+    private void InitializePlayer()
+    {
+        if (playerInstance == null)
+        {
+            playerInstance = Instantiate(playerPrefab);
+            Debug.Log("Player initialized.");
+        }
+        else
+        {
+            Debug.LogWarning("Player already exists. Skipping instantiation.");
         }
     }
 }

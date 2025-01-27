@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class RockPaperScissorsGame : MonoBehaviour
 {
     public List<HandController> EnemiesList; // This is a list with enemies
-    public HandController player;     // Reference to the player script
+    private HandController playerInstance;   // Player instance
     public TextMeshProUGUI playerChoiceText;
     public TextMeshProUGUI enemyChoiceText;
     public TextMeshProUGUI resultText;
@@ -18,15 +18,19 @@ public class RockPaperScissorsGame : MonoBehaviour
     private bool isRoundActive = false;
     private HandController enemyHandController;  // Reference to enemy hand animations
 
-    // New method to initialize the game
-    public void InitializeGame()
+    // Updated method to initialize the game with a player instance
+    public void InitializeGame(HandController player)
     {
         Debug.Log("Initializing game...");
 
-        // Ensure UI elements and gameplay objects are properly set up before starting
-        if (player == null)
+        if (player != null)
         {
-            Debug.LogError("Player reference is missing!");
+            playerInstance = player;
+        }
+        else
+        {
+            Debug.LogError("Player instance is missing!");
+            return;
         }
 
         if (EnemiesList == null || EnemiesList.Count == 0)
@@ -107,13 +111,13 @@ public class RockPaperScissorsGame : MonoBehaviour
             switch (playerChoice)
             {
                 case "Rock":
-                    damage = player.rockDamage;
+                    damage = playerInstance.rockDamage;
                     break;
                 case "Paper":
-                    damage = player.paperDamage;
+                    damage = playerInstance.paperDamage;
                     break;
                 case "Scissors":
-                    damage = player.scissorsDamage;
+                    damage = playerInstance.scissorsDamage;
                     break;
             }
 
@@ -137,7 +141,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             }
 
             result = "You Lose!";
-            player.TakeDamage(damage);
+            playerInstance.TakeDamage(damage);
         }
 
         resultText.text = result;
