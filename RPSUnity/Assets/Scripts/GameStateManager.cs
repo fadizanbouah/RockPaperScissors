@@ -19,14 +19,14 @@ public class GameStateManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            Destroy(gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -37,6 +37,7 @@ public class GameStateManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
+        if (currentState == newState) return;
         currentState = newState;
         HandleStateChange();
     }
@@ -67,13 +68,18 @@ public class GameStateManager : MonoBehaviour
 
             case GameState.GameOver:
                 Debug.Log("Entering Game Over State");
-                // Add logic for game over later
+                CleanupGame();
                 break;
         }
     }
 
     private void InitializePlayer()
     {
+        if (playerPrefab == null)
+        {
+            Debug.LogError("Player prefab is not assigned!");
+            return;
+        }
         if (playerInstance == null)
         {
             playerInstance = Instantiate(playerPrefab);
@@ -82,6 +88,13 @@ public class GameStateManager : MonoBehaviour
         else
         {
             Debug.LogWarning("Player already exists. Skipping instantiation.");
+        }
+    }
+    private void CleanupGame()
+    {
+        if (playerInstance != null)
+        {
+            Destroy(playerInstance.gameObject);
         }
     }
 }
