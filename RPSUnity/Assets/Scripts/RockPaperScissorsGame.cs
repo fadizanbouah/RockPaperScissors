@@ -7,8 +7,6 @@ public class RockPaperScissorsGame : MonoBehaviour
 {
     public List<HandController> EnemiesList; // This is a list with enemies
     private HandController playerInstance;   // Player instance
-    public TextMeshProUGUI playerChoiceText;
-    public TextMeshProUGUI enemyChoiceText;
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
@@ -39,6 +37,9 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
 
         DisableButtons();  // Disable buttons until the game starts
+
+        // Clear out choice texts (optional cleanup)
+        resultText.text = "";
     }
 
     public void StartGame()
@@ -70,7 +71,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         DisableButtons();
 
         Debug.Log("Player selected: " + playerChoice);
-        playerChoiceText.text = "Player Chose: " + playerChoice;
 
         // Start player hand animation first
         if (playerInstance != null)
@@ -85,7 +85,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         // Enemy chooses immediately
         var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
         enemyHandController.StartShaking(storedEnemyChoice);
-        enemyChoiceText.text = "Enemy Chose: " + storedEnemyChoice;
 
         Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
 
@@ -97,7 +96,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         yield return new WaitForSeconds(1.0f);  // Ensure animation finishes
 
         Debug.Log("Updating enemy hand with choice: " + enemyChoice);
-        enemyChoiceText.text = "Enemy Chose: " + enemyChoice;
 
         DetermineOutcome(playerChoice, enemyChoice);
 
