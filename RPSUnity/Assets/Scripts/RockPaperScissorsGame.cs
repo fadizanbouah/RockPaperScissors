@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    public List<HandController> EnemiesList; // List of enemies
+    public List<HandController> EnemiesList; // This is a list with enemies
     private HandController playerInstance;   // Player instance
-    public TextMeshProUGUI playerChoiceText;
-    public TextMeshProUGUI enemyChoiceText;
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
@@ -17,12 +15,6 @@ public class RockPaperScissorsGame : MonoBehaviour
     private string[] choices = { "Rock", "Paper", "Scissors" };
     private bool isRoundActive = false;
     private HandController enemyHandController;  // Reference to enemy hand animations
-
-    void Start()
-    {
-        // Hide buttons at the start
-        DisableButtons();
-    }
 
     // Updated method to initialize the game with a player instance
     public void InitializeGame(HandController player)
@@ -44,23 +36,10 @@ public class RockPaperScissorsGame : MonoBehaviour
             Debug.LogError("No enemies assigned to the list!");
         }
 
-        InitializeButtons();  // Initialize buttons
-    }
+        DisableButtons();  // Disable buttons until the game starts
 
-    // New method to initialize button functionality
-    private void InitializeButtons()
-    {
-        if (rockButton == null || paperButton == null || scissorsButton == null)
-        {
-            Debug.LogError("One or more buttons are missing from the UI!");
-            return;
-        }
-
-        rockButton.onClick.AddListener(() => PlayerSelect("Rock"));
-        paperButton.onClick.AddListener(() => PlayerSelect("Paper"));
-        scissorsButton.onClick.AddListener(() => PlayerSelect("Scissors"));
-
-        Debug.Log("Rock, Paper, Scissors buttons have been initialized!");
+        // Clear out choice texts (optional cleanup)
+        resultText.text = "";
     }
 
     public void StartGame()
@@ -81,8 +60,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             Debug.LogWarning("Enemy already exists. Skipping instantiation.");
         }
 
-        // Show buttons when gameplay starts
-        EnableButtons();
+        EnableButtons();  // Enable buttons after game starts
     }
 
     public void PlayerSelect(string playerChoice)
@@ -107,6 +85,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         // Enemy chooses immediately
         var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
         enemyHandController.StartShaking(storedEnemyChoice);
+
         Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
 
         StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
@@ -179,15 +158,15 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private void DisableButtons()
     {
-        rockButton.gameObject.SetActive(false);
-        paperButton.gameObject.SetActive(false);
-        scissorsButton.gameObject.SetActive(false);
+        rockButton.interactable = false;
+        paperButton.interactable = false;
+        scissorsButton.interactable = false;
     }
 
     private void EnableButtons()
     {
-        rockButton.gameObject.SetActive(true);
-        paperButton.gameObject.SetActive(true);
-        scissorsButton.gameObject.SetActive(true);
+        rockButton.interactable = true;
+        paperButton.interactable = true;
+        scissorsButton.interactable = true;
     }
 }
