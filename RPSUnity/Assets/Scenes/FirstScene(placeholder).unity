@@ -221,8 +221,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemiesList:
   - {fileID: -3137686536588065982, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
-  playerChoiceText: {fileID: 816803615}
-  enemyChoiceText: {fileID: 918154391}
+  playerChoiceText: {fileID: 0}
+  enemyChoiceText: {fileID: 0}
   resultText: {fileID: 1740217212}
   rockButton: {fileID: 1236138956}
   paperButton: {fileID: 727346859}
@@ -630,7 +630,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &816803613
 RectTransform:
   m_ObjectHideFlags: 0
@@ -764,7 +764,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &918154390
 RectTransform:
   m_ObjectHideFlags: 0
