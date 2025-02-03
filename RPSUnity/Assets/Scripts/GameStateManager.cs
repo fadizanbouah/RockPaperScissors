@@ -15,6 +15,8 @@ public class GameStateManager : MonoBehaviour
 
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Exposed field for assignment
     [SerializeField] private HandController playerPrefab; // Assign the Player prefab here
+    [SerializeField] private GameObject gameplayCanvas; // Assign the Gameplay Canvas here in the Inspector
+
     private HandController playerInstance;
 
     private void Awake()
@@ -32,6 +34,17 @@ public class GameStateManager : MonoBehaviour
 
     private void Start()
     {
+        // Ensure GameplayCanvas is hidden at start
+        if (gameplayCanvas != null)
+        {
+            gameplayCanvas.SetActive(false);
+            Debug.Log("GameplayCanvas is now HIDDEN at start.");
+        }
+        else
+        {
+            Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
+        }
+
         ChangeState(GameState.Gameplay); // Default state
     }
 
@@ -48,11 +61,12 @@ public class GameStateManager : MonoBehaviour
         {
             case GameState.MainMenu:
                 Debug.Log("Entering Main Menu State");
-                // Add logic to show the main menu later
+                SetGameplayCanvasVisibility(false);
                 break;
 
             case GameState.Gameplay:
                 Debug.Log("Entering Gameplay State");
+                SetGameplayCanvasVisibility(true);
 
                 if (rockPaperScissorsGame != null)
                 {
@@ -68,6 +82,7 @@ public class GameStateManager : MonoBehaviour
 
             case GameState.GameOver:
                 Debug.Log("Entering Game Over State");
+                SetGameplayCanvasVisibility(false);
                 CleanupGame();
                 break;
         }
@@ -90,11 +105,28 @@ public class GameStateManager : MonoBehaviour
             Debug.LogWarning("Player already exists. Skipping instantiation.");
         }
     }
+
     private void CleanupGame()
     {
         if (playerInstance != null)
         {
             Destroy(playerInstance.gameObject);
+        }
+    }
+
+    private void SetGameplayCanvasVisibility(bool isVisible)
+    {
+        if (gameplayCanvas != null)
+        {
+            gameplayCanvas.SetActive(isVisible);
+            if (isVisible)
+            {
+                Debug.Log("GameplayCanvas is now VISIBLE");
+            }
+        }
+        else
+        {
+            Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
         }
     }
 }

@@ -925,6 +925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rockPaperScissorsGame: {fileID: 218203640}
   playerPrefab: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+  gameplayCanvas: {fileID: 1472082757}
 --- !u!1 &1055975836
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,12 +1363,12 @@ GameObject:
   - component: {fileID: 1472082759}
   - component: {fileID: 1472082758}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: GameplayCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1472082758
 MonoBehaviour:
   m_ObjectHideFlags: 0
