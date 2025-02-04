@@ -16,6 +16,7 @@ public class GameStateManager : MonoBehaviour
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Exposed field for assignment
     [SerializeField] private HandController playerPrefab; // Assign the Player prefab here
     [SerializeField] private GameObject gameplayCanvas; // Assign the Gameplay Canvas here in the Inspector
+    [SerializeField] private GameObject mainMenuCanvas; // New Main Menu Canvas
 
     private HandController playerInstance;
 
@@ -34,6 +35,16 @@ public class GameStateManager : MonoBehaviour
 
     private void Start()
     {
+        // Ensure canvases are properly set up
+        if (mainMenuCanvas != null)
+        {
+            mainMenuCanvas.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("MainMenuCanvas reference is missing in GameStateManager!");
+        }
+
         // Ensure GameplayCanvas is hidden at start
         if (gameplayCanvas != null)
         {
@@ -45,7 +56,7 @@ public class GameStateManager : MonoBehaviour
             Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
         }
 
-        ChangeState(GameState.Gameplay); // Default state
+        ChangeState(GameState.MainMenu); // Default state
     }
 
     public void ChangeState(GameState newState)
@@ -61,12 +72,14 @@ public class GameStateManager : MonoBehaviour
         {
             case GameState.MainMenu:
                 Debug.Log("Entering Main Menu State");
-                SetGameplayCanvasVisibility(false);
+                SetCanvasVisibility(mainMenuCanvas, true);
+                SetCanvasVisibility(gameplayCanvas, false);
                 break;
 
             case GameState.Gameplay:
                 Debug.Log("Entering Gameplay State");
-                SetGameplayCanvasVisibility(true);
+                SetCanvasVisibility(mainMenuCanvas, false);
+                SetCanvasVisibility(gameplayCanvas, true);
 
                 if (rockPaperScissorsGame != null)
                 {
@@ -82,7 +95,7 @@ public class GameStateManager : MonoBehaviour
 
             case GameState.GameOver:
                 Debug.Log("Entering Game Over State");
-                SetGameplayCanvasVisibility(false);
+                SetCanvasVisibility(gameplayCanvas, false);
                 CleanupGame();
                 break;
         }
@@ -114,11 +127,11 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    private void SetGameplayCanvasVisibility(bool isVisible)
+    private void SetCanvasVisibility(GameObject canvas, bool isVisible)
     {
-        if (gameplayCanvas != null)
+        if (canvas != null)
         {
-            gameplayCanvas.SetActive(isVisible);
+            canvas.SetActive(isVisible);
             if (isVisible)
             {
                 Debug.Log("GameplayCanvas is now VISIBLE");
