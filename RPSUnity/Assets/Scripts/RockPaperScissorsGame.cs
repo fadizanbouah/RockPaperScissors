@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    public List<HandController> EnemiesList; // This is a list with enemies
     private HandController playerInstance;   // Player instance
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
@@ -17,7 +16,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     private HandController enemyHandController;  // Reference to enemy hand animations
 
     // Updated method to initialize the game with a player instance
-    public void InitializeGame(HandController player)
+    public void InitializeGame(HandController player, HandController enemy)
     {
         Debug.Log("Initializing game...");
 
@@ -31,35 +30,22 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
-        if (EnemiesList == null || EnemiesList.Count == 0)
+        if (enemy != null)
         {
-            Debug.LogError("No enemies assigned to the list!");
+            enemyHandController = enemy;
+        }
+        else
+        {
+            Debug.LogError("Enemy instance is missing!");
+            return;
         }
 
         DisableButtons();  // Disable buttons until the game starts
-
-        // Clear out choice texts (optional cleanup)
         resultText.text = "";
     }
 
     public void StartGame()
     {
-        if (enemyHandController == null)
-        {
-            if (EnemiesList != null && EnemiesList.Count > 0)
-            {
-                enemyHandController = Instantiate(EnemiesList[Random.Range(0, EnemiesList.Count)]);
-            }
-            else
-            {
-                Debug.LogError("No enemies assigned to the list!");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Enemy already exists. Skipping instantiation.");
-        }
-
         EnableButtons();  // Enable buttons after game starts
     }
 
@@ -84,9 +70,15 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         // Enemy chooses immediately
         var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
-        enemyHandController.StartShaking(storedEnemyChoice);
-
-        Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
+        if (enemyHandController != null)
+        {
+            enemyHandController.StartShaking(storedEnemyChoice);
+            Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
+        }
+        else
+        {
+            Debug.LogError("EnemyHandController is null! Cannot execute enemy actions.");
+        }
 
         StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
     }

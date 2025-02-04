@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameStateManager : MonoBehaviour
 {
@@ -84,8 +85,17 @@ public class GameStateManager : MonoBehaviour
                 if (rockPaperScissorsGame != null)
                 {
                     InitializePlayer();
-                    rockPaperScissorsGame.InitializeGame(playerInstance);
-                    rockPaperScissorsGame.StartGame();
+
+                    // Select a new room BEFORE waiting for the enemy
+                    if (RoomManager.Instance != null)
+                    {
+                        RoomManager.Instance.SelectNextRoom();
+                        StartCoroutine(WaitForRoomAndInitializeGame());
+                    }
+                    else
+                    {
+                        Debug.LogError("RoomManager instance is missing!");
+                    }
                 }
                 else
                 {
@@ -141,5 +151,21 @@ public class GameStateManager : MonoBehaviour
         {
             Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
         }
+    }
+
+    private IEnumerator WaitForRoomAndInitializeGame()
+    {
+        Debug.Log("Waiting for the room to be ready...");
+
+        // Wait until RoomManager has an enemy
+        while (RoomManager.Instance.GetCurrentEnemy() == null)
+        {
+            yield return null; // Wait 1 frame
+        }
+
+        Debug.Log("Room and enemy are ready. Initializing game...");
+
+        rockPaperScissorsGame.InitializeGame(playerInstance, RoomManager.Instance.GetCurrentEnemy());
+        rockPaperScissorsGame.StartGame();
     }
 }
