@@ -20,6 +20,7 @@ public class GameStateManager : MonoBehaviour
     [SerializeField] private GameObject mainMenuCanvas; // New Main Menu Canvas
 
     private HandController playerInstance;
+    private HandController currentEnemyInstance;
 
     private void Awake()
     {
@@ -164,8 +165,16 @@ public class GameStateManager : MonoBehaviour
         }
 
         Debug.Log("Room and enemy are ready. Initializing game...");
-
-        rockPaperScissorsGame.InitializeGame(playerInstance, RoomManager.Instance.GetCurrentEnemy());
+        currentEnemyInstance = RoomManager.Instance.GetCurrentEnemy();
+        rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
         rockPaperScissorsGame.StartGame();
+    }
+
+    // New method to update enemy reference dynamically
+    public void UpdateEnemy(HandController newEnemy)
+    {
+        Debug.Log($"Updating GameStateManager enemy reference: {newEnemy.name}");
+        currentEnemyInstance = newEnemy;
+        rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
     }
 }

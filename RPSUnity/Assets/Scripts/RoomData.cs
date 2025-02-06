@@ -6,16 +6,15 @@ public class RoomData : ScriptableObject
 {
     public string roomName;
     public Sprite backgroundImage;
-    public List<HandController> enemies; // List of enemies in the room
+    public List<GameObject> enemyPrefabs; // List of enemy prefabs for this room
     public int weight = 1; // Rarity weight (default to 1)
-    public GameObject enemyPrefab; // The enemy assigned to this room
 
-    public HandController GetNextEnemy()
+    public GameObject GetNextEnemyPrefab()
     {
-        if (enemies.Count > 0)
+        if (enemyPrefabs.Count > 0)
         {
-            HandController nextEnemy = enemies[0];
-            enemies.RemoveAt(0);
+            GameObject nextEnemy = enemyPrefabs[0];
+            enemyPrefabs.RemoveAt(0);
             return nextEnemy;
         }
 

@@ -4,6 +4,7 @@ public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance { get; private set; }
     private RoomData currentRoom;
+    private int currentEnemyIndex = 0; // Track enemy index
 
     [SerializeField] private RoomPool roomPool; // Assign this in the Inspector
     [SerializeField] private SpriteRenderer roomBackground;
@@ -26,6 +27,8 @@ public class RoomManager : MonoBehaviour
     private void LoadRoom(RoomData room)
     {
         Debug.Log($"Loading Room: {room.roomName}");
+        currentRoom = room;
+        currentEnemyIndex = 0; // Reset enemy index when entering a new room
 
         // Set background
         if (roomBackground != null)
@@ -33,32 +36,51 @@ public class RoomManager : MonoBehaviour
             roomBackground.sprite = room.backgroundImage;
         }
 
-        // Spawn enemy
-        if (room.enemyPrefab != null)
-        {
-            GameObject enemyInstance = Instantiate(room.enemyPrefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
-            currentEnemy = enemyInstance.GetComponent<HandController>();
+        // Spawn the first enemy
+        SpawnNextEnemy();
+    }
 
-            if (currentEnemy != null)
-            {
-                currentEnemy.OnDeath += HandleRoomCompletion; // Subscribe to enemy defeat event
-            }
-            else
-            {
-                Debug.LogError("Spawned enemy does not have a HandController script!");
-            }
+    private void SpawnNextEnemy()
+    {
+        if (currentRoom == null || currentRoom.enemyPrefabs.Count == 0 || currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
+        {
+            Debug.Log("No more enemies left in this room. Room cleared.");
+            SelectNextRoom();
+            return;
+        }
+
+        // Destroy previous enemy if it exists
+        if (currentEnemy != null)
+        {
+            Destroy(currentEnemy.gameObject);
+            currentEnemy = null;
+        }
+
+        // Instantiate the new enemy
+        GameObject enemyInstance = Instantiate(currentRoom.enemyPrefabs[currentEnemyIndex], enemySpawnPoint.position, enemySpawnPoint.rotation);
+        currentEnemy = enemyInstance.GetComponent<HandController>();
+
+        if (currentEnemy != null)
+        {
+            currentEnemy.OnDeath += HandleEnemyDefeat; // Subscribe to enemy defeat event
+            Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
+
+            // Notify GameStateManager that a new enemy is spawned
+            GameStateManager.Instance.UpdateEnemy(currentEnemy);
         }
         else
         {
-            Debug.LogError("Room does not have an assigned enemyPrefab!");
+            Debug.LogError("Spawned enemy does not have a HandController script!");
         }
+
+        currentEnemyIndex++; // Move to next enemy in the list
     }
 
     // Triggered when an enemy dies
-    private void HandleRoomCompletion(HandController defeatedEnemy)
+    private void HandleEnemyDefeat(HandController defeatedEnemy)
     {
-        Debug.Log("Room Cleared! Selecting Next Room...");
-        SelectNextRoom();
+        Debug.Log($"{defeatedEnemy.gameObject.name} has been defeated! Checking for next enemy...");
+        SpawnNextEnemy(); // Spawn the next enemy in the list
     }
 
     public void SelectNextRoom()

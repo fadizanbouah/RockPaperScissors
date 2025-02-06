@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomName: 1TestRoom
   backgroundImage: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  enemies:
-  - {fileID: -3137686536588065982, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
+  enemyPrefabs:
+  - {fileID: 8428155265588346663, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
+  - {fileID: 8428155265588346663, guid: 59b9b14dcfd3c244ca88f706e301c680, type: 3}
   weight: 1
-  enemyPrefab: {fileID: 8428155265588346663, guid: f9d3b5349b61ff344998c48be7989345, type: 3}

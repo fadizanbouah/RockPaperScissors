@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
-    private HandController playerInstance;   // Player instance
+    private HandController playerInstance;
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
@@ -13,9 +13,8 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
     private bool isRoundActive = false;
-    private HandController enemyHandController;  // Reference to enemy hand animations
+    private HandController enemyHandController;
 
-    // Updated method to initialize the game with a player instance
     public void InitializeGame(HandController player, HandController enemy)
     {
         Debug.Log("Initializing game...");
@@ -40,64 +39,63 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
-        DisableButtons();  // Disable buttons until the game starts
+        DisableButtons();
         resultText.text = "";
     }
 
     public void StartGame()
     {
-        EnableButtons();  // Enable buttons after game starts
+        EnableButtons();
     }
 
     public void PlayerSelect(string playerChoice)
     {
-        if (isRoundActive) return; // Prevent multiple selections
+        if (isRoundActive || enemyHandController == null) return; // Prevent actions if the enemy is null
 
-        isRoundActive = true;  // Lock input until the round ends
+        isRoundActive = true;
         DisableButtons();
 
         Debug.Log("Player selected: " + playerChoice);
 
-        // Start player hand animation first
         if (playerInstance != null)
         {
             playerInstance.StartShaking(playerChoice);
         }
-        else
-        {
-            Debug.LogError("Player instance is null when trying to shake!");
-        }
 
-        // Enemy chooses immediately
         var storedEnemyChoice = choices[Random.Range(0, choices.Length)];
+
         if (enemyHandController != null)
         {
             enemyHandController.StartShaking(storedEnemyChoice);
             Debug.Log("Enemy has pre-selected: " + storedEnemyChoice);
+            StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
         }
         else
         {
             Debug.LogError("EnemyHandController is null! Cannot execute enemy actions.");
+            isRoundActive = false;
+            EnableButtons();
         }
-
-        StartCoroutine(WaitForEnemyHand(playerChoice, storedEnemyChoice));
     }
 
     private IEnumerator WaitForEnemyHand(string playerChoice, string enemyChoice)
     {
-        yield return new WaitForSeconds(1.0f);  // Ensure animation finishes
+        yield return new WaitForSeconds(1.0f);
+
+        if (enemyHandController == null) yield break; // Ensure enemy still exists
 
         Debug.Log("Updating enemy hand with choice: " + enemyChoice);
-
         DetermineOutcome(playerChoice, enemyChoice);
 
-        yield return new WaitForSeconds(1.0f);  // Placeholder for future animations
+        yield return new WaitForSeconds(1.0f);
         EnableButtons();
-        isRoundActive = false;  // Unlock input for next round
+        isRoundActive = false;
     }
 
     private void DetermineOutcome(string playerChoice, string enemyChoice)
     {
+        if (enemyHandController == null) return; // Prevent further actions if the enemy no longer exists
+
         string result = "";
 
         if (playerChoice == enemyChoice)
@@ -123,7 +121,10 @@ public class RockPaperScissorsGame : MonoBehaviour
             }
 
             result = "You Win!";
-            enemyHandController.TakeDamage(damage);
+            if (enemyHandController != null)
+            {
+                enemyHandController.TakeDamage(damage);
+            }
         }
         else
         {
