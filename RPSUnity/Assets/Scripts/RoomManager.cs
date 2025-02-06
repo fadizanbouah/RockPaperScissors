@@ -36,7 +36,7 @@ public class RoomManager : MonoBehaviour
         // Spawn enemy
         if (room.enemyPrefab != null)
         {
-            GameObject enemyInstance = Instantiate(room.enemyPrefab, enemySpawnPoint.position, Quaternion.identity);
+            GameObject enemyInstance = Instantiate(room.enemyPrefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
             currentEnemy = enemyInstance.GetComponent<HandController>();
 
             if (currentEnemy != null)
