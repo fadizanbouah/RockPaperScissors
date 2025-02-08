@@ -2,16 +2,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum PanelType
+{
+    Main,
+    Settings,
+    Credits
+}
+
 public class MainMenu : MonoBehaviour
 {
-    [Header("Menu Buttons")]
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button settingsButton;
-    [SerializeField] private Button creditsButton;
-    [SerializeField] private Button quitButton;
-
     [Header("Menu Panels")]
-    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private MainMenuPanel mainMenuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
 
@@ -22,26 +23,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        InitializeButtons();
         InitializeSettings();
         ShowMainMenu();
-    }
-
-    private void InitializeButtons()
-    {
-        if (playButton != null)
-            playButton.onClick.AddListener(StartGame);
-        else
-            Debug.LogError("Play Button reference is missing in MainMenu!");
-
-        if (settingsButton != null)
-            settingsButton.onClick.AddListener(() => ShowPanel(settingsPanel));
-
-        if (creditsButton != null)
-            creditsButton.onClick.AddListener(() => ShowPanel(creditsPanel));
-
-        if (quitButton != null)
-            quitButton.onClick.AddListener(QuitGame);
     }
 
     private void InitializeSettings()
@@ -65,23 +48,16 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void StartGame()
+    public void ShowPanel(PanelType panelType)
     {
-        GameStateManager.Instance.ChangeState(GameStateManager.GameState.Gameplay);
-    }
-
-    private void ShowPanel(GameObject panel)
-    {
-        mainMenuPanel?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        creditsPanel?.SetActive(false);
-
-        panel?.SetActive(true);
+        mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main);
+        settingsPanel?.SetActive(panelType == PanelType.Settings);
+        creditsPanel?.SetActive(panelType == PanelType.Credits);
     }
 
     public void ShowMainMenu()
     {
-        ShowPanel(mainMenuPanel);
+        ShowPanel(PanelType.Main);
     }
 
     private void SetMusicVolume(float volume)
@@ -99,15 +75,6 @@ public class MainMenu : MonoBehaviour
     private void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
-    }
-
-    private void QuitGame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
     }
 
     private void OnDestroy()
