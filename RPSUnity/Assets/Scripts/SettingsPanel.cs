@@ -2,29 +2,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum PanelType
+public class SettingsPanel : MonoBehaviour
 {
-    Main,
-    Settings,
-    Credits
-}
-
-public class MainMenu : MonoBehaviour
-{
-    [Header("Menu Panels")]
-    [SerializeField] private MainMenuPanel mainMenuPanel;
-    [SerializeField] private SettingsPanel settingsPanel;
-    [SerializeField] private CreditsPanel creditsPanel;
-
     [Header("Settings Controls")]
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Button backButton;
+
+    private MainMenu mainMenu;
+
+    private void Awake()
+    {
+        mainMenu = GetComponentInParent<MainMenu>();
+    }
 
     private void Start()
     {
         InitializeSettings();
-        ShowMainMenu();
+        InitializeButtons();
     }
 
     private void InitializeSettings()
@@ -48,32 +44,10 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void ShowPanel(PanelType panelType)
+    private void InitializeButtons()
     {
-        if (mainMenuPanel == null)
-        {
-            Debug.LogError("MainMenuPanel reference is missing!");
-            return;
-        }
-
-        if (settingsPanel == null)
-        {
-            Debug.LogWarning("SettingsPanel reference is missing!");
-        }
-
-        if (creditsPanel == null)
-        {
-            Debug.LogWarning("CreditsPanel reference is missing!");
-        }
-
-        mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main);
-        settingsPanel?.gameObject.SetActive(panelType == PanelType.Settings);
-        creditsPanel?.gameObject.SetActive(panelType == PanelType.Credits);
-    }
-
-    public void ShowMainMenu()
-    {
-        ShowPanel(PanelType.Main);
+        if (backButton != null)
+            backButton.onClick.AddListener(OnBackClicked);
     }
 
     private void SetMusicVolume(float volume)
@@ -93,8 +67,13 @@ public class MainMenu : MonoBehaviour
         Screen.fullScreen = isFullscreen;
     }
 
+    private void OnBackClicked()
+    {
+        mainMenu.ShowPanel(PanelType.Main);
+    }
+
     private void OnDestroy()
     {
         PlayerPrefs.Save();
     }
-}
+} 
