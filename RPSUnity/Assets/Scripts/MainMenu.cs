@@ -50,6 +50,22 @@ public class MainMenu : MonoBehaviour
 
     public void ShowPanel(PanelType panelType)
     {
+        if (mainMenuPanel == null)
+        {
+            Debug.LogError("MainMenuPanel reference is missing!");
+            return;
+        }
+
+        if (settingsPanel == null)
+        {
+            Debug.LogWarning("SettingsPanel reference is missing!");
+        }
+
+        if (creditsPanel == null)
+        {
+            Debug.LogWarning("CreditsPanel reference is missing!");
+        }
+
         mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main);
         settingsPanel?.SetActive(panelType == PanelType.Settings);
         creditsPanel?.SetActive(panelType == PanelType.Credits);
