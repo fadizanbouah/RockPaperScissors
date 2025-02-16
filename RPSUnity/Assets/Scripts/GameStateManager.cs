@@ -90,7 +90,7 @@ public class GameStateManager : MonoBehaviour
                     // Select a new room BEFORE waiting for the enemy
                     if (RoomManager.Instance != null)
                     {
-                        RoomManager.Instance.SelectNextRoom();
+                        RoomManager.Instance.StartRoomSequence();
                         StartCoroutine(WaitForRoomAndInitializeGame());
                     }
                     else

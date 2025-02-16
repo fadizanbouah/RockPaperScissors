@@ -1152,7 +1152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbcfbd136eb1f4647a36c357e1ff5ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomPool: {fileID: 11400000, guid: 11ef8cabbd3ca784589fc8c25e891e9e, type: 2}
+  roomPools:
+  - {fileID: 11400000, guid: 11ef8cabbd3ca784589fc8c25e891e9e, type: 2}
+  - {fileID: 11400000, guid: af111d69eb1ba1b4db76274bdcfba440, type: 2}
   roomBackground: {fileID: 0}
   enemySpawnPoint: {fileID: 1317680167}
 --- !u!4 &929284197

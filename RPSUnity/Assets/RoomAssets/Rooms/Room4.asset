@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d15f8a159502166429f057a863e9f656, type: 3}
-  m_Name: 1TestRoom
+  m_Name: Room4
   m_EditorClassIdentifier: 
-  roomName: 1TestRoom
+  roomName: Room4
   backgroundImage: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   enemyPrefabs:
-  - {fileID: 8428155265588346663, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
-  - {fileID: 8428155265588346663, guid: 59b9b14dcfd3c244ca88f706e301c680, type: 3}
+  - {fileID: 8428155265588346663, guid: 6b9536fde11c8c549beb0272ad1b5c46, type: 3}
+  - {fileID: 8428155265588346663, guid: 352e8bd11b9f3c0489873b0287e3b8d0, type: 3}
   weight: 1

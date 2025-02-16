@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44fe0cf7cc6eea840bcb2eb476ebc242, type: 3}
-  m_Name: 1TestPool
+  m_Name: Pool1
   m_EditorClassIdentifier: 
   rooms:
   - {fileID: 11400000, guid: a09dd9497de806d429b656839016317d, type: 2}
+  - {fileID: 11400000, guid: 4fb97385fb6dd304fa778539a279671e, type: 2}
