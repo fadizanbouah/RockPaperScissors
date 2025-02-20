@@ -16,6 +16,7 @@ public class GameStateManager : MonoBehaviour
 
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Exposed field for assignment
     [SerializeField] private HandController playerPrefab; // Assign the Player prefab here
+    [SerializeField] private Transform playerSpawnPoint; // New: Assign the player spawn location
     [SerializeField] private GameObject gameplayCanvas; // Assign the Gameplay Canvas here in the Inspector
     [SerializeField] private GameObject mainMenuCanvas; // New Main Menu Canvas
 
@@ -119,10 +120,17 @@ public class GameStateManager : MonoBehaviour
             Debug.LogError("Player prefab is not assigned!");
             return;
         }
+
+        if (playerSpawnPoint == null)
+        {
+            Debug.LogError("Player spawn point is not assigned!");
+            return;
+        }
+
         if (playerInstance == null)
         {
-            playerInstance = Instantiate(playerPrefab);
-            Debug.Log("Player initialized.");
+            playerInstance = Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+            Debug.Log("Player initialized at spawn point.");
         }
         else
         {
