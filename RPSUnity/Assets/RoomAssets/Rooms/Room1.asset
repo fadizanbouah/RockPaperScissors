@@ -16,5 +16,5 @@ MonoBehaviour:
   backgroundImage: {fileID: 21300000, guid: 030f60b169e2f884fbee66fa34a59764, type: 3}
   enemyPrefabs:
   - {fileID: 8428155265588346663, guid: f9d3b5349b61ff344998c48be7989345, type: 3}
-  - {fileID: 8428155265588346663, guid: 59b9b14dcfd3c244ca88f706e301c680, type: 3}
+  - {fileID: 8428155265588346663, guid: bac24bcb007a1974dac095374d0cbdca, type: 3}
   weight: 1
