@@ -9,6 +9,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private List<RoomPool> roomPools; // List of pools in sequence
     [SerializeField] private SpriteRenderer roomBackground;
     [SerializeField] private Transform enemySpawnPoint;
+    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Reference to game logic
 
     private int currentPoolIndex = 0; // Track current pool in sequence
     private RoomData currentRoom;
@@ -82,6 +83,12 @@ public class RoomManager : MonoBehaviour
 
             // Notify GameStateManager of new enemy
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
+
+            // Notify RockPaperScissorsGame of new enemy (to unlock buttons)
+            if (rockPaperScissorsGame != null)
+            {
+                rockPaperScissorsGame.UpdateEnemyReference(currentEnemy);
+            }
         }
         else
         {

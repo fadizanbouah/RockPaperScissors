@@ -51,7 +51,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         DisableButtons();
         resultText.text = "";
         currentSubstate = GameSubstate.Idle;
-        EnableButtons();
+        AllowPlayerInput(); // Only enable buttons when a valid enemy is present
 
         Debug.Log("Game successfully initialized. Waiting for player input...");
     }
@@ -59,7 +59,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     public void StartGame()
     {
         currentSubstate = GameSubstate.Idle;
-        EnableButtons();
+        AllowPlayerInput();
         Debug.Log("Game started! Waiting for player to make a selection...");
     }
 
@@ -89,7 +89,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             Debug.LogError("EnemyHandController is null! Cannot execute enemy actions.");
             currentSubstate = GameSubstate.Idle;
-            EnableButtons();
+            AllowPlayerInput();
         }
     }
 
@@ -112,9 +112,19 @@ public class RockPaperScissorsGame : MonoBehaviour
             yield return new WaitUntil(() => enemyHandController == null); // Wait for enemy to be destroyed
         }
 
-        Debug.Log("Round complete. Returning to idle state.");
-        currentSubstate = GameSubstate.Idle;
-        EnableButtons();
+        Debug.Log("Round complete. Transitioning to next phase.");
+
+        // If enemy is dead, wait for the new one before enabling input
+        if (enemyHandController == null)
+        {
+            Debug.Log("Waiting for new enemy to be assigned...");
+        }
+        else
+        {
+            Debug.Log("Returning to idle state.");
+            currentSubstate = GameSubstate.Idle;
+            AllowPlayerInput();
+        }
     }
 
     private void DetermineOutcome(string playerChoice, string enemyChoice)
@@ -169,14 +179,21 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("Buttons disabled.");
     }
 
-    private void EnableButtons()
+    private void AllowPlayerInput()
     {
-        if (currentSubstate == GameSubstate.Idle)
+        if (currentSubstate == GameSubstate.Idle && enemyHandController != null)
         {
             rockButton.interactable = true;
             paperButton.interactable = true;
             scissorsButton.interactable = true;
             Debug.Log("Buttons enabled. Ready for next selection.");
         }
+    }
+
+    public void UpdateEnemyReference(HandController newEnemy)
+    {
+        enemyHandController = newEnemy;
+        currentSubstate = GameSubstate.Idle; // Ensure state resets
+        AllowPlayerInput(); // Enable buttons only when an enemy is present
     }
 }
