@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class RoomManager : MonoBehaviour
@@ -35,7 +36,6 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    // This method will now be called from GameStateManager when Gameplay starts
     public void StartRoomSequence()
     {
         SelectNextRoom();
@@ -45,15 +45,13 @@ public class RoomManager : MonoBehaviour
     {
         Debug.Log($"Loading Room: {room.roomName}");
         currentRoom = room;
-        currentEnemyIndex = 0; // Reset enemy index when entering a new room
+        currentEnemyIndex = 0;
 
-        // Set background for the room
         if (roomBackground != null)
         {
             roomBackground.sprite = room.backgroundImage;
         }
 
-        // Spawn the first enemy in the room
         SpawnNextEnemy();
     }
 
@@ -66,23 +64,23 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        // Destroy previous enemy if it exists
         if (currentEnemy != null)
         {
             Destroy(currentEnemy.gameObject);
             currentEnemy = null;
         }
 
-        // Instantiate the new enemy
         GameObject enemyInstance = Instantiate(currentRoom.enemyPrefabs[currentEnemyIndex], enemySpawnPoint.position, enemySpawnPoint.rotation);
         currentEnemy = enemyInstance.GetComponent<HandController>();
 
         if (currentEnemy != null)
         {
+            // Subscribe to enemy death event
             currentEnemy.OnDeath += HandleEnemyDefeat;
+            currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
 
-            // Notify GameStateManager that a new enemy is spawned
+            // Notify GameStateManager of new enemy
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
         }
         else
@@ -90,13 +88,35 @@ public class RoomManager : MonoBehaviour
             Debug.LogError("Spawned enemy does not have a HandController script!");
         }
 
-        currentEnemyIndex++; // Move to next enemy in the list
+        currentEnemyIndex++;
     }
 
-    // Called when an enemy is defeated
     private void HandleEnemyDefeat(HandController defeatedEnemy)
     {
-        Debug.Log($"{defeatedEnemy.gameObject.name} has been defeated! Checking for next enemy...");
+        Debug.Log($"{defeatedEnemy.gameObject.name} has been defeated! Waiting for Die animation to finish...");
+    }
+
+    private void HandleDeathAnimationFinished(HandController defeatedEnemy)
+    {
+        if (defeatedEnemy == null) return; // Ensure the enemy is valid
+
+        // Unsubscribe to prevent duplicate calls
+        defeatedEnemy.OnDeathAnimationFinished -= HandleDeathAnimationFinished;
+        defeatedEnemy.OnDeath -= HandleEnemyDefeat;
+
+        Debug.Log($"{defeatedEnemy.gameObject.name} death animation finished. Checking for next enemy...");
+
+        // Ensure the defeated enemy is destroyed before spawning a new one
+        Destroy(defeatedEnemy.gameObject);
+        currentEnemy = null;
+
+        // Delay before spawning the next enemy (optional for smoother transition)
+        StartCoroutine(DelayedSpawnNextEnemy(0.5f));
+    }
+
+    private IEnumerator DelayedSpawnNextEnemy(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         SpawnNextEnemy();
     }
 
@@ -108,7 +128,6 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        // Get the current pool
         RoomPool currentPool = roomPools[currentPoolIndex];
 
         if (currentPool == null || currentPool.rooms.Count == 0)
@@ -117,13 +136,10 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        // Select a random room from the current pool
         currentRoom = currentPool.rooms[Random.Range(0, currentPool.rooms.Count)];
         Debug.Log($"Next Room Selected: {currentRoom.roomName}");
 
         LoadRoom(currentRoom);
-
-        // Move to the next pool in sequence (loop back if at the end)
         currentPoolIndex = (currentPoolIndex + 1) % roomPools.Count;
     }
 

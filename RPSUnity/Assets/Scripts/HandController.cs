@@ -16,16 +16,20 @@ public class HandController : MonoBehaviour
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
 
-    public Sprite defaultHandSprite;  // Rock sprite (default hand)
+    public Sprite defaultHandSprite;
     public Sprite paperHandSprite;
     public Sprite scissorsHandSprite;
 
     // Reference to the health bar
     public HealthBar healthBar;
     private string playerChoice;
+    private bool isDying = false; // Prevent multiple triggers
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
+
+    public delegate void OnDeathAnimationFinishedHandler(HandController hand);
+    public event OnDeathAnimationFinishedHandler OnDeathAnimationFinished;
 
     void Start()
     {
@@ -33,9 +37,10 @@ public class HandController : MonoBehaviour
         UpdateHealthBar();
     }
 
-    // Method to take damage
     public void TakeDamage(int damage)
     {
+        if (isDying) return; // Prevent damage after death
+
         health -= damage;
         if (health < 0) health = 0;
         UpdateHealthBar();
@@ -48,37 +53,46 @@ public class HandController : MonoBehaviour
 
     private IEnumerator HandleDeathWithDelay()
     {
-        // Allow player to see the current hand state before transitioning to the death animation
         yield return new WaitForSeconds(1.0f);
-
         Die();
     }
 
     private void Die()
     {
-        Debug.Log(gameObject.name + " has been defeated!");
+        if (isDying) return; // Prevent multiple calls
+        isDying = true;
 
-        // Play the die animation if the animator is assigned
+        Debug.Log($"{gameObject.name} has been defeated!");
+
         if (handAnimator != null && handAnimator.HasParameter("Die"))
         {
             handAnimator.SetTrigger("Die");
+            StartCoroutine(WaitForDeathAnimation());
         }
         else
         {
-            Debug.LogWarning("Die trigger not found or animator is not assigned on " + gameObject.name);
+            Debug.LogWarning($"Die trigger not found or animator is not assigned on {gameObject.name}");
+            OnDeath?.Invoke(this);
+            Destroy(gameObject);
         }
-
-        // Start coroutine to destroy the object after animation
-        StartCoroutine(DestroyAfterDelay(1.0f));
-
-        // Notify any listeners that this hand has died
-        OnDeath?.Invoke(this);
     }
 
-    // Coroutine to destroy the hand after the animation
-    private IEnumerator DestroyAfterDelay(float delay)
+    private IEnumerator WaitForDeathAnimation()
     {
-        yield return new WaitForSeconds(delay);
+        yield return null; // Wait for the animation to start
+
+        if (handAnimator != null)
+        {
+            AnimatorStateInfo stateInfo = handAnimator.GetCurrentAnimatorStateInfo(0);
+            while (stateInfo.IsName("Die") && stateInfo.normalizedTime < 1.0f)
+            {
+                yield return null;
+                stateInfo = handAnimator.GetCurrentAnimatorStateInfo(0);
+            }
+        }
+
+        Debug.Log($"{gameObject.name} death animation finished.");
+        OnDeathAnimationFinished?.Invoke(this);
         Destroy(gameObject);
     }
 
@@ -92,20 +106,17 @@ public class HandController : MonoBehaviour
 
     public void StartShaking(string choice)
     {
-        // Reset hand to default first
+        if (isDying) return; // Prevent interactions if dying
         ResetHandToDefault();
-
-        // Trigger the shaking animation
         handAnimator.SetTrigger("Shake");
-
         playerChoice = choice;
-
-        // Store the choice so the correct animation plays after shake
         Invoke(nameof(ChangeHandState), 1.0f);
     }
 
     private void ChangeHandState()
     {
+        if (isDying) return; // Prevent animation change if dying
+
         if (playerChoice == "Paper")
         {
             handAnimator.SetTrigger("ChoosePaper");
@@ -116,30 +127,19 @@ public class HandController : MonoBehaviour
         }
         else
         {
-            handSpriteRenderer.sprite = defaultHandSprite;  // Default rock hand
+            handSpriteRenderer.sprite = defaultHandSprite;
         }
     }
 
     private void ResetHandToDefault()
     {
-        handSpriteRenderer.sprite = defaultHandSprite;  // Reset sprite to default rock hand
-        handAnimator.Rebind();  // Reset animator to default state
+        handSpriteRenderer.sprite = defaultHandSprite;
+        handAnimator.Rebind();
     }
 
-    public void SelectRock()
-    {
-        StartShaking("Rock");
-    }
-
-    public void SelectPaper()
-    {
-        StartShaking("Paper");
-    }
-
-    public void SelectScissors()
-    {
-        StartShaking("Scissors");
-    }
+    public void SelectRock() => StartShaking("Rock");
+    public void SelectPaper() => StartShaking("Paper");
+    public void SelectScissors() => StartShaking("Scissors");
 }
 
 // Extension method to check if a parameter exists in the Animator
