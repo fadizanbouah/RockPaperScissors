@@ -154,9 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 30
   maxHealth: 30
-  rockDamage: 100
-  paperDamage: 100
-  scissorsDamage: 100
+  rockDamage: 99
+  paperDamage: 99
+  scissorsDamage: 99
   handAnimator: {fileID: 4962887340843718462}
   handSpriteRenderer: {fileID: 7448360978216978555}
   defaultHandSprite: {fileID: 21300000, guid: 695d6b433ed86094d93547626a340756, type: 3}
