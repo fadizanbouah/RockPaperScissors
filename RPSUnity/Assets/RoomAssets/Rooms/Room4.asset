@@ -15,6 +15,6 @@ MonoBehaviour:
   roomName: Room4
   backgroundImage: {fileID: 21300000, guid: 51075d4ec63aa964abb14513a193737b, type: 3}
   enemyPrefabs:
-  - {fileID: 8428155265588346663, guid: 1f9f2cf1398b408478b43e2c97abaee1, type: 3}
-  - {fileID: 8428155265588346663, guid: 3f84abdce45f1c24cba4c9a6442f75ec, type: 3}
+  - {fileID: 8428155265588346663, guid: 7ab60499c3422aa428048ae31cd0b556, type: 3}
+  - {fileID: 8428155265588346663, guid: 917db6d811c9eb34dbaadb589894451a, type: 3}
   weight: 1

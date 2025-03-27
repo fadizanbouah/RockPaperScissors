@@ -31,6 +31,10 @@ public class HandController : MonoBehaviour
     public delegate void OnDeathAnimationFinishedHandler(HandController hand);
     public event OnDeathAnimationFinishedHandler OnDeathAnimationFinished;
 
+    // NEW: Sign animation event delegate
+    public delegate void SignAnimationFinishedHandler(HandController hand);
+    public event SignAnimationFinishedHandler SignAnimationFinished;
+
     void Start()
     {
         handSpriteRenderer.sprite = defaultHandSprite;
@@ -140,6 +144,14 @@ public class HandController : MonoBehaviour
     public void SelectRock() => StartShaking("Rock");
     public void SelectPaper() => StartShaking("Paper");
     public void SelectScissors() => StartShaking("Scissors");
+
+    // NEW: Called by AnimationEventRelay at end of each sign animation
+    public void OnSignAnimationFinished()
+    {
+        if (isDying) return;
+        Debug.Log($"{gameObject.name} sign animation finished!");
+        SignAnimationFinished?.Invoke(this);
+    }
 }
 
 // Extension method to check if a parameter exists in the Animator

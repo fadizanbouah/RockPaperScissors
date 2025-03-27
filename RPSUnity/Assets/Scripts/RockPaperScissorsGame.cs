@@ -7,130 +7,104 @@ public class RockPaperScissorsGame : MonoBehaviour
 {
     private enum GameSubstate
     {
-        Idle,         // Waiting for player input
-        Selecting,    // Player & Enemy choosing actions
-        Resolving,    // Playing attack animations & applying damage
-        Transitioning // Waiting for next round/enemy spawn
+        Idle,
+        Selecting,
+        Resolving,
+        Transitioning
     }
 
     private GameSubstate currentSubstate = GameSubstate.Idle;
 
     private HandController playerInstance;
+    private HandController enemyHandController;
+
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
-    private HandController enemyHandController;
+
+    private bool playerSignDone = false;
+    private bool enemySignDone = false;
 
     public void InitializeGame(HandController player, HandController enemy)
     {
         Debug.Log("Initializing game...");
 
-        if (player != null)
+        playerInstance = player;
+        enemyHandController = enemy;
+
+        if (playerInstance == null || enemyHandController == null)
         {
-            playerInstance = player;
-        }
-        else
-        {
-            Debug.LogError("Player instance is missing!");
+            Debug.LogError("Player or Enemy instance is missing!");
             return;
         }
 
-        if (enemy != null)
-        {
-            enemyHandController = enemy;
-        }
-        else
-        {
-            Debug.LogError("Enemy instance is missing!");
-            return;
-        }
+        // Subscribe to animation finished events
+        playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
+        enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
 
-        DisableButtons();
         resultText.text = "";
         currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput(); // Only enable buttons when a valid enemy is present
+        AllowPlayerInput();
 
-        Debug.Log("Game successfully initialized. Waiting for player input...");
+        Debug.Log("Game successfully initialized.");
     }
 
     public void StartGame()
     {
         currentSubstate = GameSubstate.Idle;
         AllowPlayerInput();
-        Debug.Log("Game started! Waiting for player to make a selection...");
+        Debug.Log("Game started!");
     }
 
     public void PlayerSelect(string playerChoice)
     {
-        if (currentSubstate != GameSubstate.Idle) return; // Prevent actions if not in idle
+        if (currentSubstate != GameSubstate.Idle) return;
 
         currentSubstate = GameSubstate.Selecting;
         DisableButtons();
 
-        Debug.Log($"Player selected: {playerChoice}");
+        playerSignDone = false;
+        enemySignDone = false;
 
-        if (playerInstance != null)
-        {
-            playerInstance.StartShaking(playerChoice);
-        }
+        Debug.Log($"Player selected: {playerChoice}");
+        playerInstance.StartShaking(playerChoice);
 
         string enemyChoice = choices[Random.Range(0, choices.Length)];
+        enemyHandController.StartShaking(enemyChoice);
+        Debug.Log($"Enemy has pre-selected: {enemyChoice}");
 
-        if (enemyHandController != null)
-        {
-            enemyHandController.StartShaking(enemyChoice);
-            Debug.Log($"Enemy has pre-selected: {enemyChoice}");
-            StartCoroutine(ResolveRound(playerChoice, enemyChoice));
-        }
-        else
-        {
-            Debug.LogError("EnemyHandController is null! Cannot execute enemy actions.");
-            currentSubstate = GameSubstate.Idle;
-            AllowPlayerInput();
-        }
+        StartCoroutine(ResolveRound(playerChoice, enemyChoice));
     }
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
-        yield return new WaitForSeconds(1.0f); // Wait for animations
+        yield return new WaitForSeconds(1.0f); // Let the shaking animation play
 
-        if (enemyHandController == null) yield break; // Ensure enemy still exists
+        if (enemyHandController == null) yield break;
 
-        Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
         currentSubstate = GameSubstate.Resolving;
+        Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
+
         DetermineOutcome(playerChoice, enemyChoice);
 
-        yield return new WaitForSeconds(1.5f); // Allow time for damage animations
+        yield return new WaitUntil(() => playerSignDone && enemySignDone);
+        Debug.Log("Both sign animations finished.");
 
-        // Check if the enemy is still alive
         if (enemyHandController != null && enemyHandController.health <= 0)
         {
             currentSubstate = GameSubstate.Transitioning;
-            yield return new WaitUntil(() => enemyHandController == null); // Wait for enemy to be destroyed
+            yield return new WaitUntil(() => enemyHandController == null);
         }
 
-        Debug.Log("Round complete. Transitioning to next phase.");
-
-        // If enemy is dead, wait for the new one before enabling input
-        if (enemyHandController == null)
-        {
-            Debug.Log("Waiting for new enemy to be assigned...");
-        }
-        else
-        {
-            Debug.Log("Returning to idle state.");
-            currentSubstate = GameSubstate.Idle;
-            AllowPlayerInput();
-        }
+        currentSubstate = GameSubstate.Idle;
+        AllowPlayerInput();
     }
 
     private void DetermineOutcome(string playerChoice, string enemyChoice)
     {
-        if (enemyHandController == null) return; // Prevent further actions if the enemy no longer exists
-
         string result = "";
 
         if (playerChoice == enemyChoice)
@@ -143,18 +117,15 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             int damage = GetDamage(playerChoice, playerInstance);
             result = "You Win!";
-            if (enemyHandController != null)
-            {
-                enemyHandController.TakeDamage(damage);
-                Debug.Log($"Player dealt {damage} damage to Enemy {enemyHandController.name}.");
-            }
+            enemyHandController?.TakeDamage(damage);
+            Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
         }
         else
         {
             int damage = GetDamage(enemyChoice, enemyHandController);
             result = "You Lose!";
             playerInstance.TakeDamage(damage);
-            Debug.Log($"Enemy {enemyHandController.name} dealt {damage} damage to Player.");
+            Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
         }
 
         resultText.text = result;
@@ -162,13 +133,13 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private int GetDamage(string choice, HandController hand)
     {
-        switch (choice)
+        return choice switch
         {
-            case "Rock": return hand.rockDamage;
-            case "Paper": return hand.paperDamage;
-            case "Scissors": return hand.scissorsDamage;
-            default: return 0;
-        }
+            "Rock" => hand.rockDamage,
+            "Paper" => hand.paperDamage,
+            "Scissors" => hand.scissorsDamage,
+            _ => 0
+        };
     }
 
     private void DisableButtons()
@@ -186,14 +157,35 @@ public class RockPaperScissorsGame : MonoBehaviour
             rockButton.interactable = true;
             paperButton.interactable = true;
             scissorsButton.interactable = true;
-            Debug.Log("Buttons enabled. Ready for next selection.");
+            Debug.Log("Buttons enabled.");
         }
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
     {
+        if (enemyHandController != null)
+        {
+            enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
+        }
+
         enemyHandController = newEnemy;
-        currentSubstate = GameSubstate.Idle; // Ensure state resets
-        AllowPlayerInput(); // Enable buttons only when an enemy is present
+
+        if (enemyHandController != null)
+        {
+            enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
+        }
+
+        currentSubstate = GameSubstate.Idle;
+        AllowPlayerInput();
+    }
+
+    private void OnPlayerSignAnimationFinished(HandController hand)
+    {
+        playerSignDone = true;
+    }
+
+    private void OnEnemySignAnimationFinished(HandController hand)
+    {
+        enemySignDone = true;
     }
 }
