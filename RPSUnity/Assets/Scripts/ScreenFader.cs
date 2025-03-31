@@ -17,14 +17,16 @@ public class ScreenFader : MonoBehaviour
         SetAlpha(1f); // Start fully black if desired
     }
 
-    public IEnumerator FadeInRoutine()
+    public IEnumerator FadeInRoutine(System.Action onComplete = null)
     {
         yield return StartCoroutine(Fade(1f, 0f));
+        onComplete?.Invoke();
     }
 
-    public IEnumerator FadeOutRoutine()
+    public IEnumerator FadeOutRoutine(System.Action onComplete = null)
     {
         yield return StartCoroutine(Fade(0f, 1f));
+        onComplete?.Invoke();
     }
 
     private IEnumerator Fade(float from, float to)
