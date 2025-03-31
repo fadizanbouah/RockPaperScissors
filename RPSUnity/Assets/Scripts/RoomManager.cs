@@ -53,7 +53,21 @@ public class RoomManager : MonoBehaviour
             roomBackground.sprite = room.backgroundImage;
         }
 
+        FadeInAfterRoomLoad();
         SpawnNextEnemy();
+    }
+
+    private void FadeInAfterRoomLoad()
+    {
+        ScreenFader fader = FindObjectOfType<ScreenFader>();
+        if (fader != null)
+        {
+            StartCoroutine(fader.FadeInRoutine());
+        }
+        else
+        {
+            Debug.LogWarning("ScreenFader not found in scene!");
+        }
     }
 
     private void SpawnNextEnemy()
@@ -76,19 +90,12 @@ public class RoomManager : MonoBehaviour
 
         if (currentEnemy != null)
         {
-            // Subscribe to enemy death event
             currentEnemy.OnDeath += HandleEnemyDefeat;
             currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
 
-            // Notify GameStateManager of new enemy
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
-
-            // Notify RockPaperScissorsGame of new enemy (to unlock buttons)
-            if (rockPaperScissorsGame != null)
-            {
-                rockPaperScissorsGame.UpdateEnemyReference(currentEnemy);
-            }
+            rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
         }
         else
         {
@@ -105,19 +112,16 @@ public class RoomManager : MonoBehaviour
 
     private void HandleDeathAnimationFinished(HandController defeatedEnemy)
     {
-        if (defeatedEnemy == null) return; // Ensure the enemy is valid
+        if (defeatedEnemy == null) return;
 
-        // Unsubscribe to prevent duplicate calls
         defeatedEnemy.OnDeathAnimationFinished -= HandleDeathAnimationFinished;
         defeatedEnemy.OnDeath -= HandleEnemyDefeat;
 
         Debug.Log($"{defeatedEnemy.gameObject.name} death animation finished. Checking for next enemy...");
 
-        // Ensure the defeated enemy is destroyed before spawning a new one
         Destroy(defeatedEnemy.gameObject);
         currentEnemy = null;
 
-        // Delay before spawning the next enemy (optional for smoother transition)
         StartCoroutine(DelayedSpawnNextEnemy(0.5f));
     }
 
