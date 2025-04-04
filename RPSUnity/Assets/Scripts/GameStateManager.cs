@@ -7,21 +7,24 @@ public class GameStateManager : MonoBehaviour
     {
         MainMenu,
         Gameplay,
-        GameOver
+        GameOver,
+        Transition
     }
 
     public static GameStateManager Instance { get; private set; }
 
     public GameState currentState { get; private set; }
 
-    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Exposed field for assignment
-    [SerializeField] private HandController playerPrefab; // Assign the Player prefab here
-    [SerializeField] private Transform playerSpawnPoint; // New: Assign the player spawn location
-    [SerializeField] private GameObject gameplayCanvas; // Assign the Gameplay Canvas here in the Inspector
-    [SerializeField] private GameObject mainMenuCanvas; // New Main Menu Canvas
+    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame;
+    [SerializeField] private HandController playerPrefab;
+    [SerializeField] private Transform playerSpawnPoint;
+    [SerializeField] private GameObject gameplayCanvas;
+    [SerializeField] private GameObject mainMenuCanvas;
 
     private HandController playerInstance;
     private HandController currentEnemyInstance;
+
+    private bool hasStartedRoomSequence = false; //  NEW: prevent duplicate room init
 
     private void Awake()
     {
@@ -38,7 +41,6 @@ public class GameStateManager : MonoBehaviour
 
     private void Start()
     {
-        // Ensure canvases are properly set up
         if (mainMenuCanvas != null)
         {
             mainMenuCanvas.SetActive(true);
@@ -48,7 +50,6 @@ public class GameStateManager : MonoBehaviour
             Debug.LogError("MainMenuCanvas reference is missing in GameStateManager!");
         }
 
-        // Ensure GameplayCanvas is hidden at start
         if (gameplayCanvas != null)
         {
             gameplayCanvas.SetActive(false);
@@ -59,7 +60,7 @@ public class GameStateManager : MonoBehaviour
             Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
         }
 
-        ChangeState(GameState.MainMenu); // Default state
+        ChangeState(GameState.MainMenu);
     }
 
     public void ChangeState(GameState newState)
@@ -77,6 +78,7 @@ public class GameStateManager : MonoBehaviour
                 Debug.Log("Entering Main Menu State");
                 SetCanvasVisibility(mainMenuCanvas, true);
                 SetCanvasVisibility(gameplayCanvas, false);
+                hasStartedRoomSequence = false; //  Reset when returning to main menu
                 break;
 
             case GameState.Gameplay:
@@ -88,16 +90,21 @@ public class GameStateManager : MonoBehaviour
                 {
                     InitializePlayer();
 
-                    // Select a new room BEFORE waiting for the enemy
-                    if (RoomManager.Instance != null)
+                    //  Only start room sequence ONCE
+                    if (!hasStartedRoomSequence)
                     {
-                        RoomManager.Instance.StartRoomSequence();
-                        StartCoroutine(WaitForRoomAndInitializeGame());
+                        if (RoomManager.Instance != null)
+                        {
+                            RoomManager.Instance.StartRoomSequence();
+                            hasStartedRoomSequence = true;
+                        }
+                        else
+                        {
+                            Debug.LogError("RoomManager instance is missing!");
+                        }
                     }
-                    else
-                    {
-                        Debug.LogError("RoomManager instance is missing!");
-                    }
+
+                    StartCoroutine(WaitForRoomAndInitializeGame());
                 }
                 else
                 {
@@ -109,6 +116,10 @@ public class GameStateManager : MonoBehaviour
                 Debug.Log("Entering Game Over State");
                 SetCanvasVisibility(gameplayCanvas, false);
                 CleanupGame();
+                break;
+
+            case GameState.Transition:
+                Debug.Log("Entering Transition State");
                 break;
         }
     }
@@ -166,10 +177,9 @@ public class GameStateManager : MonoBehaviour
     {
         Debug.Log("Waiting for the room to be ready...");
 
-        // Wait until RoomManager has an enemy
         while (RoomManager.Instance.GetCurrentEnemy() == null)
         {
-            yield return null; // Wait 1 frame
+            yield return null;
         }
 
         Debug.Log("Room and enemy are ready. Initializing game...");
@@ -178,11 +188,37 @@ public class GameStateManager : MonoBehaviour
         rockPaperScissorsGame.StartGame();
     }
 
-    // New method to update enemy reference dynamically
     public void UpdateEnemy(HandController newEnemy)
     {
         Debug.Log($"Updating GameStateManager enemy reference: {newEnemy.name}");
         currentEnemyInstance = newEnemy;
         rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
+    }
+
+    public void BeginRoomTransition()
+    {
+        ChangeState(GameState.Transition);
+
+        ScreenFader fader = FindObjectOfType<ScreenFader>();
+        if (fader != null)
+        {
+            StartCoroutine(HandleRoomTransitionSequence(fader));
+        }
+        else
+        {
+            Debug.LogWarning("ScreenFader not found! Skipping transition.");
+            ChangeState(GameState.Gameplay);
+        }
+    }
+
+    private IEnumerator HandleRoomTransitionSequence(ScreenFader fader)
+    {
+        yield return StartCoroutine(fader.FadeOutRoutine());
+
+        RoomManager.Instance.SelectNextRoom();
+
+        yield return StartCoroutine(fader.FadeInRoutine());
+
+        ChangeState(GameState.Gameplay);
     }
 }

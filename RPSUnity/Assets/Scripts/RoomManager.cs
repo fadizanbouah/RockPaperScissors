@@ -74,23 +74,8 @@ public class RoomManager : MonoBehaviour
     {
         if (currentRoom == null || currentRoom.enemyPrefabs.Count == 0 || currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
         {
-            Debug.Log("No more enemies left in this room. Starting fade-out...");
-
-            ScreenFader fader = FindObjectOfType<ScreenFader>();
-            if (fader != null)
-            {
-                StartCoroutine(fader.FadeOutRoutine(() =>
-                {
-                    Debug.Log("Fade-out complete. Now selecting next room...");
-                    SelectNextRoom();
-                }));
-            }
-            else
-            {
-                Debug.LogWarning("ScreenFader not found! Proceeding to next room without fade.");
-                SelectNextRoom();
-            }
-
+            Debug.Log("No more enemies left in this room. Starting fade-out transition...");
+            GameStateManager.Instance.BeginRoomTransition();
             return;
         }
 
