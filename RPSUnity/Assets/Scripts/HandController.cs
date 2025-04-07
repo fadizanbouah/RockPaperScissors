@@ -25,15 +25,20 @@ public class HandController : MonoBehaviour
     private string playerChoice;
     private bool isDying = false; // Prevent multiple triggers
 
+    public bool isPlayer = false; // New flag to indicate if this hand is the player
+
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
 
     public delegate void OnDeathAnimationFinishedHandler(HandController hand);
     public event OnDeathAnimationFinishedHandler OnDeathAnimationFinished;
 
-    // NEW: Sign animation event delegate
     public delegate void SignAnimationFinishedHandler(HandController hand);
     public event SignAnimationFinishedHandler SignAnimationFinished;
+
+    // NEW: Player-specific death event
+    public delegate void PlayerDiedHandler();
+    public static event PlayerDiedHandler OnPlayerDied;
 
     void Start()
     {
@@ -43,7 +48,7 @@ public class HandController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDying) return; // Prevent damage after death
+        if (isDying) return;
 
         health -= damage;
         if (health < 0) health = 0;
@@ -63,7 +68,7 @@ public class HandController : MonoBehaviour
 
     private void Die()
     {
-        if (isDying) return; // Prevent multiple calls
+        if (isDying) return;
         isDying = true;
 
         Debug.Log($"{gameObject.name} has been defeated!");
@@ -83,7 +88,7 @@ public class HandController : MonoBehaviour
 
     private IEnumerator WaitForDeathAnimation()
     {
-        yield return null; // Wait for the animation to start
+        yield return null;
 
         if (handAnimator != null)
         {
@@ -97,6 +102,13 @@ public class HandController : MonoBehaviour
 
         Debug.Log($"{gameObject.name} death animation finished.");
         OnDeathAnimationFinished?.Invoke(this);
+
+        if (isPlayer)
+        {
+            Debug.Log("Player death detected. Triggering OnPlayerDied.");
+            OnPlayerDied?.Invoke();
+        }
+
         Destroy(gameObject);
     }
 
@@ -110,7 +122,7 @@ public class HandController : MonoBehaviour
 
     public void StartShaking(string choice)
     {
-        if (isDying) return; // Prevent interactions if dying
+        if (isDying) return;
         ResetHandToDefault();
         handAnimator.SetTrigger("Shake");
         playerChoice = choice;
@@ -119,7 +131,7 @@ public class HandController : MonoBehaviour
 
     private void ChangeHandState()
     {
-        if (isDying) return; // Prevent animation change if dying
+        if (isDying) return;
 
         if (playerChoice == "Paper")
         {
@@ -145,7 +157,6 @@ public class HandController : MonoBehaviour
     public void SelectPaper() => StartShaking("Paper");
     public void SelectScissors() => StartShaking("Scissors");
 
-    // NEW: Called by AnimationEventRelay at end of each sign animation
     public void OnSignAnimationFinished()
     {
         if (isDying) return;

@@ -24,7 +24,7 @@ public class GameStateManager : MonoBehaviour
     private HandController playerInstance;
     private HandController currentEnemyInstance;
 
-    private bool hasStartedRoomSequence = false; //  NEW: prevent duplicate room init
+    private bool hasStartedRoomSequence = false;
 
     private void Awake()
     {
@@ -78,7 +78,7 @@ public class GameStateManager : MonoBehaviour
                 Debug.Log("Entering Main Menu State");
                 SetCanvasVisibility(mainMenuCanvas, true);
                 SetCanvasVisibility(gameplayCanvas, false);
-                hasStartedRoomSequence = false; //  Reset when returning to main menu
+                hasStartedRoomSequence = false;
                 break;
 
             case GameState.Gameplay:
@@ -90,7 +90,6 @@ public class GameStateManager : MonoBehaviour
                 {
                     InitializePlayer();
 
-                    //  Only start room sequence ONCE
                     if (!hasStartedRoomSequence)
                     {
                         if (RoomManager.Instance != null)
@@ -142,6 +141,8 @@ public class GameStateManager : MonoBehaviour
         {
             playerInstance = Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
             Debug.Log("Player initialized at spawn point.");
+
+            playerInstance.OnDeathAnimationFinished += HandlePlayerDeathAnimationFinished;
         }
         else
         {
@@ -149,10 +150,30 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    private void HandlePlayerDeathAnimationFinished(HandController player)
+    {
+        Debug.Log("Player death animation finished. Returning to main menu...");
+        StartCoroutine(FadeToMainMenu());
+    }
+
+    private IEnumerator FadeToMainMenu()
+    {
+        ChangeState(GameState.Transition);
+
+        ScreenFader fader = FindObjectOfType<ScreenFader>();
+        if (fader != null)
+        {
+            yield return StartCoroutine(fader.FadeOutRoutine());
+        }
+
+        ChangeState(GameState.MainMenu);
+    }
+
     private void CleanupGame()
     {
         if (playerInstance != null)
         {
+            playerInstance.OnDeathAnimationFinished -= HandlePlayerDeathAnimationFinished;
             Destroy(playerInstance.gameObject);
         }
     }
