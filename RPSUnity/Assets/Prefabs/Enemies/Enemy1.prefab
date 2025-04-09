@@ -525,8 +525,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
-  maxHealth: 3
+  health: 30
+  maxHealth: 30
   rockDamage: 1
   paperDamage: 1
   scissorsDamage: 1
@@ -536,6 +536,7 @@ MonoBehaviour:
   paperHandSprite: {fileID: 21300000, guid: 8633d282acffbf34f8d736757869c4c1, type: 3}
   scissorsHandSprite: {fileID: 21300000, guid: aef76f3c6b2704a419cb440358e9ed17, type: 3}
   healthBar: {fileID: 4552222775822232691}
+  isPlayer: 0
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
