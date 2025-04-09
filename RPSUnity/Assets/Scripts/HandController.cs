@@ -13,6 +13,7 @@ public class HandController : MonoBehaviour
     public int scissorsDamage = 5;
 
     // Hand animation properties
+    public Animation playerHitAnimation;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
 
@@ -53,6 +54,9 @@ public class HandController : MonoBehaviour
         health -= damage;
         if (health < 0) health = 0;
         UpdateHealthBar();
+
+        if (playerHitAnimation != null && damage>0) // Container test here
+            playerHitAnimation.Play(); 
 
         if (health <= 0)
         {
