@@ -167,9 +167,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 30
   maxHealth: 30
-  rockDamage: 1
-  paperDamage: 1
-  scissorsDamage: 1
+  rockDamage: 2
+  paperDamage: 2
+  scissorsDamage: 2
   playerHitAnimation: {fileID: 4025989370840745165}
   handAnimator: {fileID: 4962887340843718462}
   handSpriteRenderer: {fileID: 7448360978216978555}
@@ -178,6 +178,7 @@ MonoBehaviour:
   scissorsHandSprite: {fileID: 21300000, guid: 5fc92a23e77fefd49a77db7fa40b5e35, type: 3}
   healthBar: {fileID: 6361557421654122162}
   isPlayer: 0
+  combatTextPrefab: {fileID: 6277306413349539318, guid: aa7b1b0d83581574c8c2d36650551b7e, type: 3}
 --- !u!1 &724484435241975518
 GameObject:
   m_ObjectHideFlags: 0

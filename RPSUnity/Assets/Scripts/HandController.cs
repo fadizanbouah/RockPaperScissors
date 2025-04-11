@@ -3,16 +3,13 @@ using System.Collections;
 
 public class HandController : MonoBehaviour
 {
-    // Health properties
     public int health = 30;
     public int maxHealth = 30;
 
-    // Damage values for Rock, Paper, Scissors
     public int rockDamage = 10;
     public int paperDamage = 7;
     public int scissorsDamage = 5;
 
-    // Hand animation properties
     public Animation playerHitAnimation;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
@@ -21,12 +18,14 @@ public class HandController : MonoBehaviour
     public Sprite paperHandSprite;
     public Sprite scissorsHandSprite;
 
-    // Reference to the health bar
     public HealthBar healthBar;
     private string playerChoice;
-    private bool isDying = false; // Prevent multiple triggers
+    private bool isDying = false;
 
-    public bool isPlayer = false; // New flag to indicate if this hand is the player
+    public bool isPlayer = false;
+
+    [Header("Combat Text")]
+    public GameObject combatTextPrefab;
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
@@ -37,7 +36,6 @@ public class HandController : MonoBehaviour
     public delegate void SignAnimationFinishedHandler(HandController hand);
     public event SignAnimationFinishedHandler SignAnimationFinished;
 
-    // NEW: Player-specific death event
     public delegate void PlayerDiedHandler();
     public static event PlayerDiedHandler OnPlayerDied;
 
@@ -55,12 +53,25 @@ public class HandController : MonoBehaviour
         if (health < 0) health = 0;
         UpdateHealthBar();
 
-        if (playerHitAnimation != null && damage>0) // Container test here
-            playerHitAnimation.Play(); 
+        if (playerHitAnimation != null && damage > 0)
+            playerHitAnimation.Play();
+
+        if (combatTextPrefab != null && damage > 0)
+            SpawnFloatingDamageText(damage);
 
         if (health <= 0)
         {
             StartCoroutine(HandleDeathWithDelay());
+        }
+    }
+
+    private void SpawnFloatingDamageText(int amount)
+    {
+        GameObject instance = Instantiate(combatTextPrefab, transform.position, Quaternion.identity);
+        var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
+        if (textComponent != null)
+        {
+            textComponent.text = "-" + amount.ToString();
         }
     }
 
@@ -177,9 +188,7 @@ public static class AnimatorExtensions
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
             if (param.name == paramName)
-            {
                 return true;
-            }
         }
         return false;
     }

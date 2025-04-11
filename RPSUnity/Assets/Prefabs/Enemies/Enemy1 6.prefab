@@ -555,6 +555,7 @@ MonoBehaviour:
   scissorsHandSprite: {fileID: 21300000, guid: aef76f3c6b2704a419cb440358e9ed17, type: 3}
   healthBar: {fileID: 4552222775822232691}
   isPlayer: 0
+  combatTextPrefab: {fileID: 6277306413349539318, guid: aa7b1b0d83581574c8c2d36650551b7e, type: 3}
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
