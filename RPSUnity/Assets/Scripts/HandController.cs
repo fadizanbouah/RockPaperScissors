@@ -27,6 +27,9 @@ public class HandController : MonoBehaviour
     [Header("Combat Text")]
     public GameObject combatTextPrefab;
 
+    [Header("Rewards")]
+    public int coinReward = 5;  // Customize this per enemy in the Inspector
+
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
 
@@ -88,6 +91,8 @@ public class HandController : MonoBehaviour
 
         Debug.Log($"{gameObject.name} has been defeated!");
 
+        OnDeath?.Invoke(this);
+
         if (handAnimator != null && handAnimator.HasParameter("Die"))
         {
             handAnimator.SetTrigger("Die");
@@ -96,7 +101,6 @@ public class HandController : MonoBehaviour
         else
         {
             Debug.LogWarning($"Die trigger not found or animator is not assigned on {gameObject.name}");
-            OnDeath?.Invoke(this);
             Destroy(gameObject);
         }
     }

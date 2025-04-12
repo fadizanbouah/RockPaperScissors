@@ -41,9 +41,9 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
-        // Subscribe to animation finished events
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
+        enemyHandController.OnDeath += OnEnemyDefeated;
 
         resultText.text = "";
         currentSubstate = GameSubstate.Idle;
@@ -81,7 +81,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
-        yield return new WaitForSeconds(1.0f); // Let the shaking animation play
+        yield return new WaitForSeconds(1.0f);
 
         if (enemyHandController == null) yield break;
 
@@ -166,6 +166,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (enemyHandController != null)
         {
             enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
+            enemyHandController.OnDeath -= OnEnemyDefeated;
         }
 
         enemyHandController = newEnemy;
@@ -173,6 +174,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (enemyHandController != null)
         {
             enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
+            enemyHandController.OnDeath += OnEnemyDefeated;
         }
 
         currentSubstate = GameSubstate.Idle;
@@ -188,4 +190,15 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         enemySignDone = true;
     }
+
+    private void OnEnemyDefeated(HandController hand)
+    {
+        if (!hand.isPlayer)
+        {
+            PlayerProgressData.Instance.coins += hand.coinReward;
+            PlayerProgressData.Save();
+            Debug.Log($"Gained {hand.coinReward} coins! Total: {PlayerProgressData.Instance.coins}");
+        }
+    }
+
 }

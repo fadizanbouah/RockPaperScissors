@@ -21,9 +21,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Toggle fullscreenToggle;
 
+    [Header("Coin Display")]
+    [SerializeField] private TextMeshProUGUI coinText;
+
     private void Start()
     {
         InitializeSettings();
+        UpdateCoinDisplay();
         ShowMainMenu();
     }
 
@@ -74,6 +78,21 @@ public class MainMenu : MonoBehaviour
     public void ShowMainMenu()
     {
         ShowPanel(PanelType.Main);
+        UpdateCoinDisplay();
+    }
+
+    public void RefreshCoinDisplay()
+    {
+        UpdateCoinDisplay();
+    }
+
+    private void UpdateCoinDisplay()
+    {
+        if (coinText != null)
+        {
+            coinText.text = "Coins: " + PlayerProgressData.Instance.coins;
+            Debug.Log($"[MainMenu] Refreshed coin text: {PlayerProgressData.Instance.coins}");
+        }
     }
 
     private void SetMusicVolume(float volume)

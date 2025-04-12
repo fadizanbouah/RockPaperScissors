@@ -167,6 +167,14 @@ public class GameStateManager : MonoBehaviour
         }
 
         ChangeState(GameState.MainMenu);
+
+        // Refresh the coin display now that we're back at the main menu
+        MainMenu mainMenu = FindObjectOfType<MainMenu>();
+        if (mainMenu != null)
+        {
+            mainMenu.RefreshCoinDisplay();
+            Debug.Log("[GameStateManager] Refreshed coin display after returning to main menu.");
+        }
     }
 
     private void CleanupGame()
