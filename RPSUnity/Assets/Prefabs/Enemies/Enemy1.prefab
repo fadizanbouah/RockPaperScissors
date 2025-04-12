@@ -307,7 +307,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 645.9999, y: -270}
+  m_AnchoredPosition: {x: 520, y: -250}
   m_SizeDelta: {x: 500, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6782672718568478286
@@ -544,9 +544,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 30
   maxHealth: 30
-  rockDamage: 1
-  paperDamage: 1
-  scissorsDamage: 1
+  rockDamage: 10
+  paperDamage: 10
+  scissorsDamage: 10
   playerHitAnimation: {fileID: 6542035435138104612}
   handAnimator: {fileID: 2991300258156510983}
   handSpriteRenderer: {fileID: 7813983361860719102}
