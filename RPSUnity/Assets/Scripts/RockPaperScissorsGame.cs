@@ -41,6 +41,10 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
+        playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
+        enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
+        enemyHandController.OnDeath -= OnEnemyDefeated;
+
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
