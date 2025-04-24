@@ -6,7 +6,8 @@ public enum PanelType
 {
     Main,
     Settings,
-    Credits
+    Credits,
+    Upgrades
 }
 
 public class MainMenu : MonoBehaviour
@@ -15,6 +16,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private MainMenuPanel mainMenuPanel;
     [SerializeField] private SettingsPanel settingsPanel;
     [SerializeField] private CreditsPanel creditsPanel;
+    [SerializeField] private GameObject upgradesPanel;
 
     [Header("Settings Controls")]
     [SerializeField] private Slider musicVolumeSlider;
@@ -73,6 +75,7 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main);
         settingsPanel?.gameObject.SetActive(panelType == PanelType.Settings);
         creditsPanel?.gameObject.SetActive(panelType == PanelType.Credits);
+        upgradesPanel?.gameObject.SetActive(panelType == PanelType.Upgrades);
     }
 
     public void ShowMainMenu()

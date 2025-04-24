@@ -6,6 +6,7 @@ public class MainMenuPanel : MonoBehaviour
 {
     [Header("Menu Buttons")]
     [SerializeField] private Button playButton;
+    [SerializeField] private Button upgradesButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
@@ -26,7 +27,10 @@ public class MainMenuPanel : MonoBehaviour
     {
         if (playButton != null)
             playButton.onClick.AddListener(OnPlayClicked);
-        
+
+        if (upgradesButton != null)
+            upgradesButton.onClick.AddListener(OnUpgradesClicked);
+
         if (settingsButton != null)
             settingsButton.onClick.AddListener(OnSettingsClicked);
         
@@ -40,6 +44,11 @@ public class MainMenuPanel : MonoBehaviour
     private void OnPlayClicked()
     {
         GameStateManager.Instance.ChangeState(GameStateManager.GameState.Gameplay);
+    }
+
+    private void OnUpgradesClicked()
+    {
+        mainMenu.ShowPanel(PanelType.Upgrades);
     }
 
     private void OnSettingsClicked()
