@@ -34,9 +34,7 @@ public class UpgradeButtonController : MonoBehaviour
         return upgradeType switch
         {
             UpgradeType.MaxHealth => PlayerProgressData.Instance.maxHealthLevel,
-            UpgradeType.RockDamage => PlayerProgressData.Instance.rockDamageLevel,
-            UpgradeType.PaperDamage => PlayerProgressData.Instance.paperDamageLevel,
-            UpgradeType.ScissorsDamage => PlayerProgressData.Instance.scissorsDamageLevel,
+            UpgradeType.BaseDamage => PlayerProgressData.Instance.baseDamageLevel,
             _ => 0
         };
     }
@@ -48,14 +46,8 @@ public class UpgradeButtonController : MonoBehaviour
             case UpgradeType.MaxHealth:
                 PlayerProgressData.Instance.maxHealthLevel = newLevel;
                 break;
-            case UpgradeType.RockDamage:
-                PlayerProgressData.Instance.rockDamageLevel = newLevel;
-                break;
-            case UpgradeType.PaperDamage:
-                PlayerProgressData.Instance.paperDamageLevel = newLevel;
-                break;
-            case UpgradeType.ScissorsDamage:
-                PlayerProgressData.Instance.scissorsDamageLevel = newLevel;
+            case UpgradeType.BaseDamage:
+                PlayerProgressData.Instance.baseDamageLevel = newLevel;
                 break;
         }
     }
@@ -133,7 +125,5 @@ public class UpgradeButtonController : MonoBehaviour
 public enum UpgradeType
 {
     MaxHealth,
-    RockDamage,
-    PaperDamage,
-    ScissorsDamage
+    BaseDamage
 }

@@ -6,9 +6,7 @@ public class UpgradesPanel : MonoBehaviour
 {
     [Header("Upgrade Buttons")]
     [SerializeField] private UpgradeButtonController maxHealthUpgrade;
-    [SerializeField] private UpgradeButtonController rockDamageUpgrade;
-    [SerializeField] private UpgradeButtonController paperDamageUpgrade;
-    [SerializeField] private UpgradeButtonController scissorsDamageUpgrade;
+    [SerializeField] private UpgradeButtonController baseDamageUpgrade;
     [HideInInspector] public UpgradesPanel upgradesPanel;
 
 
@@ -28,9 +26,7 @@ public class UpgradesPanel : MonoBehaviour
 
         // Set upgrade panel reference on each button
         maxHealthUpgrade.upgradesPanel = this;
-        rockDamageUpgrade.upgradesPanel = this;
-        paperDamageUpgrade.upgradesPanel = this;
-        scissorsDamageUpgrade.upgradesPanel = this;
+        baseDamageUpgrade.upgradesPanel = this;
 
         ClampUpgradeLevels();
         RefreshAllUpgrades();
@@ -42,15 +38,11 @@ public class UpgradesPanel : MonoBehaviour
         int refundAmount = 0;
 
         refundAmount += maxHealthUpgrade.GetTotalSpentCoins();
-        refundAmount += rockDamageUpgrade.GetTotalSpentCoins();
-        refundAmount += paperDamageUpgrade.GetTotalSpentCoins();
-        refundAmount += scissorsDamageUpgrade.GetTotalSpentCoins();
+        refundAmount += baseDamageUpgrade.GetTotalSpentCoins();
 
         // Reset upgrade levels
         PlayerProgressData.Instance.maxHealthLevel = 0;
-        PlayerProgressData.Instance.rockDamageLevel = 0;
-        PlayerProgressData.Instance.paperDamageLevel = 0;
-        PlayerProgressData.Instance.scissorsDamageLevel = 0;
+        PlayerProgressData.Instance.baseDamageLevel = 0;
 
         // Refund coins
         PlayerProgressData.Instance.coins += refundAmount;
@@ -74,18 +66,14 @@ public class UpgradesPanel : MonoBehaviour
     private void RefreshAllUpgrades()
     {
         maxHealthUpgrade.RefreshUI();
-        rockDamageUpgrade.RefreshUI();
-        paperDamageUpgrade.RefreshUI();
-        scissorsDamageUpgrade.RefreshUI();
+        baseDamageUpgrade.RefreshUI();
         RefreshCoinDisplay();
     }
 
     private void ClampUpgradeLevels()
     {
         PlayerProgressData.Instance.maxHealthLevel = Mathf.Clamp(PlayerProgressData.Instance.maxHealthLevel, 0, maxHealthUpgrade.maxLevel);
-        PlayerProgressData.Instance.rockDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.rockDamageLevel, 0, rockDamageUpgrade.maxLevel);
-        PlayerProgressData.Instance.paperDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.paperDamageLevel, 0, paperDamageUpgrade.maxLevel);
-        PlayerProgressData.Instance.scissorsDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.scissorsDamageLevel, 0, scissorsDamageUpgrade.maxLevel);
+        PlayerProgressData.Instance.baseDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.baseDamageLevel, 0, baseDamageUpgrade.maxLevel);
     }
 
     public void RefreshCoinDisplay()

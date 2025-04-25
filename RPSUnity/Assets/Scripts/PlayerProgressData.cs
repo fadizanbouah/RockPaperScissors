@@ -7,9 +7,7 @@ public class PlayerProgressData
     public int coins = 0;
 
     public int maxHealthLevel = 0;
-    public int rockDamageLevel = 0;
-    public int paperDamageLevel = 0;
-    public int scissorsDamageLevel = 0;
+    public int baseDamageLevel = 0;
     public int damageReductionLevel = 0;
 
     private const string SaveKey = "PlayerProgress";
