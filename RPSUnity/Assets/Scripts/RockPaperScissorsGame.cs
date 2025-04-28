@@ -119,31 +119,20 @@ public class RockPaperScissorsGame : MonoBehaviour
                  (playerChoice == "Paper" && enemyChoice == "Rock") ||
                  (playerChoice == "Scissors" && enemyChoice == "Paper"))
         {
-            int damage = GetDamage(playerChoice, playerInstance);
+            int damage = playerInstance.GetEffectiveDamage();
             result = "You Win!";
             enemyHandController?.TakeDamage(damage);
             Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
         }
         else
         {
-            int damage = GetDamage(enemyChoice, enemyHandController);
+            int damage = enemyHandController.GetEffectiveDamage();
             result = "You Lose!";
             playerInstance.TakeDamage(damage);
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
         }
 
         resultText.text = result;
-    }
-
-    private int GetDamage(string choice, HandController hand)
-    {
-        return choice switch
-        {
-            "Rock" => hand.rockDamage,
-            "Paper" => hand.paperDamage,
-            "Scissors" => hand.scissorsDamage,
-            _ => 0
-        };
     }
 
     private void DisableButtons()
@@ -204,5 +193,4 @@ public class RockPaperScissorsGame : MonoBehaviour
             Debug.Log($"Gained {hand.coinReward} coins! Total: {PlayerProgressData.Instance.coins}");
         }
     }
-
 }

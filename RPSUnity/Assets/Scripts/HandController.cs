@@ -3,12 +3,13 @@ using System.Collections;
 
 public class HandController : MonoBehaviour
 {
-    public int health = 30;
-    public int maxHealth = 30;
+    [Header("Base Stats")]
+    public int baseMaxHealth = 30;
+    public int baseDamage = 10;
 
-    public int rockDamage = 10;
-    public int paperDamage = 7;
-    public int scissorsDamage = 5;
+    [Header("Runtime Stats")]
+    public int health;
+    public int maxHealth;
 
     public Animation playerHitAnimation;
     public Animator handAnimator;
@@ -28,7 +29,7 @@ public class HandController : MonoBehaviour
     public GameObject combatTextPrefab;
 
     [Header("Rewards")]
-    public int coinReward = 5;  // Customize this per enemy in the Inspector
+    public int coinReward = 5;
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
@@ -44,8 +45,29 @@ public class HandController : MonoBehaviour
 
     void Start()
     {
+        ApplyUpgrades();
         handSpriteRenderer.sprite = defaultHandSprite;
         UpdateHealthBar();
+    }
+
+    private void ApplyUpgrades()
+    {
+        if (isPlayer)
+        {
+            maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
+            baseDamage += PlayerProgressData.Instance.baseDamageLevel * 2;
+        }
+        else
+        {
+            maxHealth = baseMaxHealth;
+        }
+
+        health = maxHealth;
+    }
+
+    public int GetEffectiveDamage()
+    {
+        return baseDamage;
     }
 
     public void TakeDamage(int damage)
@@ -90,7 +112,6 @@ public class HandController : MonoBehaviour
         isDying = true;
 
         Debug.Log($"{gameObject.name} has been defeated!");
-
         OnDeath?.Invoke(this);
 
         if (handAnimator != null && handAnimator.HasParameter("Die"))
