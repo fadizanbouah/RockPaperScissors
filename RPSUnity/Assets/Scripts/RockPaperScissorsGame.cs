@@ -191,6 +191,9 @@ public class RockPaperScissorsGame : MonoBehaviour
             PlayerProgressData.Instance.coins += hand.coinReward;
             PlayerProgressData.Save();
             Debug.Log($"Gained {hand.coinReward} coins! Total: {PlayerProgressData.Instance.coins}");
+
+            RunProgressManager.Instance.AddFavor(hand.favorReward);
+            Debug.Log($"Gained {hand.favorReward} favor! Total: {RunProgressManager.Instance.currentFavor}");
         }
     }
 }

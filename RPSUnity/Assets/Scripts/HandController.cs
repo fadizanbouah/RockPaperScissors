@@ -30,6 +30,7 @@ public class HandController : MonoBehaviour
 
     [Header("Rewards")]
     public int coinReward = 5;
+    public int favorReward = 3;
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
@@ -112,7 +113,12 @@ public class HandController : MonoBehaviour
         isDying = true;
 
         Debug.Log($"{gameObject.name} has been defeated!");
-        OnDeath?.Invoke(this);
+
+        if (OnDeath != null)
+        {
+            OnDeath.Invoke(this);
+            OnDeath = null;   // Important! Prevent double rewards
+        }
 
         if (handAnimator != null && handAnimator.HasParameter("Die"))
         {
