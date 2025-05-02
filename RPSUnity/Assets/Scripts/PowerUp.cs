@@ -1,16 +1,24 @@
+using UnityEngine;
+
 [System.Serializable]
 public class PowerUp
 {
-    public string name;
-    public string description;
-    public int cost;
+    public string powerUpName;      // Display name
+    public string description;      // Short description
+    public int favorCost;           // How much favor it costs
+    public Sprite icon;             // Image/icon to display
+    public PowerUpType type;        // Buff, debuff, passive, etc.
+    public float effectValue;       // The magnitude of the effect (e.g., +10%)
 
-    // Future properties: type, modifiers, etc.
+    // Example: can add more properties later if needed
+}
 
-    public PowerUp(string name, string description, int cost)
-    {
-        this.name = name;
-        this.description = description;
-        this.cost = cost;
-    }
+// Simple enum for powerup categories
+public enum PowerUpType
+{
+    IncreaseDamage,
+    IncreaseHealth,
+    DamageReduction,
+    SpecialMove,
+    Other
 }
