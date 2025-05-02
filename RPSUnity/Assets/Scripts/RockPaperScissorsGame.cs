@@ -22,6 +22,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
+    public GameObject roomClearedTextObject;  // Reference for RoomCleared text object
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
 
@@ -96,12 +97,6 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log("Both sign animations finished.");
-
-        if (enemyHandController != null && enemyHandController.health <= 0)
-        {
-            currentSubstate = GameSubstate.Transitioning;
-            yield return new WaitUntil(() => enemyHandController == null);
-        }
 
         currentSubstate = GameSubstate.Idle;
         AllowPlayerInput();

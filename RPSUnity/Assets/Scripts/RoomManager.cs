@@ -10,6 +10,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private SpriteRenderer roomBackground;
     [SerializeField] private Transform enemySpawnPoint;
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Reference to game logic
+    [SerializeField] private GameObject roomClearedTextObject;
 
     private int currentPoolIndex = 0; // Track current pool in sequence
     private RoomData currentRoom;
@@ -122,7 +123,24 @@ public class RoomManager : MonoBehaviour
         Destroy(defeatedEnemy.gameObject);
         currentEnemy = null;
 
-        StartCoroutine(DelayedSpawnNextEnemy(0.5f));
+        if (currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
+        {
+            Debug.Log("[RoomManager] All enemies defeated in this room.");
+
+            if (rockPaperScissorsGame != null && rockPaperScissorsGame.roomClearedTextObject != null)
+            {
+                rockPaperScissorsGame.roomClearedTextObject.SetActive(true);
+                Debug.Log("[RoomManager] Activated RoomClearedTextObject.");
+            }
+            else
+            {
+                Debug.LogWarning("[RoomManager] rockPaperScissorsGame or roomClearedTextObject is not assigned!");
+            }
+        }
+        else
+        {
+            StartCoroutine(DelayedSpawnNextEnemy(0.5f));
+        }
     }
 
     private IEnumerator DelayedSpawnNextEnemy(float delay)
@@ -157,5 +175,17 @@ public class RoomManager : MonoBehaviour
     public HandController GetCurrentEnemy()
     {
         return currentEnemy;
+    }
+
+    public void OnRoomClearedAnimationFinished()
+    {
+        Debug.Log("[RoomManager] Room cleared animation finished. Hiding text.");
+        if (roomClearedTextObject != null)
+        {
+            Debug.Log("[RoomManager] Setting roomClearedTextObject to inactive: " + roomClearedTextObject.name);
+            roomClearedTextObject.SetActive(false);
+        }
+
+        // Here’s where you’d also trigger the next UI/panel (power-ups panel etc.)
     }
 }
