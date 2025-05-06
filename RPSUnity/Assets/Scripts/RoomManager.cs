@@ -11,6 +11,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Transform enemySpawnPoint;
     [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Reference to game logic
     [SerializeField] private GameObject roomClearedTextObject;
+    [SerializeField] private GameObject powerUpPanelObject;
 
     private int currentPoolIndex = 0; // Track current pool in sequence
     private RoomData currentRoom;
@@ -186,6 +187,27 @@ public class RoomManager : MonoBehaviour
             roomClearedTextObject.SetActive(false);
         }
 
-        // Here’s where you’d also trigger the next UI/panel (power-ups panel etc.)
+        if (powerUpPanelObject != null)
+        {
+            Debug.Log("[RoomManager] Activating powerUpPanelObject: " + powerUpPanelObject.name);
+            powerUpPanelObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("[RoomManager] powerUpPanelObject is not assigned!");
+        }
     }
+
+    public void OnPowerUpContinueButtonClicked()
+    {
+        Debug.Log("[RoomManager] Continue button clicked. Hiding PowerUpPanel and starting room transition.");
+
+        if (powerUpPanelObject != null)
+        {
+            powerUpPanelObject.SetActive(false);
+        }
+
+        GameStateManager.Instance.BeginRoomTransition();
+    }
+
 }
