@@ -277,6 +277,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8733114998627585837}
+  - component: {fileID: 4966171282575501177}
   m_Layer: 5
   m_Name: PowerUpCard
   m_TagString: Untagged
@@ -306,6 +307,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4966171282575501177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7261569195890138904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60450f0b1636ad44a864271cc120e986, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgroundImage: {fileID: 7394942883717015514}
+  nameText: {fileID: 547511275785748820}
+  descriptionText: {fileID: 5116884728576305902}
+  costText: {fileID: 0}
 --- !u!1 &7921925257386122293
 GameObject:
   m_ObjectHideFlags: 0

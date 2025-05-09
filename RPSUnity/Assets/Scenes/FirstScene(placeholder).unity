@@ -5165,7 +5165,7 @@ GameObject:
   - component: {fileID: 2039003311}
   - component: {fileID: 2039003313}
   - component: {fileID: 2039003312}
-  - component: {fileID: 2039003314}
+  - component: {fileID: 2039003315}
   m_Layer: 5
   m_Name: PowerUpPanel
   m_TagString: Untagged
@@ -5232,7 +5232,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2039003310}
   m_CullTransparentMesh: 1
---- !u!114 &2039003314
+--- !u!114 &2039003315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5241,11 +5241,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2039003310}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aebce9ad0ecc4d6418b401b458eb4164, type: 3}
+  m_Script: {fileID: 11500000, guid: 4190a7ce58190c849b50194da1f94ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardContainer: {fileID: 286563481}
   powerUpCardPrefab: {fileID: 7261569195890138904, guid: b3b4de9ff20cb0744970ace2b4b21fd6, type: 3}
+  cardContainer: {fileID: 286563482}
+  availablePowerUps:
+  - {fileID: 11400000, guid: 771d578a3fcf4e44db5a8c86501b417e, type: 2}
+  - {fileID: 11400000, guid: 2dcc46829c8b9bc48b43d93e42f6c7cb, type: 2}
+  - {fileID: 11400000, guid: 89b47e79a58e6a64083c40e5fa0386e9, type: 2}
+  - {fileID: 11400000, guid: 0a5af733870ee844fa056ad44a329b9a, type: 2}
 --- !u!1 &2043156627
 GameObject:
   m_ObjectHideFlags: 0

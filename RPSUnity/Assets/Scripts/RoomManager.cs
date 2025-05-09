@@ -191,6 +191,17 @@ public class RoomManager : MonoBehaviour
         {
             Debug.Log("[RoomManager] Activating powerUpPanelObject: " + powerUpPanelObject.name);
             powerUpPanelObject.SetActive(true);
+
+            // Populate random power-up cards
+            PowerUpCardSpawner spawner = powerUpPanelObject.GetComponent<PowerUpCardSpawner>();
+            if (spawner != null)
+            {
+                spawner.PopulatePowerUpPanel();
+            }
+            else
+            {
+                Debug.LogWarning("[RoomManager] PowerUpPanel does not have a PowerUpCardSpawner component!");
+            }
         }
         else
         {
@@ -209,5 +220,4 @@ public class RoomManager : MonoBehaviour
 
         GameStateManager.Instance.BeginRoomTransition();
     }
-
 }
