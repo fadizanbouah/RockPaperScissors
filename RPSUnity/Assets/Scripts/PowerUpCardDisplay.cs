@@ -9,7 +9,7 @@ public class PowerUpCardDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
 
-    public void SetData(PowerUpData data)
+    public void SetData(PowerUpData data, int currentFavor)
     {
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
@@ -21,6 +21,18 @@ public class PowerUpCardDisplay : MonoBehaviour
             descriptionText.text = data.description;
 
         if (costText != null)
-            costText.text = data.favorCost > 0 ? $"Cost: {data.favorCost}" : "";
+        {
+            if (data.favorCost > 0)
+            {
+                costText.text = $"Cost: {data.favorCost}";
+
+                // Set text color: white if affordable, red if not
+                costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
+            }
+            else
+            {
+                costText.text = "";
+            }
+        }
     }
 }

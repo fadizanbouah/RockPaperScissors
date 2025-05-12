@@ -1,17 +1,21 @@
 using UnityEngine;
+using TMPro;
 
 public class PowerUpPanelManager : MonoBehaviour
 {
-    [SerializeField] private GameObject cardContainer; // CardContainer with Horizontal Layout Group
-    [SerializeField] private GameObject powerUpCardPrefab; // Your PowerUpCard prefab
+    [Header("UI References")]
+    [SerializeField] private TextMeshProUGUI favorText;
 
-    private void Start()
+    private void OnEnable()
     {
-        // Spawn 3 placeholder cards
-        for (int i = 0; i < 3; i++)
+        RefreshFavorDisplay();
+    }
+
+    public void RefreshFavorDisplay()
+    {
+        if (favorText != null)
         {
-            GameObject card = Instantiate(powerUpCardPrefab, cardContainer.transform);
-            card.name = "PowerUpCard_" + (i + 1);
+            favorText.text = "Favor: " + RunProgressManager.Instance.currentFavor;
         }
     }
 }

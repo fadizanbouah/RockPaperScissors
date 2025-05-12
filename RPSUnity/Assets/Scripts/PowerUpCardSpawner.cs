@@ -31,6 +31,8 @@ public class PowerUpCardSpawner : MonoBehaviour
         // Determine how many to spawn (up to 3 or fewer if less available)
         int numberToSpawn = Mathf.Min(3, shuffledList.Count);
 
+        int currentFavor = RunProgressManager.Instance.currentFavor;
+
         // Spawn the selected cards
         for (int i = 0; i < numberToSpawn; i++)
         {
@@ -39,7 +41,7 @@ public class PowerUpCardSpawner : MonoBehaviour
 
             if (display != null)
             {
-                display.SetData(shuffledList[i]);
+                display.SetData(shuffledList[i], currentFavor);
             }
             else
             {

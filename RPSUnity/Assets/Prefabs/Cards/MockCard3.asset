@@ -15,6 +15,6 @@ MonoBehaviour:
   powerUpName: Mock Card 3
   description: You've been a naughty boy
   icon: {fileID: 0}
-  favorCost: 0
+  favorCost: 3
   powerUpType: 0
   value: 0
