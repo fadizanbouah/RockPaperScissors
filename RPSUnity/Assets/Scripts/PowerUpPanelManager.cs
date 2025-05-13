@@ -9,6 +9,7 @@ public class PowerUpPanelManager : MonoBehaviour
     private void OnEnable()
     {
         RefreshFavorDisplay();
+        RefreshCardAffordability();
     }
 
     public void RefreshFavorDisplay()
@@ -16,6 +17,18 @@ public class PowerUpPanelManager : MonoBehaviour
         if (favorText != null)
         {
             favorText.text = "Favor: " + RunProgressManager.Instance.currentFavor;
+        }
+    }
+
+    public void RefreshCardAffordability()
+    {
+        int currentFavor = RunProgressManager.Instance.currentFavor;
+
+        PowerUpCardDisplay[] cards = GetComponentsInChildren<PowerUpCardDisplay>(true);
+
+        foreach (var card in cards)
+        {
+            card.UpdateAffordability(currentFavor);
         }
     }
 }

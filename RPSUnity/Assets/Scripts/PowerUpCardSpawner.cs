@@ -10,8 +10,17 @@ public class PowerUpCardSpawner : MonoBehaviour
     [Header("Available PowerUps")]
     [SerializeField] private PowerUpData[] availablePowerUps;
 
+    [Header("References")]
+    [SerializeField] private PowerUpPanelManager panelManager;
+
     public void PopulatePowerUpPanel()
     {
+        if (panelManager == null)
+        {
+            Debug.LogError("[PowerUpCardSpawner] PowerUpPanelManager reference not assigned!");
+            return;
+        }
+
         // Clear existing cards
         foreach (Transform child in cardContainer)
         {

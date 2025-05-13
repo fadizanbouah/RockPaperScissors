@@ -24,13 +24,16 @@ public class PowerUpCardDisplay : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = data.description;
 
-        if (costText != null)
+        UpdateAffordability(currentFavor);
+    }
+
+    public void UpdateAffordability(int currentFavor)
+    {
+        if (costText != null && data != null)
         {
             if (data.favorCost > 0)
             {
                 costText.text = $"Cost: {data.favorCost}";
-
-                // Set text color: white if affordable, red if not
                 costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
             }
             else
@@ -56,7 +59,19 @@ public class PowerUpCardDisplay : MonoBehaviour
             // Hide or disable the card after purchase
             gameObject.SetActive(false);
 
-            // TODO: Trigger UI refresh for Favor counter externally (next step)
+            // Refresh UI favor display and affordability on all cards
+            PowerUpPanelManager panelManager = GetComponentInParent<PowerUpPanelManager>();
+            if (panelManager != null)
+            {
+                panelManager.RefreshFavorDisplay();
+
+                // Go through sibling cards and update their affordability colors
+                PowerUpCardDisplay[] cardDisplays = panelManager.GetComponentsInChildren<PowerUpCardDisplay>(true);
+                foreach (PowerUpCardDisplay card in cardDisplays)
+                {
+                    card.UpdateAffordability(RunProgressManager.Instance.currentFavor);
+                }
+            }
         }
         else
         {
