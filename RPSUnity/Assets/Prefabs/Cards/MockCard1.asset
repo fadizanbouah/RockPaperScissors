@@ -15,6 +15,6 @@ MonoBehaviour:
   powerUpName: Mock Card 1
   description: This will blow your mind
   icon: {fileID: 0}
-  favorCost: 1
+  favorCost: 10
   powerUpType: 0
   value: 0

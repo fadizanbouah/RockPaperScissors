@@ -9,8 +9,12 @@ public class PowerUpCardDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
 
-    public void SetData(PowerUpData data, int currentFavor)
+    private PowerUpData data;
+
+    public void SetData(PowerUpData newData, int currentFavor)
     {
+        data = newData;
+
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
 
@@ -33,6 +37,30 @@ public class PowerUpCardDisplay : MonoBehaviour
             {
                 costText.text = "";
             }
+        }
+    }
+
+    public void OnCardClicked()
+    {
+        if (data == null) return;
+
+        int currentFavor = RunProgressManager.Instance.currentFavor;
+
+        if (currentFavor >= data.favorCost)
+        {
+            RunProgressManager.Instance.favor -= data.favorCost;
+            Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
+
+            // TODO: Add power-up to active effects list here in the future
+
+            // Hide or disable the card after purchase
+            gameObject.SetActive(false);
+
+            // TODO: Trigger UI refresh for Favor counter externally (next step)
+        }
+        else
+        {
+            Debug.Log($"[PowerUpCardDisplay] Not enough favor to buy {data.powerUpName}!");
         }
     }
 }
