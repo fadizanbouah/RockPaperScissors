@@ -41,6 +41,9 @@ public class RoomManager : MonoBehaviour
 
     public void StartRoomSequence()
     {
+        Debug.Log("[RoomManager] Starting new room sequence. Resetting run progress...");
+        RunProgressManager.Instance.ResetRun();
+
         SelectNextRoom();
     }
 

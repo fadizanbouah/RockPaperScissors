@@ -15,6 +15,6 @@ MonoBehaviour:
   powerUpName: Mock Card 4
   description: Existential dread incoming
   icon: {fileID: 0}
-  favorCost: 40
+  favorCost: 4
   powerUpType: 0
   value: 0

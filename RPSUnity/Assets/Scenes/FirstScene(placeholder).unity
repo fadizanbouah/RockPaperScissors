@@ -5387,6 +5387,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2dcc46829c8b9bc48b43d93e42f6c7cb, type: 2}
   - {fileID: 11400000, guid: 89b47e79a58e6a64083c40e5fa0386e9, type: 2}
   - {fileID: 11400000, guid: 0a5af733870ee844fa056ad44a329b9a, type: 2}
+  panelManager: {fileID: 2039003316}
 --- !u!114 &2039003316
 MonoBehaviour:
   m_ObjectHideFlags: 0
