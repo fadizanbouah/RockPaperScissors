@@ -10,10 +10,12 @@ public class PowerUpCardDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI costText;
 
     private PowerUpData data;
+    private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
 
-    public void SetData(PowerUpData newData, int currentFavor)
+    public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null)
     {
         data = newData;
+        panelManager = manager;
 
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
@@ -54,23 +56,17 @@ public class PowerUpCardDisplay : MonoBehaviour
             RunProgressManager.Instance.favor -= data.favorCost;
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
-            // TODO: Add power-up to active effects list here in the future
+            // Register acquired powerup for gameplay usage
+            RunProgressManager.Instance.AddAcquiredPowerUp(data);
 
             // Hide or disable the card after purchase
             gameObject.SetActive(false);
 
-            // Refresh UI favor display and affordability on all cards
-            PowerUpPanelManager panelManager = GetComponentInParent<PowerUpPanelManager>();
+            // Refresh UI favor & affordability
             if (panelManager != null)
             {
                 panelManager.RefreshFavorDisplay();
-
-                // Go through sibling cards and update their affordability colors
-                PowerUpCardDisplay[] cardDisplays = panelManager.GetComponentsInChildren<PowerUpCardDisplay>(true);
-                foreach (PowerUpCardDisplay card in cardDisplays)
-                {
-                    card.UpdateAffordability(RunProgressManager.Instance.currentFavor);
-                }
+                panelManager.RefreshCardAffordability();
             }
         }
         else

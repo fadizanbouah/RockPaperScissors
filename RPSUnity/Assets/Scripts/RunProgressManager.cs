@@ -9,8 +9,11 @@ public class RunProgressManager : MonoBehaviour
     public int favor = 0;
     public int currentFavor => favor;
 
-    [Header("Active PowerUps")]
+    [Header("Active PowerUps (Runtime Effects)")]
     public List<PowerUp> activePowerUps = new List<PowerUp>();
+
+    [Header("Acquired PowerUps (Visual Cards in Gameplay)")]
+    public List<PowerUpData> acquiredPowerUps = new List<PowerUpData>();
 
     private void Awake()
     {
@@ -31,10 +34,17 @@ public class RunProgressManager : MonoBehaviour
         Debug.Log($"[RunProgress] Gained {amount} favor. Total: {favor}");
     }
 
+    public void AddAcquiredPowerUp(PowerUpData powerUpData)
+    {
+        acquiredPowerUps.Add(powerUpData);
+        Debug.Log($"[RunProgress] Acquired power-up: {powerUpData.powerUpName}");
+    }
+
     public void ResetRun()
     {
         favor = 0;
         activePowerUps.Clear();
+        acquiredPowerUps.Clear();
         Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
     }
 }

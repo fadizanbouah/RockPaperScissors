@@ -50,7 +50,7 @@ public class PowerUpCardSpawner : MonoBehaviour
 
             if (display != null)
             {
-                display.SetData(shuffledList[i], currentFavor);
+                display.SetData(shuffledList[i], currentFavor, panelManager);
             }
             else
             {

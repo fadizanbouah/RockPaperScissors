@@ -60,6 +60,8 @@ public class RoomManager : MonoBehaviour
 
         FadeInAfterRoomLoad();
         SpawnNextEnemy();
+
+        FindObjectOfType<PowerUpCardSpawnerGameplay>()?.SpawnActivePowerUps();
     }
 
     private void FadeInAfterRoomLoad()
