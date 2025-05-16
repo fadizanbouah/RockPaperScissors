@@ -5037,7 +5037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerUpCardPrefab: {fileID: 7261569195890138904, guid: b3b4de9ff20cb0744970ace2b4b21fd6, type: 3}
-  cardContainer: {fileID: 0}
+  cardContainer: {fileID: 1256750059}
 --- !u!4 &1683662962
 Transform:
   m_ObjectHideFlags: 0
