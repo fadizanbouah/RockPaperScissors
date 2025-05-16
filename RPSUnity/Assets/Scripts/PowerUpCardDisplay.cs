@@ -11,11 +11,13 @@ public class PowerUpCardDisplay : MonoBehaviour
 
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
+    private bool isGameplayCard = false;
 
-    public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null)
+    public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {
         data = newData;
         panelManager = manager;
+        isGameplayCard = isGameplay;
 
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
@@ -47,6 +49,12 @@ public class PowerUpCardDisplay : MonoBehaviour
 
     public void OnCardClicked()
     {
+        if (isGameplayCard)
+        {
+            Debug.Log("[PowerUpCardDisplay] Card is in gameplay, ignoring click.");
+            return;
+        }
+
         if (data == null) return;
 
         int currentFavor = RunProgressManager.Instance.currentFavor;
@@ -56,13 +64,9 @@ public class PowerUpCardDisplay : MonoBehaviour
             RunProgressManager.Instance.favor -= data.favorCost;
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
-            // Register acquired powerup for gameplay usage
             RunProgressManager.Instance.AddAcquiredPowerUp(data);
-
-            // Hide or disable the card after purchase
             gameObject.SetActive(false);
 
-            // Refresh UI favor & affordability
             if (panelManager != null)
             {
                 panelManager.RefreshFavorDisplay();

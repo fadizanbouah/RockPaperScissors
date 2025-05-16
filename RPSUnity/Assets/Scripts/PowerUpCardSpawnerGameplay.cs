@@ -30,8 +30,8 @@ public class PowerUpCardSpawnerGameplay : MonoBehaviour
 
             if (display != null)
             {
-                // Favor doesn't matter in gameplay, pass large value & null panel reference.
-                display.SetData(powerUp, int.MaxValue, null);
+                // Pass true for isGameplay to disable button behavior
+                display.SetData(powerUp, int.MaxValue, null, true);
             }
             else
             {
