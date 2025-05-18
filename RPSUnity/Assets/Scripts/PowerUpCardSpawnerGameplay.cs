@@ -38,5 +38,12 @@ public class PowerUpCardSpawnerGameplay : MonoBehaviour
                 Debug.LogWarning("PowerUpCard prefab is missing PowerUpCardDisplay script!");
             }
         }
+
+        // Apply fan layout if the container has it
+        FanLayout fanLayout = cardContainer.GetComponent<FanLayout>();
+        if (fanLayout != null)
+        {
+            fanLayout.ApplyFanLayout();
+        }
     }
 }
