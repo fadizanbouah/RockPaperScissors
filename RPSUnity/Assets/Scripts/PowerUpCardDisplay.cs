@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
-public class PowerUpCardDisplay : MonoBehaviour
+public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Image backgroundImage;
     [SerializeField] private TextMeshProUGUI nameText;
@@ -13,11 +14,15 @@ public class PowerUpCardDisplay : MonoBehaviour
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
     private bool isGameplayCard = false;
 
+    private Vector3 originalPosition;
+
     public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {
         data = newData;
         panelManager = manager;
         isGameplayCard = isGameplay;
+
+        originalPosition = transform.localPosition;
 
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
@@ -54,6 +59,22 @@ public class PowerUpCardDisplay : MonoBehaviour
                     costText.text = "";
                 }
             }
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (isGameplayCard)
+        {
+            transform.localPosition = originalPosition + Vector3.up * 20f;
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (isGameplayCard)
+        {
+            transform.localPosition = originalPosition;
         }
     }
 

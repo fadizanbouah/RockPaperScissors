@@ -4894,11 +4894,11 @@ RectTransform:
   - {fileID: 918154390}
   - {fileID: 1740217211}
   - {fileID: 451026747}
-  - {fileID: 343573890}
   - {fileID: 1801786211}
-  - {fileID: 2039003311}
   - {fileID: 1411638170}
+  - {fileID: 2039003311}
   - {fileID: 1024770168}
+  - {fileID: 343573890}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
