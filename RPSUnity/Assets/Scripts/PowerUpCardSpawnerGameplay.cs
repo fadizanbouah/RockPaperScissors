@@ -26,16 +26,27 @@ public class PowerUpCardSpawnerGameplay : MonoBehaviour
         foreach (PowerUpData powerUp in RunProgressManager.Instance.acquiredPowerUps)
         {
             GameObject cardInstance = Instantiate(powerUpCardPrefab, cardContainer);
-            PowerUpCardDisplay display = cardInstance.GetComponent<PowerUpCardDisplay>();
 
+            // Set display data
+            PowerUpCardDisplay display = cardInstance.GetComponent<PowerUpCardDisplay>();
             if (display != null)
             {
-                // Pass true for isGameplay to disable button behavior
                 display.SetData(powerUp, int.MaxValue, null, true);
             }
             else
             {
                 Debug.LogWarning("PowerUpCard prefab is missing PowerUpCardDisplay script!");
+            }
+
+            // Enable dragging for gameplay cards
+            PowerUpCardDrag drag = cardInstance.GetComponent<PowerUpCardDrag>();
+            if (drag != null)
+            {
+                drag.isDraggable = true;
+            }
+            else
+            {
+                Debug.LogWarning("PowerUpCard prefab is missing PowerUpCardDrag script!");
             }
         }
 

@@ -4,6 +4,9 @@ using System.Collections;
 
 public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    [Tooltip("Should this card be draggable? Set true only for gameplay cards.")]
+    public bool isDraggable = false;
+
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private Vector2 originalAnchoredPosition;
@@ -19,6 +22,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!isDraggable) return;
+
         droppedInActivationZone = false;
         originalAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
@@ -32,11 +37,15 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!isDraggable) return;
+
         rectTransform.anchoredPosition += eventData.delta / transform.root.GetComponent<Canvas>().scaleFactor;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isDraggable) return;
+
         canvasGroup.blocksRaycasts = true;
 
         if (!droppedInActivationZone)
@@ -53,6 +62,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void BeginActivationSequence(Vector3 targetPosition)
     {
+        if (!isDraggable) return;
+
         Debug.Log("[PowerUpCardDrag] Begin activation sequence at " + targetPosition);
         droppedInActivationZone = true;
 
