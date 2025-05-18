@@ -8,11 +8,13 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private RectTransform rectTransform;
     private Vector2 originalAnchoredPosition;
     private bool droppedInActivationZone = false;
+    private PowerUpCardDisplay cardDisplay;
 
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
+        cardDisplay = GetComponent<PowerUpCardDisplay>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -20,6 +22,12 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         droppedInActivationZone = false;
         originalAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
+
+        // Reset any hover offset before drag starts
+        if (cardDisplay != null)
+        {
+            cardDisplay.ResetHoverPosition();
+        }
     }
 
     public void OnDrag(PointerEventData eventData)

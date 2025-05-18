@@ -14,15 +14,13 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
     private bool isGameplayCard = false;
 
-    private Vector3 originalPosition;
+    private Vector3 originalLocalPosition; // Stores the fan layout position
 
     public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {
         data = newData;
         panelManager = manager;
         isGameplayCard = isGameplay;
-
-        originalPosition = transform.localPosition;
 
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
@@ -43,11 +41,11 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (isGameplayCard)
             {
                 costText.text = "";
-                costText.gameObject.SetActive(false); // Completely hide the cost text in gameplay
+                costText.gameObject.SetActive(false);
             }
             else
             {
-                costText.gameObject.SetActive(true); // Ensure it’s visible in the panel
+                costText.gameObject.SetActive(true);
 
                 if (data.favorCost > 0)
                 {
@@ -66,7 +64,11 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isGameplayCard)
         {
-            transform.localPosition = originalPosition + Vector3.up * 20f;
+            // Save the position only if it's not already raised
+            if (Mathf.Approximately(originalLocalPosition.y, 0f))
+                originalLocalPosition = transform.localPosition;
+
+            transform.localPosition = originalLocalPosition + Vector3.up * 20f;
         }
     }
 
@@ -74,7 +76,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isGameplayCard)
         {
-            transform.localPosition = originalPosition;
+            transform.localPosition = originalLocalPosition;
         }
     }
 
@@ -109,4 +111,15 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             Debug.Log($"[PowerUpCardDisplay] Not enough favor to buy {data.powerUpName}!");
         }
     }
+
+    public void ResetToFanPosition()
+    {
+        transform.localPosition = originalLocalPosition;
+    }
+
+    public void ResetHoverPosition()
+    {
+        transform.localPosition = originalLocalPosition;
+    }
+
 }
