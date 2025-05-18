@@ -35,14 +35,24 @@ public class PowerUpCardDisplay : MonoBehaviour
     {
         if (costText != null && data != null)
         {
-            if (data.favorCost > 0)
+            if (isGameplayCard)
             {
-                costText.text = $"Cost: {data.favorCost}";
-                costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
+                costText.text = "";
+                costText.gameObject.SetActive(false); // Completely hide the cost text in gameplay
             }
             else
             {
-                costText.text = "";
+                costText.gameObject.SetActive(true); // Ensure it’s visible in the panel
+
+                if (data.favorCost > 0)
+                {
+                    costText.text = $"Cost: {data.favorCost}";
+                    costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
+                }
+                else
+                {
+                    costText.text = "";
+                }
             }
         }
     }

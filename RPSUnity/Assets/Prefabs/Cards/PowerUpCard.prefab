@@ -413,6 +413,8 @@ GameObject:
   - component: {fileID: 8733114998627585837}
   - component: {fileID: 4966171282575501177}
   - component: {fileID: 3528959825341640282}
+  - component: {fileID: 5101307197539233437}
+  - component: {fileID: 5750039102844481642}
   m_Layer: 5
   m_Name: PowerUpCard
   m_TagString: Untagged
@@ -515,6 +517,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!225 &5101307197539233437
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7261569195890138904}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
+--- !u!114 &5750039102844481642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7261569195890138904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2005e0b416f0123489baea1d36bbc63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7921925257386122293
 GameObject:
   m_ObjectHideFlags: 0
