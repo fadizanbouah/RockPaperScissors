@@ -84,5 +84,6 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         rectTransform.anchoredPosition = originalAnchoredPosition;
+        gameObject.GetComponent<PowerUpCardDisplay>().ResetToFanPosition();
     }
 }
