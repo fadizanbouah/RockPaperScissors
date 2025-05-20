@@ -67,6 +67,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Debug.Log("[PowerUpCardDrag] Begin activation sequence at " + targetPosition);
         droppedInActivationZone = true;
 
+        transform.position = targetPosition;
+
         // TODO: Add animation and effect application
     }
 
