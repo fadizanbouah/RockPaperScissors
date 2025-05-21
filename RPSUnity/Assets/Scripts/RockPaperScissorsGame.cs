@@ -71,6 +71,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         currentSubstate = GameSubstate.Selecting;
         DisableButtons();
 
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+        {
+            spawner.SetAllCardsInteractable(false);
+        }
+
         playerSignDone = false;
         enemySignDone = false;
 
@@ -146,6 +152,12 @@ public class RockPaperScissorsGame : MonoBehaviour
             paperButton.interactable = true;
             scissorsButton.interactable = true;
             Debug.Log("Buttons enabled.");
+
+            PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+            if (spawner != null)
+            {
+                spawner.SetAllCardsInteractable(true);
+            }
         }
     }
 

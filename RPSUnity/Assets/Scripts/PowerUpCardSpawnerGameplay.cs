@@ -57,4 +57,18 @@ public class PowerUpCardSpawnerGameplay : MonoBehaviour
             fanLayout.ApplyFanLayout();
         }
     }
+
+    public void SetAllCardsInteractable(bool isInteractable)
+    {
+        foreach (Transform child in cardContainer)
+        {
+            CanvasGroup cg = child.GetComponent<CanvasGroup>();
+            if (cg != null)
+            {
+                cg.interactable = isInteractable;
+                cg.blocksRaycasts = isInteractable;
+            }
+        }
+    }
+
 }
