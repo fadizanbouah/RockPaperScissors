@@ -10,25 +10,36 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private Vector2 originalAnchoredPosition;
-    private bool droppedInActivationZone = false;
     private PowerUpCardDisplay cardDisplay;
+
+    private RectTransform activationZoneRect;
 
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
         cardDisplay = GetComponent<PowerUpCardDisplay>();
+
+        // Find the CardActivationZone once at runtime
+        CardActivationZone zone = FindObjectOfType<CardActivationZone>();
+        if (zone != null)
+        {
+            activationZoneRect = zone.GetComponent<RectTransform>();
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUpCardDrag] CardActivationZone not found in scene!");
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!isDraggable) return;
 
-        droppedInActivationZone = false;
         originalAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
 
-        // Reset any hover offset before drag starts
+        // Reset hover offset before dragging
         if (cardDisplay != null)
         {
             cardDisplay.ResetHoverPosition();
@@ -48,8 +59,18 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         canvasGroup.blocksRaycasts = true;
 
-        if (!droppedInActivationZone)
+        if (activationZoneRect != null &&
+            RectTransformUtility.RectangleContainsScreenPoint(activationZoneRect, Input.mousePosition, eventData.enterEventCamera))
         {
+            Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
+
+            // Trigger activation
+            DisableInteraction();
+            BeginActivationSequence(activationZoneRect.position);
+        }
+        else
+        {
+            Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
             StartCoroutine(SmoothReturnToOriginalPosition());
         }
     }
@@ -65,11 +86,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (!isDraggable) return;
 
         Debug.Log("[PowerUpCardDrag] Begin activation sequence at " + targetPosition);
-        droppedInActivationZone = true;
-
         transform.position = targetPosition;
 
-        // NEW: Trigger the activation animation
         Animator animator = GetComponentInChildren<Animator>();
         if (animator != null)
         {
