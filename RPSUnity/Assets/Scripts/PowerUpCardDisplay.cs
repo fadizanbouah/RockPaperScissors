@@ -122,4 +122,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         transform.localPosition = originalLocalPosition;
     }
 
+    public bool IsGameplayCard()
+    {
+        return isGameplayCard;
+    }
+
 }

@@ -69,7 +69,19 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         transform.position = targetPosition;
 
-        // TODO: Add animation and effect application
+        // NEW: Trigger the activation animation
+        Animator animator = GetComponentInChildren<Animator>();
+        if (animator != null)
+        {
+            Debug.Log("Animator trigger 'Activate' sent. Animator is: " + animator.name);
+            animator.SetTrigger("Activate");
+        }
+        else
+        {
+            Debug.LogWarning("Animator not found on PowerUpCard or its children!");
+        }
+
+        // TODO: Add effect logic here (in next step)
     }
 
     private IEnumerator SmoothReturnToOriginalPosition()
