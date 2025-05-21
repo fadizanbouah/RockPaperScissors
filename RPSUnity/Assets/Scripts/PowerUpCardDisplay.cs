@@ -15,6 +15,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     private bool isGameplayCard = false;
 
     private Vector3 originalLocalPosition; // Stores the fan layout position
+    private Quaternion originalRotation;   // Stores the fan layout rotation
 
     public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {
@@ -115,6 +116,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void ResetToFanPosition()
     {
         transform.localPosition = originalLocalPosition;
+        transform.localRotation = originalRotation;
     }
 
     public void ResetHoverPosition()
@@ -127,4 +129,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         return isGameplayCard;
     }
 
+    public void StoreFanLayoutState(Vector3 position, Quaternion rotation)
+    {
+        originalLocalPosition = position;
+        originalRotation = rotation;
+    }
 }

@@ -21,6 +21,13 @@ public class FanLayout : MonoBehaviour
             Vector3 pos = card.localPosition;
             card.localPosition = new Vector3(0, pos.y, pos.z); // Keep Y, center X
             card.localRotation = Quaternion.identity;
+
+            PowerUpCardDisplay display = card.GetComponent<PowerUpCardDisplay>();
+            if (display != null)
+            {
+                display.StoreFanLayoutState(card.localPosition, card.localRotation);
+            }
+
             return;
         }
 
@@ -35,9 +42,17 @@ public class FanLayout : MonoBehaviour
             float angle = startAngle + angleStep * i;
             float xOffset = spacing * (i - middleIndex);
 
-            Vector3 originalPos = card.localPosition;
-            card.localPosition = new Vector3(xOffset, originalPos.y, originalPos.z);
-            card.localRotation = Quaternion.Euler(0f, 0f, -angle);
+            Vector3 newPosition = new Vector3(xOffset, card.localPosition.y, card.localPosition.z);
+            Quaternion newRotation = Quaternion.Euler(0f, 0f, -angle);
+
+            card.localPosition = newPosition;
+            card.localRotation = newRotation;
+
+            PowerUpCardDisplay display = card.GetComponent<PowerUpCardDisplay>();
+            if (display != null)
+            {
+                display.StoreFanLayoutState(newPosition, newRotation);
+            }
         }
     }
 }

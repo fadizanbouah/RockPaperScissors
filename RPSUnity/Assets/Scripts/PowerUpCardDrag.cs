@@ -43,6 +43,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (cardDisplay != null)
         {
             cardDisplay.ResetHoverPosition();
+
+            // Straighten the card by resetting rotation
+            transform.localRotation = Quaternion.identity;
         }
     }
 
