@@ -171,6 +171,9 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
+        // NEW: Clear any temporary buffs before loading the next room
+        RunProgressManager.Instance.RemoveRoomScopedPowerUps();
+
         currentRoom = currentPool.rooms[Random.Range(0, currentPool.rooms.Count)];
         Debug.Log($"Next Room Selected: {currentRoom.roomName}");
 

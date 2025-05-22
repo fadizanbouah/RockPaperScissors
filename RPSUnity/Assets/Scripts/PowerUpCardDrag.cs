@@ -116,7 +116,12 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             Debug.LogWarning("Animator not found on PowerUpCard or its children!");
         }
 
-        // TODO: Add effect logic here (in next step)
+        // Apply the power-up effect
+        if (cardDisplay != null && cardDisplay.IsGameplayCard())
+        {
+            PowerUpData data = cardDisplay.GetPowerUpData();
+            RunProgressManager.Instance.ApplyPowerUp(data);
+        }
     }
 
     private IEnumerator SmoothReturnToOriginalPosition()

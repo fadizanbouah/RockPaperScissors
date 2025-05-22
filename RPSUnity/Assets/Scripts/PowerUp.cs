@@ -16,6 +16,11 @@ public class PowerUp
 // Simple enum for powerup categories
 public enum PowerUpType
 {
+    IncreaseDamageNextHit,      // Only affects the next successful attack
+    IncreaseDamageThisRoom,     // Lasts the entire room
+    IncreaseMaxHealthThisRoom,  // Boosts HP only for this room
+
+    // Future support (existing and new types)
     IncreaseDamage,
     IncreaseHealth,
     DamageReduction,

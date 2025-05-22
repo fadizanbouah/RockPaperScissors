@@ -134,4 +134,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         originalLocalPosition = position;
         originalRotation = rotation;
     }
+
+    public PowerUpData GetPowerUpData()
+    {
+        return data;
+    }
 }

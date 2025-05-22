@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: MockCard1
   m_EditorClassIdentifier: 
-  powerUpName: Mock Card 1
-  description: This will blow your mind
+  powerUpName: Damage This Round
+  description: This will blow your mind (+5 HP)
   icon: {fileID: 0}
   favorCost: 1
-  powerUpType: 0
-  value: 0
+  powerUpType: 1
+  value: 5

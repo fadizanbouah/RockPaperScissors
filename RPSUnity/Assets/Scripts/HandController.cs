@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class HandController : MonoBehaviour
 {
@@ -68,7 +69,36 @@ public class HandController : MonoBehaviour
 
     public int GetEffectiveDamage()
     {
-        return baseDamage;
+        int damage = baseDamage;
+
+        if (isPlayer)
+        {
+            List<PowerUp> toRemove = new List<PowerUp>();
+
+            foreach (PowerUp powerUp in RunProgressManager.Instance.activePowerUps)
+            {
+                switch (powerUp.type)
+                {
+                    case PowerUpType.IncreaseDamageThisRoom:
+                        damage += Mathf.RoundToInt(powerUp.effectValue);
+                        break;
+
+                    case PowerUpType.IncreaseDamageNextHit:
+                        damage += Mathf.RoundToInt(powerUp.effectValue);
+                        toRemove.Add(powerUp); // Mark for one-time use
+                        break;
+                }
+            }
+
+            // Remove one-time buffs after use
+            foreach (PowerUp powerUp in toRemove)
+            {
+                RunProgressManager.Instance.activePowerUps.Remove(powerUp);
+                Debug.Log($"[HandController] Consumed one-time power-up: {powerUp.powerUpName}");
+            }
+        }
+
+        return damage;
     }
 
     public void TakeDamage(int damage)

@@ -47,4 +47,31 @@ public class RunProgressManager : MonoBehaviour
         acquiredPowerUps.Clear();
         Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
     }
+
+    public void ApplyPowerUp(PowerUpData data)
+    {
+        if (data == null) return;
+
+        PowerUp powerUp = new PowerUp
+        {
+            powerUpName = data.powerUpName,
+            description = data.description,
+            favorCost = data.favorCost,
+            icon = data.icon,
+            type = data.powerUpType,
+            effectValue = data.value
+        };
+
+        activePowerUps.Add(powerUp);
+        Debug.Log($"[RunProgressManager] Applied power-up: {powerUp.powerUpName} ({powerUp.type})");
+    }
+
+    public void RemoveRoomScopedPowerUps()
+    {
+        activePowerUps.RemoveAll(p =>
+            p.type == PowerUpType.IncreaseDamageThisRoom ||
+            p.type == PowerUpType.IncreaseMaxHealthThisRoom);
+
+        Debug.Log("[RunProgressManager] Removed room-scoped power-ups.");
+    }
 }
