@@ -70,26 +70,22 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (zone != null)
         {
             zone.HideVisual();
+
+            if (!isDraggable) return;
+
+            canvasGroup.blocksRaycasts = true;
+
+            if (RectTransformUtility.RectangleContainsScreenPoint(zone.GetComponent<RectTransform>(), Input.mousePosition, eventData.enterEventCamera))
+            {
+                Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
+                DisableInteraction();
+                BeginActivationSequence(zone.activationAnimationTarget.position);
+                return;
+            }
         }
 
-        if (!isDraggable) return;
-
-        canvasGroup.blocksRaycasts = true;
-
-        if (activationZoneRect != null &&
-            RectTransformUtility.RectangleContainsScreenPoint(activationZoneRect, Input.mousePosition, eventData.enterEventCamera))
-        {
-            Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
-
-            // Trigger activation
-            DisableInteraction();
-            BeginActivationSequence(activationZoneRect.position);
-        }
-        else
-        {
-            Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
-            StartCoroutine(SmoothReturnToOriginalPosition());
-        }
+        Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
+        StartCoroutine(SmoothReturnToOriginalPosition());
     }
 
     public void DisableInteraction()
