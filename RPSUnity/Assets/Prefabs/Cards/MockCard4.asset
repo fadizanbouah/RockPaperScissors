@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: MockCard4
   m_EditorClassIdentifier: 
-  powerUpName: Mock Card 4
-  description: Existential dread incoming
+  powerUpName: Room Damage 2
+  description: +13 damage during this room
   icon: {fileID: 0}
-  favorCost: 4
-  powerUpType: 0
-  value: 0
+  favorCost: 2
+  powerUpType: 1
+  value: 13

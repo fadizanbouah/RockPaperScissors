@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: MockCard2
   m_EditorClassIdentifier: 
-  powerUpName: Mock Card 2
-  description: This will tickle your brain
+  powerUpName: Room Damage 1
+  description: +10 damage during this room
   icon: {fileID: 0}
-  favorCost: 2
-  powerUpType: 0
-  value: 0
+  favorCost: 1
+  powerUpType: 1
+  value: 10
