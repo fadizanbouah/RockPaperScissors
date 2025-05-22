@@ -44,6 +44,13 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             cardDisplay.ResetHoverPosition();
 
+            // Show the activation zone visual when dragging starts
+            CardActivationZone zone = FindObjectOfType<CardActivationZone>();
+            if (zone != null)
+            {
+                zone.ShowVisual();
+            }
+
             // Straighten the card by resetting rotation
             transform.localRotation = Quaternion.identity;
         }
@@ -58,6 +65,13 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        // Always hide the activation zone visual when drag ends
+        CardActivationZone zone = FindObjectOfType<CardActivationZone>();
+        if (zone != null)
+        {
+            zone.HideVisual();
+        }
+
         if (!isDraggable) return;
 
         canvasGroup.blocksRaycasts = true;
