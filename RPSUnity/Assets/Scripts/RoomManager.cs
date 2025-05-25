@@ -44,6 +44,7 @@ public class RoomManager : MonoBehaviour
         Debug.Log("[RoomManager] Starting new room sequence. Resetting run progress...");
         RunProgressManager.Instance.ResetRun();
 
+        currentPoolIndex = 0;
         SelectNextRoom();
     }
 
