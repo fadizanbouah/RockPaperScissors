@@ -118,6 +118,13 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             PowerUpData data = cardDisplay.GetPowerUpData();
             RunProgressManager.Instance.ApplyPowerUp(data);
         }
+
+        // Remove visual card's data from acquired list if it was used
+        PowerUpData powerUp = cardDisplay?.GetPowerUpData();
+        if (powerUp != null)
+        {
+            RunProgressManager.Instance.RemoveAcquiredPowerUp(powerUp);
+        }
     }
 
     private IEnumerator SmoothReturnToOriginalPosition()

@@ -74,4 +74,13 @@ public class RunProgressManager : MonoBehaviour
 
         Debug.Log("[RunProgressManager] Removed room-scoped power-ups.");
     }
+
+    public void RemoveAcquiredPowerUp(PowerUpData data)
+    {
+        if (acquiredPowerUps.Contains(data))
+        {
+            acquiredPowerUps.Remove(data);
+            Debug.Log($"[RunProgressManager] Removed used power-up: {data.powerUpName}");
+        }
+    }
 }
