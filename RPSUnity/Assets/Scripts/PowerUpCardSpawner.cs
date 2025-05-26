@@ -6,13 +6,21 @@ public class PowerUpCardSpawner : MonoBehaviour
     [Header("Prefab")]
     [SerializeField] private GameObject powerUpCardPrefab;
 
-    [Header("Card Slots")]
+    [Header("Active Card Slots")]
     [SerializeField] private Transform cardSlot1;
     [SerializeField] private Transform cardSlot2;
     [SerializeField] private Transform cardSlot3;
 
+    [Header("Passive Card Slots")]
+    [SerializeField] private Transform passiveSlot1;
+    [SerializeField] private Transform passiveSlot2;
+    [SerializeField] private Transform passiveSlot3;
+
     [Header("Available PowerUps")]
     [SerializeField] private PowerUpData[] availablePowerUps;
+
+    [Header("Available Passive PowerUps")]
+    [SerializeField] private PowerUpData[] passivePowerUps;
 
     [Header("References")]
     [SerializeField] private PowerUpPanelManager panelManager;
@@ -25,26 +33,27 @@ public class PowerUpCardSpawner : MonoBehaviour
             return;
         }
 
-        // Clear any existing cards in the fixed slots
-        ClearSlot(cardSlot1);
-        ClearSlot(cardSlot2);
-        ClearSlot(cardSlot3);
-
-        // Shuffle powerup list
-        List<PowerUpData> shuffledList = new List<PowerUpData>(availablePowerUps);
-        for (int i = 0; i < shuffledList.Count; i++)
-        {
-            int randomIndex = Random.Range(i, shuffledList.Count);
-            (shuffledList[i], shuffledList[randomIndex]) = (shuffledList[randomIndex], shuffledList[i]);
-        }
-
-        int numberToSpawn = Mathf.Min(3, shuffledList.Count);
         int currentFavor = RunProgressManager.Instance.currentFavor;
 
-        // Spawn into each fixed slot
-        if (numberToSpawn >= 1) SpawnCardToSlot(cardSlot1, shuffledList[0], currentFavor);
-        if (numberToSpawn >= 2) SpawnCardToSlot(cardSlot2, shuffledList[1], currentFavor);
-        if (numberToSpawn >= 3) SpawnCardToSlot(cardSlot3, shuffledList[2], currentFavor);
+        // Spawn active power-ups
+        SpawnCardsToFixedSlots(availablePowerUps, new[] { cardSlot1, cardSlot2, cardSlot3 }, currentFavor, false);
+
+        // Spawn passive power-ups
+        SpawnCardsToFixedSlots(passivePowerUps, new[] { passiveSlot1, passiveSlot2, passiveSlot3 }, currentFavor, true);
+    }
+
+    private void SpawnCardsToFixedSlots(PowerUpData[] pool, Transform[] slots, int favor, bool isPassive)
+    {
+        if (pool == null || slots == null || slots.Length == 0) return;
+
+        List<PowerUpData> list = new List<PowerUpData>(pool);
+        ShuffleList(list);
+
+        for (int i = 0; i < Mathf.Min(slots.Length, list.Count); i++)
+        {
+            ClearSlot(slots[i]);
+            SpawnCardToSlot(slots[i], list[i], favor);
+        }
     }
 
     private void ClearSlot(Transform slot)
@@ -70,6 +79,15 @@ public class PowerUpCardSpawner : MonoBehaviour
         else
         {
             Debug.LogWarning("[PowerUpCardSpawner] Spawned card is missing PowerUpCardDisplay!");
+        }
+    }
+
+    private void ShuffleList(List<PowerUpData> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int randomIndex = Random.Range(i, list.Count);
+            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
         }
     }
 }
