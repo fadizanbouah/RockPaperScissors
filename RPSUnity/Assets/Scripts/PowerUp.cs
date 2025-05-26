@@ -9,21 +9,18 @@ public class PowerUp
     public Sprite icon;             // Image/icon to display
     public PowerUpType type;        // Buff, debuff, passive, etc.
     public float effectValue;       // The magnitude of the effect (e.g., +10%)
-
-    // Example: can add more properties later if needed
 }
 
-// Simple enum for powerup categories
+// Power-up type definitions
 public enum PowerUpType
 {
-    IncreaseDamageNextHit,      // Only affects the next successful attack
-    IncreaseDamageThisRoom,     // Lasts the entire room
-    IncreaseMaxHealthThisRoom,  // Boosts HP only for this room
+    IncreaseDamageNextHit,         // Affects next successful hit only
+    IncreaseDamageThisRoom,        // Temporary effect until room ends
+    IncreaseMaxHealthThisRoom,     // Temporary max HP boost for one room
 
-    // Future support (existing and new types)
-    IncreaseDamage,
-    IncreaseHealth,
-    DamageReduction,
-    SpecialMove,
-    Other
+    // Passive (persistent until run ends)
+    PassiveIncreaseRockDamage,     // Adds to Rock attack damage
+    PassiveIncreasePaperDamage,    // Adds to Paper attack damage
+    PassiveIncreaseScissorsDamage, // Adds to Scissors attack damage
+    PassiveIncreaseDamage,         // Adds to all sign types
 }

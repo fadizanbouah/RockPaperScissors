@@ -116,7 +116,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (cardDisplay != null && cardDisplay.IsGameplayCard())
         {
             PowerUpData data = cardDisplay.GetPowerUpData();
-            RunProgressManager.Instance.ApplyPowerUp(data);
+            RunProgressManager.Instance.ApplyPowerUpEffect(data);
         }
 
         // Remove visual card's data from acquired list if it was used

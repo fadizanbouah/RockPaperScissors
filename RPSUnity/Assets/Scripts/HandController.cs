@@ -67,12 +67,23 @@ public class HandController : MonoBehaviour
         health = maxHealth;
     }
 
-    public int GetEffectiveDamage()
+    public int GetEffectiveDamage(string signUsed)
     {
         int damage = baseDamage;
 
         if (isPlayer)
         {
+            // Add persistent passive boosts
+            damage += PlayerProgressData.Instance.bonusBaseDamage;
+
+            if (signUsed == "Rock")
+                damage += PlayerProgressData.Instance.bonusRockDamage;
+            else if (signUsed == "Paper")
+                damage += PlayerProgressData.Instance.bonusPaperDamage;
+            else if (signUsed == "Scissors")
+                damage += PlayerProgressData.Instance.bonusScissorsDamage;
+
+            // Add temporary power-ups
             List<PowerUp> toRemove = new List<PowerUp>();
 
             foreach (PowerUp powerUp in RunProgressManager.Instance.activePowerUps)

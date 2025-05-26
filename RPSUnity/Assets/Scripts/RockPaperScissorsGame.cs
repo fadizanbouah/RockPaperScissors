@@ -120,14 +120,14 @@ public class RockPaperScissorsGame : MonoBehaviour
                  (playerChoice == "Paper" && enemyChoice == "Rock") ||
                  (playerChoice == "Scissors" && enemyChoice == "Paper"))
         {
-            int damage = playerInstance.GetEffectiveDamage();
+            int damage = playerInstance.GetEffectiveDamage(playerChoice);
             result = "You Win!";
             enemyHandController?.TakeDamage(damage);
             Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
         }
         else
         {
-            int damage = enemyHandController.GetEffectiveDamage();
+            int damage = enemyHandController.GetEffectiveDamage(enemyChoice);
             result = "You Lose!";
             playerInstance.TakeDamage(damage);
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");

@@ -59,6 +59,9 @@ public class RoomManager : MonoBehaviour
             roomBackground.sprite = room.backgroundImage;
         }
 
+        // NEW: Apply passive power-up effects
+        ApplyPersistentPowerUps();
+
         FadeInAfterRoomLoad();
         SpawnNextEnemy();
 
@@ -228,5 +231,37 @@ public class RoomManager : MonoBehaviour
         }
 
         GameStateManager.Instance.BeginRoomTransition();
+    }
+
+    private void ApplyPersistentPowerUps()
+    {
+        if (RunProgressManager.Instance == null) return;
+
+        // Reset all passive bonuses before applying them
+        PlayerProgressData.Instance.bonusBaseDamage = 0;
+        PlayerProgressData.Instance.bonusRockDamage = 0;
+        PlayerProgressData.Instance.bonusPaperDamage = 0;
+        PlayerProgressData.Instance.bonusScissorsDamage = 0;
+
+        foreach (PowerUp powerUp in RunProgressManager.Instance.persistentPowerUps)
+        {
+            switch (powerUp.type)
+            {
+                case PowerUpType.PassiveIncreaseDamage:
+                    PlayerProgressData.Instance.bonusBaseDamage += Mathf.RoundToInt(powerUp.effectValue);
+                    break;
+                case PowerUpType.PassiveIncreaseRockDamage:
+                    PlayerProgressData.Instance.bonusRockDamage += Mathf.RoundToInt(powerUp.effectValue);
+                    break;
+                case PowerUpType.PassiveIncreasePaperDamage:
+                    PlayerProgressData.Instance.bonusPaperDamage += Mathf.RoundToInt(powerUp.effectValue);
+                    break;
+                case PowerUpType.PassiveIncreaseScissorsDamage:
+                    PlayerProgressData.Instance.bonusScissorsDamage += Mathf.RoundToInt(powerUp.effectValue);
+                    break;
+            }
+
+            Debug.Log($"[RoomManager] Applied passive power-up: {powerUp.powerUpName} ({powerUp.type})");
+        }
     }
 }

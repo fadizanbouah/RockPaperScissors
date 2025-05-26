@@ -15,6 +15,9 @@ public class RunProgressManager : MonoBehaviour
     [Header("Acquired PowerUps (Visual Cards in Gameplay)")]
     public List<PowerUpData> acquiredPowerUps = new List<PowerUpData>();
 
+    [Header("Persistent Passive PowerUps")]
+    public List<PowerUp> persistentPowerUps = new List<PowerUp>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -46,13 +49,15 @@ public class RunProgressManager : MonoBehaviour
         activePowerUps.Clear();
         acquiredPowerUps.Clear();
         Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
+
+        persistentPowerUps.Clear();
     }
 
-    public void ApplyPowerUp(PowerUpData data)
+    public void ApplyPowerUpEffect(PowerUpData data)
     {
         if (data == null) return;
 
-        PowerUp powerUp = new PowerUp
+        PowerUp newPowerUp = new PowerUp
         {
             powerUpName = data.powerUpName,
             description = data.description,
@@ -62,8 +67,16 @@ public class RunProgressManager : MonoBehaviour
             effectValue = data.value
         };
 
-        activePowerUps.Add(powerUp);
-        Debug.Log($"[RunProgressManager] Applied power-up: {powerUp.powerUpName} ({powerUp.type})");
+        if (data.isPassive)
+        {
+            persistentPowerUps.Add(newPowerUp);
+            Debug.Log($"[RunProgressManager] Stored persistent power-up: {data.powerUpName} ({data.powerUpType})");
+        }
+        else
+        {
+            activePowerUps.Add(newPowerUp);
+            Debug.Log($"[RunProgressManager] Applied active power-up: {data.powerUpName} ({data.powerUpType})");
+        }
     }
 
     public void RemoveRoomScopedPowerUps()

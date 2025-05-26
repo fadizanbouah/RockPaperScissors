@@ -98,7 +98,16 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             RunProgressManager.Instance.favor -= data.favorCost;
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
-            RunProgressManager.Instance.AddAcquiredPowerUp(data);
+            // Add to acquired powerups only if it's not passive
+            if (!data.isPassive)
+            {
+                RunProgressManager.Instance.AddAcquiredPowerUp(data);
+            }
+
+            // Apply effect regardless
+            RunProgressManager.Instance.ApplyPowerUpEffect(data);
+            Debug.Log($"[PowerUpCardDisplay] Applied {(data.isPassive ? "passive" : "active")} power-up: {data.powerUpName}");
+
             gameObject.SetActive(false);
 
             if (panelManager != null)
