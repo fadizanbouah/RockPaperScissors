@@ -17,5 +17,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
-  powerUpType: 6
+  powerUpType: 5
   value: 3

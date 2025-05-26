@@ -43,14 +43,22 @@ public class RunProgressManager : MonoBehaviour
         Debug.Log($"[RunProgress] Acquired power-up: {powerUpData.powerUpName}");
     }
 
+    public void RemoveAcquiredPowerUp(PowerUpData data)
+    {
+        if (acquiredPowerUps.Contains(data))
+        {
+            acquiredPowerUps.Remove(data);
+            Debug.Log($"[RunProgress] Removed used power-up: {data.powerUpName}");
+        }
+    }
+
     public void ResetRun()
     {
         favor = 0;
         activePowerUps.Clear();
         acquiredPowerUps.Clear();
-        Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
-
         persistentPowerUps.Clear();
+        Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
     }
 
     public void ApplyPowerUpEffect(PowerUpData data)
@@ -70,30 +78,12 @@ public class RunProgressManager : MonoBehaviour
         if (data.isPassive)
         {
             persistentPowerUps.Add(newPowerUp);
-            Debug.Log($"[RunProgressManager] Stored persistent power-up: {data.powerUpName} ({data.powerUpType})");
+            Debug.Log($"[RunProgress] Stored persistent power-up: {data.powerUpName} ({data.powerUpType})");
         }
         else
         {
             activePowerUps.Add(newPowerUp);
-            Debug.Log($"[RunProgressManager] Applied active power-up: {data.powerUpName} ({data.powerUpType})");
-        }
-    }
-
-    public void RemoveRoomScopedPowerUps()
-    {
-        activePowerUps.RemoveAll(p =>
-            p.type == PowerUpType.IncreaseDamageThisRoom ||
-            p.type == PowerUpType.IncreaseMaxHealthThisRoom);
-
-        Debug.Log("[RunProgressManager] Removed room-scoped power-ups.");
-    }
-
-    public void RemoveAcquiredPowerUp(PowerUpData data)
-    {
-        if (acquiredPowerUps.Contains(data))
-        {
-            acquiredPowerUps.Remove(data);
-            Debug.Log($"[RunProgressManager] Removed used power-up: {data.powerUpName}");
+            Debug.Log($"[RunProgress] Applied active power-up: {data.powerUpName} ({data.powerUpType})");
         }
     }
 }
