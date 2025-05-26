@@ -3,9 +3,13 @@ using System.Collections.Generic;
 
 public class PowerUpCardSpawner : MonoBehaviour
 {
-    [Header("Prefab & Container")]
+    [Header("Prefab")]
     [SerializeField] private GameObject powerUpCardPrefab;
-    [SerializeField] private Transform cardContainer;
+
+    [Header("Card Slots")]
+    [SerializeField] private Transform cardSlot1;
+    [SerializeField] private Transform cardSlot2;
+    [SerializeField] private Transform cardSlot3;
 
     [Header("Available PowerUps")]
     [SerializeField] private PowerUpData[] availablePowerUps;
@@ -21,41 +25,51 @@ public class PowerUpCardSpawner : MonoBehaviour
             return;
         }
 
-        // Clear existing cards
-        foreach (Transform child in cardContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        // Clear any existing cards in the fixed slots
+        ClearSlot(cardSlot1);
+        ClearSlot(cardSlot2);
+        ClearSlot(cardSlot3);
 
-        // Shuffle the availablePowerUps list
+        // Shuffle powerup list
         List<PowerUpData> shuffledList = new List<PowerUpData>(availablePowerUps);
         for (int i = 0; i < shuffledList.Count; i++)
         {
-            PowerUpData temp = shuffledList[i];
             int randomIndex = Random.Range(i, shuffledList.Count);
-            shuffledList[i] = shuffledList[randomIndex];
-            shuffledList[randomIndex] = temp;
+            (shuffledList[i], shuffledList[randomIndex]) = (shuffledList[randomIndex], shuffledList[i]);
         }
 
-        // Determine how many to spawn (up to 3 or fewer if less available)
         int numberToSpawn = Mathf.Min(3, shuffledList.Count);
-
         int currentFavor = RunProgressManager.Instance.currentFavor;
 
-        // Spawn the selected cards
-        for (int i = 0; i < numberToSpawn; i++)
-        {
-            GameObject cardInstance = Instantiate(powerUpCardPrefab, cardContainer);
-            PowerUpCardDisplay display = cardInstance.GetComponent<PowerUpCardDisplay>();
+        // Spawn into each fixed slot
+        if (numberToSpawn >= 1) SpawnCardToSlot(cardSlot1, shuffledList[0], currentFavor);
+        if (numberToSpawn >= 2) SpawnCardToSlot(cardSlot2, shuffledList[1], currentFavor);
+        if (numberToSpawn >= 3) SpawnCardToSlot(cardSlot3, shuffledList[2], currentFavor);
+    }
 
-            if (display != null)
-            {
-                display.SetData(shuffledList[i], currentFavor, panelManager);
-            }
-            else
-            {
-                Debug.LogWarning("PowerUpCard prefab is missing PowerUpCardDisplay script!");
-            }
+    private void ClearSlot(Transform slot)
+    {
+        if (slot == null) return;
+        foreach (Transform child in slot)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void SpawnCardToSlot(Transform slot, PowerUpData data, int currentFavor)
+    {
+        if (slot == null || data == null) return;
+
+        GameObject cardInstance = Instantiate(powerUpCardPrefab, slot);
+        PowerUpCardDisplay display = cardInstance.GetComponent<PowerUpCardDisplay>();
+
+        if (display != null)
+        {
+            display.SetData(data, currentFavor, panelManager);
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUpCardSpawner] Spawned card is missing PowerUpCardDisplay!");
         }
     }
 }
