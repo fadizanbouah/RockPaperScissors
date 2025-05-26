@@ -96,6 +96,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void BeginActivationSequence(Vector3 targetPosition)
     {
+        Debug.LogWarning($"[DEBUG] BeginActivationSequence called for: {cardDisplay?.GetPowerUpData()?.powerUpName}");
+
         if (!isDraggable) return;
 
         Debug.Log("[PowerUpCardDrag] Begin activation sequence at " + targetPosition);

@@ -65,7 +65,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isGameplayCard)
         {
-            // Save the position only if it's not already raised
             if (Mathf.Approximately(originalLocalPosition.y, 0f))
                 originalLocalPosition = transform.localPosition;
 
@@ -98,15 +97,17 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             RunProgressManager.Instance.favor -= data.favorCost;
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
-            // Add to acquired powerups only if it's not passive
-            if (!data.isPassive)
+            // Apply immediately if passive
+            if (data.isPassive)
             {
+                RunProgressManager.Instance.ApplyPowerUpEffect(data);
+                Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
+            }
+            else
+            {
+                // Active power-ups are added to the player's hand and used during gameplay
                 RunProgressManager.Instance.AddAcquiredPowerUp(data);
             }
-
-            // Apply effect regardless
-            RunProgressManager.Instance.ApplyPowerUpEffect(data);
-            Debug.Log($"[PowerUpCardDisplay] Applied {(data.isPassive ? "passive" : "active")} power-up: {data.powerUpName}");
 
             gameObject.SetActive(false);
 
