@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: PassiveMockCard3
   m_EditorClassIdentifier: 
-  powerUpName: Next Hit Damage 1
-  description: +5 dmg on next hit
+  powerUpName: Scissors Damage
+  description: Increase Scissors Damage by 3
   icon: {fileID: 0}
   favorCost: 1
-  powerUpType: 0
-  value: 5
+  isPassive: 1
+  powerUpType: 6
+  value: 3
