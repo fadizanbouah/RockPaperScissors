@@ -27,28 +27,12 @@ public class PowerUpEffectManager : MonoBehaviour
         this.player = player;
         this.enemy = enemy;
 
+        Debug.Log($"[PowerUpEffectManager] Initialized with Player: {player?.name}, Enemy: {(enemy != null ? enemy.name : "null (no enemy)")}");
+
         CleanupAllEffects();
 
-        foreach (PowerUpData data in RunProgressManager.Instance.acquiredPowerUps)
-        {
-            if (data == null || data.isPassive || data.effectPrefab == null)
-                continue;
-
-            GameObject instance = Instantiate(data.effectPrefab);
-            PowerUpEffectBase effect = instance.GetComponent<PowerUpEffectBase>();
-
-            if (effect != null)
-            {
-                effect.Initialize(data, player, enemy);
-                activeEffects.Add(effect);
-                Debug.Log($"[PowerUpEffectManager] Initialized effect: {data.powerUpName}");
-            }
-            else
-            {
-                Debug.LogWarning($"[PowerUpEffectManager] Prefab missing PowerUpEffectBase: {data.name}");
-                Destroy(instance);
-            }
-        }
+        // IMPORTANT: Do NOT instantiate active effects here.
+        // Active effects are only triggered by dragging cards into the CardActivationZone.
     }
 
     public void OnRoundStart()
@@ -118,5 +102,17 @@ public class PowerUpEffectManager : MonoBehaviour
         {
             RemoveEffect(effect);
         }
+    }
+
+    public void RegisterEffect(PowerUpEffectBase effect)
+    {
+        if (effect == null)
+        {
+            Debug.LogWarning("[PowerUpEffectManager] Tried to register a null effect.");
+            return;
+        }
+
+        activeEffects.Add(effect);
+        Debug.Log($"[PowerUpEffectManager] Registered effect at runtime: {effect.GetType().Name}");
     }
 }

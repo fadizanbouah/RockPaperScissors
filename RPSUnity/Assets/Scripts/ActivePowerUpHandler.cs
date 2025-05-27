@@ -11,6 +11,7 @@ public static class ActivePowerUpHandler
 
         foreach (var effect in effects)
         {
+            Debug.Log($"[DEBUG] Modifying damage with effect: {effect.GetType().Name}");
             effect.ModifyDamage(ref modifiedDamage, signUsed);
         }
 

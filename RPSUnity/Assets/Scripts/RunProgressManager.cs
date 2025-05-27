@@ -96,9 +96,19 @@ public class RunProgressManager : MonoBehaviour
                 return;
             }
 
-            effect.Initialize(data, null, null); // Player/enemy references can be passed later if needed
+            // Initialize with player reference only — enemy is null
+            HandController player = HandControllerFinder.Player;
+            if (player == null)
+            {
+                Debug.LogWarning("[RunProgressManager] Could not find player HandController when initializing power-up!");
+            }
+
+            effect.Initialize(data, player, null);
+
             activeEffects.Add(effect);
-            Debug.Log($"[RunProgressManager] Instantiated and initialized effect: {data.powerUpName}");
+            Debug.Log($"[DEBUG] About to register effect: {effect.GetType().Name}");
+            PowerUpEffectManager.Instance?.RegisterEffect(effect); // Register with central manager
+            Debug.Log($"[RunProgressManager] Instantiated and registered effect: {data.powerUpName}");
         }
     }
 }

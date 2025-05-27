@@ -9,12 +9,24 @@ public class IncreaseDamageNextHitEffect : PowerUpEffectBase
         if (used || result != RoundResult.Win)
             return;
 
-        // Apply extra damage to the player's next attack
-        player.ApplyTemporaryDamageBoost(Mathf.RoundToInt(sourceData.value));
+        int bonusAmount = Mathf.RoundToInt(sourceData.value);
+        player.ApplyTemporaryDamageBoost(bonusAmount);
 
         used = true;
-        Debug.Log($"[Effect] Applied {sourceData.value} bonus damage to next hit (one-time use)");
 
-        // No need to remove anything manually — manager will handle cleanup
+        Debug.Log($"[Effect] Applied {bonusAmount} bonus damage to next hit (one-time use) ({sourceData.powerUpName})");
+    }
+
+    public override void ModifyDamage(ref int damage, string signUsed)
+    {
+        Debug.Log($"[IncreaseDamageNextHitEffect] Modifying damage. Bonus applied: {sourceData.value}. Player is null? {player == null}");
+
+        if (used) return;
+
+        int bonus = Mathf.RoundToInt(sourceData.value);
+        damage += bonus;
+        Debug.Log($"[Effect] Applied {bonus} bonus damage (NextHit).");
+
+        used = true;
     }
 }

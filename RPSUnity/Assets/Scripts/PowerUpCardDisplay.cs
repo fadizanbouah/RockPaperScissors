@@ -97,15 +97,15 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             RunProgressManager.Instance.favor -= data.favorCost;
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
-            // Apply immediately if passive
             if (data.isPassive)
             {
+                // Passive power-ups apply immediately on purchase
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
             }
             else
             {
-                // Active power-ups are added to the player's hand and used during gameplay
+                // Active power-ups do NOT apply here, only added to acquired list
                 RunProgressManager.Instance.AddAcquiredPowerUp(data);
             }
 
