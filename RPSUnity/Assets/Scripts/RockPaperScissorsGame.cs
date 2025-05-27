@@ -99,7 +99,11 @@ public class RockPaperScissorsGame : MonoBehaviour
         currentSubstate = GameSubstate.Resolving;
         Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
 
-        DetermineOutcome(playerChoice, enemyChoice);
+        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
+
+        // Optional: Notify PowerUpEffectManager here if you’ve connected it
+        // Example:
+        // powerUpEffectManager.OnRoundEnd(playerChoice, enemyChoice, result);
 
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log("Both sign animations finished.");
@@ -108,32 +112,35 @@ public class RockPaperScissorsGame : MonoBehaviour
         AllowPlayerInput();
     }
 
-    private void DetermineOutcome(string playerChoice, string enemyChoice)
+    private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
     {
-        string result = "";
+        RoundResult result;
 
         if (playerChoice == enemyChoice)
         {
-            result = "It's a Draw!";
+            result = RoundResult.Draw;
+            resultText.text = "It's a Draw!";
         }
         else if ((playerChoice == "Rock" && enemyChoice == "Scissors") ||
                  (playerChoice == "Paper" && enemyChoice == "Rock") ||
                  (playerChoice == "Scissors" && enemyChoice == "Paper"))
         {
             int damage = playerInstance.GetEffectiveDamage(playerChoice);
-            result = "You Win!";
+            result = RoundResult.Win;
+            resultText.text = "You Win!";
             enemyHandController?.TakeDamage(damage);
             Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
         }
         else
         {
             int damage = enemyHandController.GetEffectiveDamage(enemyChoice);
-            result = "You Lose!";
+            result = RoundResult.Lose;
+            resultText.text = "You Lose!";
             playerInstance.TakeDamage(damage);
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
         }
 
-        resultText.text = result;
+        return result;
     }
 
     private void DisableButtons()

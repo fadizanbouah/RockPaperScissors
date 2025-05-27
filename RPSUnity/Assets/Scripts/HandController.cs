@@ -23,6 +23,7 @@ public class HandController : MonoBehaviour
     public HealthBar healthBar;
     private string playerChoice;
     private bool isDying = false;
+    private int temporaryBonusDamage = 0; // One-time damage boost from power-ups
 
     public bool isPlayer = false;
 
@@ -67,6 +68,11 @@ public class HandController : MonoBehaviour
         health = maxHealth;
     }
 
+    public void ApplyTemporaryDamageBoost(int amount)
+    {
+        temporaryBonusDamage += amount;
+    }
+
     public int GetEffectiveDamage(string signUsed)
     {
         int damage = baseDamage;
@@ -85,6 +91,12 @@ public class HandController : MonoBehaviour
 
             // Add active power-up effects
             damage = ActivePowerUpHandler.GetModifiedDamage(damage, signUsed);
+
+            // Apply and clear temporary boost
+            damage += temporaryBonusDamage;
+            if (temporaryBonusDamage > 0)
+                Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
+            temporaryBonusDamage = 0;
         }
 
         return damage;
@@ -177,7 +189,7 @@ public class HandController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void UpdateHealthBar()
+    public void UpdateHealthBar()
     {
         if (healthBar != null)
         {
