@@ -96,14 +96,14 @@ public class RunProgressManager : MonoBehaviour
                 return;
             }
 
-            // Initialize with player reference only — enemy is null
-            HandController player = GameObject.FindObjectOfType<HandController>();
+            HandController player = PowerUpEffectManager.Instance != null ? PowerUpEffectManager.Instance.GetPlayer() : null;
+            HandController enemy = PowerUpEffectManager.Instance != null ? PowerUpEffectManager.Instance.GetEnemy() : null;
             if (player == null)
             {
                 Debug.LogWarning("[RunProgressManager] Could not find player HandController when initializing power-up!");
             }
 
-            effect.Initialize(data, player, null);
+            effect.Initialize(data, player, enemy);
             effect.OnRoomStart();
 
             activeEffects.Add(effect);

@@ -24,16 +24,13 @@ public class PowerUpEffectManager : MonoBehaviour
 
     public void Initialize(HandController player, HandController enemy)
     {
+        // Only update player/enemy references — no cleanup
         this.player = player;
         this.enemy = enemy;
 
-        Debug.Log($"[PowerUpEffectManager] Initialized with Player: {player?.name}, Enemy: {(enemy != null ? enemy.name : "null (no enemy)")}");
+        Debug.Log($"[PowerUpEffectManager] Re-linked references: Player = {player?.name}, Enemy = {enemy?.name}");
 
-        // Remove all active effects (no exceptions since room-scoped effects are gone)
-        CleanupAllEffects();
-
-        // IMPORTANT: Do NOT instantiate active effects here.
-        // Active effects are only triggered by dragging cards into the CardActivationZone.
+        // DO NOT call CleanupAllEffects here anymore!
     }
 
     public void OnRoundStart()
@@ -103,5 +100,15 @@ public class PowerUpEffectManager : MonoBehaviour
 
         activeEffects.Add(effect);
         Debug.Log($"[PowerUpEffectManager] Registered effect at runtime: {effect.GetType().Name}");
+    }
+
+    public HandController GetPlayer()
+    {
+        return player;
+    }
+
+    public HandController GetEnemy()
+    {
+        return enemy;
     }
 }
