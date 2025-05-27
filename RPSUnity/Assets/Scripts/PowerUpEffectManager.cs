@@ -111,4 +111,15 @@ public class PowerUpEffectManager : MonoBehaviour
     {
         return enemy;
     }
+
+    public void TriggerRoomStart()
+    {
+        // Create a copy of the list before iterating to avoid modification errors
+        var effectsCopy = new List<PowerUpEffectBase>(activeEffects);
+
+        foreach (var effect in effectsCopy)
+        {
+            effect.OnRoomStart();
+        }
+    }
 }

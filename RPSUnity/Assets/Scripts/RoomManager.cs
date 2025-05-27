@@ -60,6 +60,7 @@ public class RoomManager : MonoBehaviour
         }
 
         ApplyPersistentPowerUps();
+        PowerUpEffectManager.Instance?.TriggerRoomStart();
 
         FadeInAfterRoomLoad();
         SpawnNextEnemy();
