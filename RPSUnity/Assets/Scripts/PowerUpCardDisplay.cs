@@ -121,7 +121,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
                 panelManager.LockOutOtherPassiveChoices(this);
             }
 
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
 
             if (panelManager != null)
             {
@@ -165,5 +165,31 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public PowerUpData GetPowerUpData()
     {
         return data;
+    }
+
+    public void PlayCheckmarkAnimation()
+    {
+        Transform container = transform.Find("AnimatedContainer");
+        Transform checkmark = container?.Find("Checkmark");
+
+        if (container != null && checkmark != null)
+        {
+            checkmark.gameObject.SetActive(true); // Enable the checkmark so it’s visible
+
+            Animator anim = container.GetComponent<Animator>(); // Corrected: Animator is on AnimatedContainer
+
+            if (anim != null)
+            {
+                anim.SetTrigger("CheckmarkPopIn"); // This triggers the Idle -> CheckmarkPopIn transition
+            }
+            else
+            {
+                Debug.LogWarning("[PowerUpCardDisplay] AnimatedContainer is missing an Animator!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUpCardDisplay] AnimatedContainer or Checkmark not found!");
+        }
     }
 }

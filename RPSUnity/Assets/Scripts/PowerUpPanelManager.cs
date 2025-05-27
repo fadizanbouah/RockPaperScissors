@@ -70,8 +70,14 @@ public class PowerUpPanelManager : MonoBehaviour
                     button.interactable = false;
 
                 if (group != null)
-                    group.alpha = 0.4f; // Visually gray it out
+                    group.alpha = 0.7f; // Visually gray it out
             }
+        }
+
+        // Play checkmark animation on the selected passive card
+        if (selectedCard != null)
+        {
+            selectedCard.PlayCheckmarkAnimation();
         }
     }
 
