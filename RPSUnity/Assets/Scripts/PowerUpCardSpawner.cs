@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 public class PowerUpCardSpawner : MonoBehaviour
 {
-    [Header("Prefab")]
+    [Header("Prefabs")]
     [SerializeField] private GameObject powerUpCardPrefab;
+    [SerializeField] private GameObject passivePowerUpCardPrefab;
 
     [Header("Active Card Slots")]
     [SerializeField] private Transform cardSlot1;
@@ -52,7 +53,7 @@ public class PowerUpCardSpawner : MonoBehaviour
         for (int i = 0; i < Mathf.Min(slots.Length, list.Count); i++)
         {
             ClearSlot(slots[i]);
-            SpawnCardToSlot(slots[i], list[i], favor);
+            SpawnCardToSlot(slots[i], list[i], favor, isPassive);
         }
     }
 
@@ -65,16 +66,22 @@ public class PowerUpCardSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnCardToSlot(Transform slot, PowerUpData data, int currentFavor)
+    private void SpawnCardToSlot(Transform slot, PowerUpData data, int currentFavor, bool isPassive)
     {
         if (slot == null || data == null) return;
 
-        GameObject cardInstance = Instantiate(powerUpCardPrefab, slot);
+        GameObject prefabToUse = isPassive ? passivePowerUpCardPrefab : powerUpCardPrefab;
+        GameObject cardInstance = Instantiate(prefabToUse, slot);
         PowerUpCardDisplay display = cardInstance.GetComponent<PowerUpCardDisplay>();
 
         if (display != null)
         {
             display.SetData(data, currentFavor, panelManager);
+
+            if (isPassive && panelManager != null)
+            {
+                panelManager.RegisterPassiveCard(cardInstance);
+            }
         }
         else
         {

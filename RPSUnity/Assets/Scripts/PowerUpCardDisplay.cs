@@ -9,6 +9,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private bool isPassiveCard = false;
 
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
@@ -32,7 +33,13 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (descriptionText != null)
             descriptionText.text = data.description;
 
-        UpdateAffordability(currentFavor);
+        if (!isPassiveCard)
+            UpdateAffordability(currentFavor);
+        else if (costText != null)
+        {
+            costText.text = "";
+            costText.gameObject.SetActive(false);
+        }
     }
 
     public void UpdateAffordability(int currentFavor)
@@ -92,21 +99,26 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         int currentFavor = RunProgressManager.Instance.currentFavor;
 
-        if (currentFavor >= data.favorCost)
+        if (isPassiveCard || currentFavor >= data.favorCost)
         {
-            RunProgressManager.Instance.favor -= data.favorCost;
+            if (!isPassiveCard)
+                RunProgressManager.Instance.favor -= data.favorCost;
+
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
 
             if (data.isPassive)
             {
-                // Passive power-ups apply immediately on purchase
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
             }
             else
             {
-                // Active power-ups do NOT apply here, only added to acquired list
                 RunProgressManager.Instance.AddAcquiredPowerUp(data);
+            }
+
+            if (isPassiveCard && panelManager != null)
+            {
+                panelManager.LockOutOtherPassiveChoices(this);
             }
 
             gameObject.SetActive(false);
@@ -115,6 +127,11 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 panelManager.RefreshFavorDisplay();
                 panelManager.RefreshCardAffordability();
+
+                if (data.isPassive)
+                {
+                    panelManager.DisableOtherPassiveCards(this);
+                }
             }
         }
         else
