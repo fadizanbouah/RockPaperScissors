@@ -17,5 +17,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
-  powerUpType: 3
+  effectPrefab: {fileID: 7775916174280671573, guid: 8e46df40ba84a0c4cb60d0f0681a3b6f, type: 3}
   value: 1

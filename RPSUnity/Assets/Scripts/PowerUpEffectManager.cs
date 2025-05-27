@@ -29,6 +29,7 @@ public class PowerUpEffectManager : MonoBehaviour
 
         Debug.Log($"[PowerUpEffectManager] Initialized with Player: {player?.name}, Enemy: {(enemy != null ? enemy.name : "null (no enemy)")}");
 
+        // Remove all active effects (no exceptions since room-scoped effects are gone)
         CleanupAllEffects();
 
         // IMPORTANT: Do NOT instantiate active effects here.
@@ -88,20 +89,8 @@ public class PowerUpEffectManager : MonoBehaviour
 
     public void RemoveRoomScopedEffects()
     {
-        var toRemove = new List<PowerUpEffectBase>();
-
-        foreach (var effect in activeEffects)
-        {
-            if (effect is IncreaseDamageThisRoomEffect || effect is IncreaseMaxHealthThisRoomEffect)
-            {
-                toRemove.Add(effect);
-            }
-        }
-
-        foreach (var effect in toRemove)
-        {
-            RemoveEffect(effect);
-        }
+        // Since those effects are deleted, this method can be empty or removed entirely
+        // Or keep it empty to avoid errors if called elsewhere
     }
 
     public void RegisterEffect(PowerUpEffectBase effect)

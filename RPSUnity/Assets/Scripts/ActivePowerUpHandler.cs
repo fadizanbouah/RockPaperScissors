@@ -18,16 +18,5 @@ public static class ActivePowerUpHandler
         return modifiedDamage;
     }
 
-    public static void RemoveRoomScopedPowerUps()
-    {
-        if (PowerUpEffectManager.Instance != null)
-        {
-            PowerUpEffectManager.Instance.RemoveRoomScopedEffects();
-            Debug.Log("[ActivePowerUpHandler] Removed room-scoped active power-up effects.");
-        }
-        else
-        {
-            Debug.LogWarning("[ActivePowerUpHandler] PowerUpEffectManager.Instance is null.");
-        }
-    }
+    // Removed RemoveRoomScopedPowerUps method entirely
 }

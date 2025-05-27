@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: ActiveMockCard3
   m_EditorClassIdentifier: 
-  powerUpName: Next Hit Damage 2
-  description: +7 dmg on next hit
+  powerUpName: Next Hit Damage 3
+  description: +15 dmg on next hit
   icon: {fileID: 0}
-  favorCost: 2
+  favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 6717762807998786352, guid: a1e76275b835a5640bc9636b7b9e003c, type: 3}
-  value: 7
+  value: 15

@@ -11,6 +11,8 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
         this.sourceData = data;
         this.player = player;
         this.enemy = enemy;
+
+        Debug.Log($"[PowerUpEffectBase] Initialized effect {data.powerUpName} with player: {player?.name ?? "null"}");
     }
 
     public virtual void OnRoundStart() { }

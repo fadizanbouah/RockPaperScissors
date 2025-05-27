@@ -59,7 +59,6 @@ public class RoomManager : MonoBehaviour
             roomBackground.sprite = room.backgroundImage;
         }
 
-        // NEW: Apply passive power-up effects
         ApplyPersistentPowerUps();
 
         FadeInAfterRoomLoad();
@@ -137,6 +136,8 @@ public class RoomManager : MonoBehaviour
         {
             Debug.Log("[RoomManager] All enemies defeated in this room.");
 
+            // Removed calls to RemoveRoomScopedEffects because those power-ups are deleted
+
             if (rockPaperScissorsGame != null && rockPaperScissorsGame.roomClearedTextObject != null)
             {
                 rockPaperScissorsGame.roomClearedTextObject.SetActive(true);
@@ -174,8 +175,6 @@ public class RoomManager : MonoBehaviour
             Debug.LogError($"RoomPool at index {currentPoolIndex} is empty or missing!");
             return;
         }
-
-        ActivePowerUpHandler.RemoveRoomScopedPowerUps();
 
         currentRoom = currentPool.rooms[Random.Range(0, currentPool.rooms.Count)];
         Debug.Log($"Next Room Selected: {currentRoom.roomName}");

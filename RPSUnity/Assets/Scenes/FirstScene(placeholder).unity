@@ -4318,6 +4318,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angleRange: 6
   spacing: 60
+--- !u!1 &1276051556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1276051558}
+  - component: {fileID: 1276051557}
+  m_Layer: 0
+  m_Name: PowerUpEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1276051557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276051556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da90e8d7c9358664bae3ce534ebc8eb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1276051558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276051556}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 958.2655, y: 984.7466, z: -4.2644596}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1317680166
 GameObject:
   m_ObjectHideFlags: 0
@@ -5915,9 +5959,9 @@ MonoBehaviour:
   passiveSlot3: {fileID: 2029313323}
   availablePowerUps:
   - {fileID: 11400000, guid: 771d578a3fcf4e44db5a8c86501b417e, type: 2}
-  - {fileID: 11400000, guid: 2dcc46829c8b9bc48b43d93e42f6c7cb, type: 2}
-  - {fileID: 11400000, guid: 89b47e79a58e6a64083c40e5fa0386e9, type: 2}
-  - {fileID: 11400000, guid: 0a5af733870ee844fa056ad44a329b9a, type: 2}
+  - {fileID: 11400000, guid: 1dea35088f0fd45419ffb689d4df32f7, type: 2}
+  - {fileID: 11400000, guid: f05a56d7010b2724491201c932879fff, type: 2}
+  - {fileID: 11400000, guid: 8e75986db2d1b20448e3b0b28a012a3f, type: 2}
   passivePowerUps:
   - {fileID: 11400000, guid: 83894d0aef38ac44487e9fe5cad77911, type: 2}
   - {fileID: 11400000, guid: 9e02ed40022546d4d9bb68281e155ffa, type: 2}
@@ -6370,5 +6414,6 @@ SceneRoots:
   - {fileID: 350574428}
   - {fileID: 1232882487}
   - {fileID: 929284197}
+  - {fileID: 1276051558}
   - {fileID: 1683662962}
   - {fileID: 1786275621}

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: ActiveMockCard4
   m_EditorClassIdentifier: 
-  powerUpName: Room Damage 2
-  description: +13 damage during this room
+  powerUpName: Next Hit Damage 4
+  description: +20 dmg on next hit
   icon: {fileID: 0}
-  favorCost: 2
+  favorCost: 1
   isPassive: 0
-  effectPrefab: {fileID: 1376115028895862417, guid: 1ed96b97a66f0ba419607a821a0763fc, type: 3}
-  value: 13
+  effectPrefab: {fileID: 6717762807998786352, guid: a1e76275b835a5640bc9636b7b9e003c, type: 3}
+  value: 20
