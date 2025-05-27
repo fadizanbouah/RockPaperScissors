@@ -9,14 +9,14 @@ public class IncreaseMaxHealthThisRoomEffect : PowerUpEffectBase
         if (!player.isPlayer || applied)
             return;
 
-        int bonus = Mathf.RoundToInt(source.effectValue);
+        int bonus = Mathf.RoundToInt(sourceData.value);
         player.maxHealth += bonus;
         player.health += bonus;
         player.UpdateHealthBar();
 
         applied = true;
 
-        Debug.Log($"[Effect] Max HP increased by {bonus} for this room ({source.powerUpName})");
+        Debug.Log($"[Effect] Max HP increased by {bonus} for this room ({sourceData.powerUpName})");
     }
 
     // No need to remove manually — RoomManager will wipe this at the end of the room

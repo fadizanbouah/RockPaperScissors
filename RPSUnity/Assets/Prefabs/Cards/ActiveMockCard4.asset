@@ -16,5 +16,6 @@ MonoBehaviour:
   description: +13 damage during this room
   icon: {fileID: 0}
   favorCost: 2
-  powerUpType: 1
+  isPassive: 0
+  effectPrefab: {fileID: 1376115028895862417, guid: 1ed96b97a66f0ba419607a821a0763fc, type: 3}
   value: 13

@@ -9,14 +9,14 @@ public class RunProgressManager : MonoBehaviour
     public int favor = 0;
     public int currentFavor => favor;
 
-    [Header("Active PowerUps (Runtime Effects)")]
-    public List<PowerUp> activePowerUps = new List<PowerUp>();
+    [Header("Active PowerUp Effects (instantiated prefabs)")]
+    public List<PowerUpEffectBase> activeEffects = new List<PowerUpEffectBase>();
 
     [Header("Acquired PowerUps (Visual Cards in Gameplay)")]
     public List<PowerUpData> acquiredPowerUps = new List<PowerUpData>();
 
     [Header("Persistent Passive PowerUps")]
-    public List<PowerUp> persistentPowerUps = new List<PowerUp>();
+    public List<PowerUpData> persistentPowerUps = new List<PowerUpData>();
 
     private void Awake()
     {
@@ -34,13 +34,13 @@ public class RunProgressManager : MonoBehaviour
     public void AddFavor(int amount)
     {
         favor += amount;
-        Debug.Log($"[RunProgress] Gained {amount} favor. Total: {favor}");
+        Debug.Log($"[RunProgressManager] Gained {amount} favor. Total: {favor}");
     }
 
     public void AddAcquiredPowerUp(PowerUpData powerUpData)
     {
         acquiredPowerUps.Add(powerUpData);
-        Debug.Log($"[RunProgress] Acquired power-up: {powerUpData.powerUpName}");
+        Debug.Log($"[RunProgressManager] Acquired power-up: {powerUpData.powerUpName}");
     }
 
     public void RemoveAcquiredPowerUp(PowerUpData data)
@@ -48,42 +48,57 @@ public class RunProgressManager : MonoBehaviour
         if (acquiredPowerUps.Contains(data))
         {
             acquiredPowerUps.Remove(data);
-            Debug.Log($"[RunProgress] Removed used power-up: {data.powerUpName}");
+            Debug.Log($"[RunProgressManager] Removed used power-up: {data.powerUpName}");
         }
     }
 
     public void ResetRun()
     {
         favor = 0;
-        activePowerUps.Clear();
         acquiredPowerUps.Clear();
+
+        foreach (var effect in activeEffects)
+        {
+            if (effect != null)
+                GameObject.Destroy(effect.gameObject);
+        }
+
+        activeEffects.Clear();
         persistentPowerUps.Clear();
-        Debug.Log("[RunProgress] Run reset: Favor and PowerUps cleared.");
+
+        Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
     }
 
     public void ApplyPowerUpEffect(PowerUpData data)
     {
         if (data == null) return;
 
-        PowerUp newPowerUp = new PowerUp
-        {
-            powerUpName = data.powerUpName,
-            description = data.description,
-            favorCost = data.favorCost,
-            icon = data.icon,
-            type = data.powerUpType,
-            effectValue = data.value
-        };
-
         if (data.isPassive)
         {
-            persistentPowerUps.Add(newPowerUp);
-            Debug.Log($"[RunProgress] Stored persistent power-up: {data.powerUpName} ({data.powerUpType})");
+            persistentPowerUps.Add(data);
+            Debug.Log($"[RunProgressManager] Stored persistent power-up: {data.powerUpName}");
         }
         else
         {
-            activePowerUps.Add(newPowerUp);
-            Debug.Log($"[RunProgress] Applied active power-up: {data.powerUpName} ({data.powerUpType})");
+            if (data.effectPrefab == null)
+            {
+                Debug.LogWarning($"[RunProgressManager] No prefab assigned for active power-up: {data.powerUpName}");
+                return;
+            }
+
+            GameObject instance = Instantiate(data.effectPrefab);
+            PowerUpEffectBase effect = instance.GetComponent<PowerUpEffectBase>();
+
+            if (effect == null)
+            {
+                Debug.LogError($"[RunProgressManager] Prefab for {data.powerUpName} is missing a PowerUpEffectBase script!");
+                Destroy(instance);
+                return;
+            }
+
+            effect.Initialize(data, null, null); // Player/enemy references can be passed later if needed
+            activeEffects.Add(effect);
+            Debug.Log($"[RunProgressManager] Instantiated and initialized effect: {data.powerUpName}");
         }
     }
 }

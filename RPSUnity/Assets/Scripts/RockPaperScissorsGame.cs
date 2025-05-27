@@ -50,6 +50,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
 
+        PowerUpEffectManager.Instance?.Initialize(player, enemy);
+
         resultText.text = "";
         currentSubstate = GameSubstate.Idle;
         AllowPlayerInput();

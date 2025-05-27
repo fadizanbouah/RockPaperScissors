@@ -16,5 +16,6 @@ MonoBehaviour:
   description: +7 dmg on next hit
   icon: {fileID: 0}
   favorCost: 2
-  powerUpType: 0
+  isPassive: 0
+  effectPrefab: {fileID: 6717762807998786352, guid: a1e76275b835a5640bc9636b7b9e003c, type: 3}
   value: 7

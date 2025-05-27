@@ -4,8 +4,8 @@ public class IncreaseDamageThisRoomEffect : PowerUpEffectBase
 {
     public override void ModifyDamage(ref int damage, string signUsed)
     {
-        damage += Mathf.RoundToInt(source.effectValue);
-        Debug.Log($"[Effect] +{source.effectValue} room-wide damage applied from: {source.powerUpName}");
+        damage += Mathf.RoundToInt(sourceData.value);
+        Debug.Log($"[Effect] +{sourceData.value} room-wide damage applied from: {sourceData.powerUpName}");
     }
 
     // No cleanup needed — RoomManager clears room-wide power-ups at room transition

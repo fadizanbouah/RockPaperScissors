@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public abstract class PowerUpEffectBase : IPowerUpEffect
+public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
 {
-    protected PowerUp source;
+    protected PowerUpData sourceData;
     protected HandController player;
     protected HandController enemy;
 
-    public virtual void Initialize(PowerUp source, HandController player, HandController enemy)
+    public virtual void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
-        this.source = source;
+        this.sourceData = data;
         this.player = player;
         this.enemy = enemy;
     }
@@ -19,9 +19,7 @@ public abstract class PowerUpEffectBase : IPowerUpEffect
 
     public virtual void Cleanup() { }
 
-    // NEW: Optional override for modifying damage
     public virtual void ModifyDamage(ref int damage, string signUsed) { }
 
-    // NEW: Optional override for effects that apply at the start of a room
     public virtual void OnRoomStart() { }
 }

@@ -10,12 +10,11 @@ public class IncreaseDamageNextHitEffect : PowerUpEffectBase
             return;
 
         // Apply extra damage to the player's next attack
-        player.ApplyTemporaryDamageBoost(Mathf.RoundToInt(source.effectValue));
+        player.ApplyTemporaryDamageBoost(Mathf.RoundToInt(sourceData.value));
 
         used = true;
-        Debug.Log($"[Effect] Applied {source.effectValue} bonus damage to next hit (one-time use)");
+        Debug.Log($"[Effect] Applied {sourceData.value} bonus damage to next hit (one-time use)");
 
-        // Remove from active power-ups after use
-        RunProgressManager.Instance.activePowerUps.Remove(source);
+        // No need to remove anything manually — manager will handle cleanup
     }
 }

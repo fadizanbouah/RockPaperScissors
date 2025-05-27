@@ -9,6 +9,8 @@ public class PowerUpData : ScriptableObject
     public int favorCost;
     public bool isPassive = false;
 
-    public PowerUpType powerUpType;
-    public float value;  // e.g., 5 for +5% damage, 10 for +10 max health, etc.
+    [Tooltip("Assign a prefab with the desired PowerUpEffectBase script attached (for active effects only)")]
+    public GameObject effectPrefab;
+
+    public float value;  // Used by many effects, e.g. +5% damage or +10 health
 }

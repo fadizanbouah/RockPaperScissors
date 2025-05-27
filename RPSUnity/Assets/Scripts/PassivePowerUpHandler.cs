@@ -12,28 +12,26 @@ public static class PassivePowerUpHandler
         PlayerProgressData.Instance.bonusPaperDamage = 0;
         PlayerProgressData.Instance.bonusScissorsDamage = 0;
 
-        foreach (PowerUp powerUp in RunProgressManager.Instance.persistentPowerUps)
+        foreach (PowerUpData data in RunProgressManager.Instance.persistentPowerUps)
         {
-            switch (powerUp.type)
+            if (data.effectPrefab == null)
             {
-                case PowerUpType.PassiveIncreaseDamage:
-                    PlayerProgressData.Instance.bonusBaseDamage += Mathf.RoundToInt(powerUp.effectValue);
-                    break;
-                case PowerUpType.PassiveIncreaseRockDamage:
-                    PlayerProgressData.Instance.bonusRockDamage += Mathf.RoundToInt(powerUp.effectValue);
-                    break;
-                case PowerUpType.PassiveIncreasePaperDamage:
-                    PlayerProgressData.Instance.bonusPaperDamage += Mathf.RoundToInt(powerUp.effectValue);
-                    break;
-                case PowerUpType.PassiveIncreaseScissorsDamage:
-                    PlayerProgressData.Instance.bonusScissorsDamage += Mathf.RoundToInt(powerUp.effectValue);
-                    break;
-                default:
-                    Debug.LogWarning($"[PassivePowerUpHandler] Unsupported passive power-up type: {powerUp.type}");
-                    break;
+                Debug.LogWarning($"[PassivePowerUpHandler] Missing effectPrefab on PowerUpData: {data.powerUpName}");
+                continue;
             }
 
-            Debug.Log($"[PassivePowerUpHandler] Applied passive power-up: {powerUp.powerUpName} ({powerUp.type})");
+            GameObject instance = GameObject.Instantiate(data.effectPrefab);
+            PowerUpEffectBase effect = instance.GetComponent<PowerUpEffectBase>();
+
+            if (effect != null)
+            {
+                effect.Initialize(data, null, null);
+                effect.OnRoomStart(); // Apply effect immediately (e.g., stat boost)
+            }
+            else
+            {
+                Debug.LogWarning($"[PassivePowerUpHandler] No PowerUpEffectBase found on prefab for {data.powerUpName}");
+            }
         }
     }
 }

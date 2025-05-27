@@ -3,26 +3,50 @@ using UnityEngine;
 
 public class PowerUpEffectManager : MonoBehaviour
 {
-    private List<IPowerUpEffect> activeEffects = new List<IPowerUpEffect>();
+    public static PowerUpEffectManager Instance { get; private set; }
+
+    private List<PowerUpEffectBase> activeEffects = new List<PowerUpEffectBase>();
 
     private HandController player;
     private HandController enemy;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     public void Initialize(HandController player, HandController enemy)
     {
         this.player = player;
         this.enemy = enemy;
 
-        activeEffects.Clear();
+        CleanupAllEffects();
 
-        foreach (PowerUp powerUp in RunProgressManager.Instance.activePowerUps)
+        foreach (PowerUpData data in RunProgressManager.Instance.acquiredPowerUps)
         {
-            IPowerUpEffect effect = CreateEffectInstance(powerUp);
+            if (data == null || data.isPassive || data.effectPrefab == null)
+                continue;
+
+            GameObject instance = Instantiate(data.effectPrefab);
+            PowerUpEffectBase effect = instance.GetComponent<PowerUpEffectBase>();
+
             if (effect != null)
             {
-                effect.Initialize(powerUp, player, enemy);
+                effect.Initialize(data, player, enemy);
                 activeEffects.Add(effect);
-                Debug.Log($"[EffectManager] Initialized effect: {powerUp.powerUpName}");
+                Debug.Log($"[PowerUpEffectManager] Initialized effect: {data.powerUpName}");
+            }
+            else
+            {
+                Debug.LogWarning($"[PowerUpEffectManager] Prefab missing PowerUpEffectBase: {data.name}");
+                Destroy(instance);
             }
         }
     }
@@ -48,27 +72,51 @@ public class PowerUpEffectManager : MonoBehaviour
         foreach (var effect in activeEffects)
         {
             effect.Cleanup();
+
+            if (effect is MonoBehaviour mb)
+            {
+                Destroy(mb.gameObject);
+            }
         }
 
         activeEffects.Clear();
     }
 
-    private IPowerUpEffect CreateEffectInstance(PowerUp powerUp)
+    public void RemoveEffect(PowerUpEffectBase effect)
     {
-        switch (powerUp.type)
+        if (effect != null && activeEffects.Contains(effect))
         {
-            case PowerUpType.IncreaseDamageNextHit:
-                return new IncreaseDamageNextHitEffect();
+            activeEffects.Remove(effect);
 
-            case PowerUpType.IncreaseDamageThisRoom:
-                return new IncreaseDamageThisRoomEffect();
+            if (effect is MonoBehaviour mb)
+            {
+                Destroy(mb.gameObject);
+            }
 
-            case PowerUpType.IncreaseMaxHealthThisRoom:
-                return new IncreaseMaxHealthThisRoomEffect();
+            Debug.Log($"[PowerUpEffectManager] Removed and destroyed effect: {effect.GetType().Name}");
+        }
+    }
 
-            // Passive ones can be ignored here or handled separately
-            default:
-                return null;
+    public List<PowerUpEffectBase> GetActiveEffects()
+    {
+        return new List<PowerUpEffectBase>(activeEffects); // Return a copy for safety
+    }
+
+    public void RemoveRoomScopedEffects()
+    {
+        var toRemove = new List<PowerUpEffectBase>();
+
+        foreach (var effect in activeEffects)
+        {
+            if (effect is IncreaseDamageThisRoomEffect || effect is IncreaseMaxHealthThisRoomEffect)
+            {
+                toRemove.Add(effect);
+            }
+        }
+
+        foreach (var effect in toRemove)
+        {
+            RemoveEffect(effect);
         }
     }
 }
