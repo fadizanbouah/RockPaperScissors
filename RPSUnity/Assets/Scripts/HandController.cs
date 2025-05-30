@@ -23,7 +23,7 @@ public class HandController : MonoBehaviour
     public HealthBar healthBar;
     private string playerChoice;
     private bool isDying = false;
-    private int temporaryBonusDamage = 0;
+    private int temporaryBonusDamage = 0; // One-time damage boost from power-ups
 
     public bool isPlayer = false;
 
@@ -42,9 +42,6 @@ public class HandController : MonoBehaviour
 
     public delegate void SignAnimationFinishedHandler(HandController hand);
     public event SignAnimationFinishedHandler SignAnimationFinished;
-
-    public delegate void HitAnimationFinishedHandler(HandController hand); // NEW
-    public event HitAnimationFinishedHandler OnHitAnimationFinished;       // NEW
 
     public delegate void PlayerDiedHandler();
     public static event PlayerDiedHandler OnPlayerDied;
@@ -82,6 +79,7 @@ public class HandController : MonoBehaviour
 
         if (isPlayer)
         {
+            // Add persistent passive boosts
             damage += PlayerProgressData.Instance.bonusBaseDamage;
 
             if (signUsed == "Rock")
@@ -91,8 +89,10 @@ public class HandController : MonoBehaviour
             else if (signUsed == "Scissors")
                 damage += PlayerProgressData.Instance.bonusScissorsDamage;
 
+            // Add active power-up effects
             damage = ActivePowerUpHandler.GetModifiedDamage(damage, signUsed);
 
+            // Apply and clear temporary boost
             damage += temporaryBonusDamage;
             if (temporaryBonusDamage > 0)
                 Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
@@ -148,7 +148,7 @@ public class HandController : MonoBehaviour
         if (OnDeath != null)
         {
             OnDeath.Invoke(this);
-            OnDeath = null;
+            OnDeath = null;   // Important! Prevent double rewards
         }
 
         if (handAnimator != null && handAnimator.HasParameter("Die"))
@@ -239,26 +239,6 @@ public class HandController : MonoBehaviour
         if (isDying) return;
         Debug.Log($"{gameObject.name} sign animation finished!");
         SignAnimationFinished?.Invoke(this);
-    }
-
-    public void TriggerDeathAnimationFinished()
-    {
-        Debug.Log($"{gameObject.name} death animation finished (via animation event).");
-        OnDeathAnimationFinished?.Invoke(this);
-
-        if (isPlayer)
-        {
-            Debug.Log("Player death detected. Triggering OnPlayerDied.");
-            OnPlayerDied?.Invoke();
-        }
-
-        Destroy(gameObject);
-    }
-
-    public void TriggerHitAnimationFinished() // NEW: Called via animation event
-    {
-        Debug.Log($"{gameObject.name} hit animation finished (via animation event).");
-        OnHitAnimationFinished?.Invoke(this);
     }
 }
 

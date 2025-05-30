@@ -15,21 +15,12 @@ public class AnimationEventRelay : MonoBehaviour
         }
     }
 
+    // Called by animation events at the end of sign animations
     public void TriggerSignAnimationFinished()
     {
-        handController?.OnSignAnimationFinished();
-    }
-
-    public void TriggerDeathAnimationFinished()
-    {
-        Debug.Log("TriggerDeathAnimationFinished called via animation event.");
-        handController?.TriggerDeathAnimationFinished();
-    }
-
-    // Now this calls the proper method
-    public void TriggerHitAnimationFinished()
-    {
-        Debug.Log("TriggerHitAnimationFinished called via animation event.");
-        handController?.TriggerHitAnimationFinished();
+        if (handController != null)
+        {
+            handController.OnSignAnimationFinished();
+        }
     }
 }
