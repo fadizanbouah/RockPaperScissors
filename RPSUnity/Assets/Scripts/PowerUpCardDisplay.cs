@@ -110,28 +110,25 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
+
+                if (panelManager != null)
+                {
+                    panelManager.LockOutOtherPassiveChoices(this);
+                    panelManager.DisableOtherPassiveCards(this);
+                }
             }
             else
             {
                 RunProgressManager.Instance.AddAcquiredPowerUp(data);
-            }
 
-            if (isPassiveCard && panelManager != null)
-            {
-                panelManager.LockOutOtherPassiveChoices(this);
+                // Hide the card immediately after purchasing an active power-up
+                gameObject.SetActive(false);
             }
-
-            //gameObject.SetActive(false);
 
             if (panelManager != null)
             {
                 panelManager.RefreshFavorDisplay();
                 panelManager.RefreshCardAffordability();
-
-                if (data.isPassive)
-                {
-                    panelManager.DisableOtherPassiveCards(this);
-                }
             }
         }
         else
