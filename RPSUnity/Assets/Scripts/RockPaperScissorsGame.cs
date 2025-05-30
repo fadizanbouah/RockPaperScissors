@@ -22,7 +22,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
-    public GameObject roomClearedTextObject;
+    public GameObject roomClearedTextObject;  // Reference for RoomCleared text object
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
 
@@ -54,8 +54,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         resultText.text = "";
         currentSubstate = GameSubstate.Idle;
-
-        UpdateInputStates();
+        AllowPlayerInput();
 
         Debug.Log("Game successfully initialized.");
     }
@@ -63,7 +62,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     public void StartGame()
     {
         currentSubstate = GameSubstate.Idle;
-        UpdateInputStates();
+        AllowPlayerInput();
         Debug.Log("Game started!");
     }
 
@@ -72,7 +71,13 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (currentSubstate != GameSubstate.Idle) return;
 
         currentSubstate = GameSubstate.Selecting;
-        UpdateInputStates();
+        DisableButtons();
+
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+        {
+            spawner.SetAllCardsInteractable(false);
+        }
 
         playerSignDone = false;
         enemySignDone = false;
@@ -89,20 +94,24 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
+        yield return new WaitForSeconds(1.0f);
+
         if (enemyHandController == null) yield break;
 
         currentSubstate = GameSubstate.Resolving;
-        UpdateInputStates();
-
         Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
+
+        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
+
+        // Optional: Notify PowerUpEffectManager here if you’ve connected it
+        // Example:
+        // powerUpEffectManager.OnRoundEnd(playerChoice, enemyChoice, result);
 
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log("Both sign animations finished.");
 
-        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
-
         currentSubstate = GameSubstate.Idle;
-        UpdateInputStates();
+        AllowPlayerInput();
     }
 
     private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
@@ -136,21 +145,29 @@ public class RockPaperScissorsGame : MonoBehaviour
         return result;
     }
 
-    private void UpdateInputStates()
+    private void DisableButtons()
     {
-        bool allow = (currentSubstate == GameSubstate.Idle);
+        rockButton.interactable = false;
+        paperButton.interactable = false;
+        scissorsButton.interactable = false;
+        Debug.Log("Buttons disabled.");
+    }
 
-        rockButton.interactable = allow;
-        paperButton.interactable = allow;
-        scissorsButton.interactable = allow;
-
-        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-        if (spawner != null)
+    private void AllowPlayerInput()
+    {
+        if (currentSubstate == GameSubstate.Idle && enemyHandController != null)
         {
-            spawner.SetAllCardsInteractable(allow);
-        }
+            rockButton.interactable = true;
+            paperButton.interactable = true;
+            scissorsButton.interactable = true;
+            Debug.Log("Buttons enabled.");
 
-        Debug.Log($"Input {(allow ? "ENABLED" : "DISABLED")} - Current Substate: {currentSubstate}");
+            PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+            if (spawner != null)
+            {
+                spawner.SetAllCardsInteractable(true);
+            }
+        }
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
@@ -170,7 +187,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
 
         currentSubstate = GameSubstate.Idle;
-        UpdateInputStates();
+        AllowPlayerInput();
     }
 
     private void OnPlayerSignAnimationFinished(HandController hand)
