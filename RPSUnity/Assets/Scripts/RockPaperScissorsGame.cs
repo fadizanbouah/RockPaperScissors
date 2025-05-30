@@ -1,7 +1,8 @@
+// Replace your current RockPaperScissorsGame.cs with this updated version:
+
 using UnityEngine;
 using TMPro;
 using System.Collections;
-using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         Idle,
         Selecting,
         Resolving,
+        HitAnimation,
+        Dying,
         Transitioning
     }
 
@@ -28,6 +31,8 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private bool playerSignDone = false;
     private bool enemySignDone = false;
+    private bool playerHitDone = true;
+    private bool enemyHitDone = true;
 
     public void InitializeGame(HandController player, HandController enemy)
     {
@@ -42,13 +47,21 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
+        // Unsubscribe old
         playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
+        enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
+        playerInstance.OnHitAnimationFinished -= OnPlayerHitAnimationFinished;
+        enemyHandController.OnHitAnimationFinished -= OnEnemyHitAnimationFinished;
 
+        // Subscribe new
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
+        enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
+        playerInstance.OnHitAnimationFinished += OnPlayerHitAnimationFinished;
+        enemyHandController.OnHitAnimationFinished += OnEnemyHitAnimationFinished;
 
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
@@ -100,6 +113,15 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("Both sign animations finished.");
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
+
+        currentSubstate = GameSubstate.HitAnimation;
+        UpdateInputStates();
+
+        // Reset hit animation flags depending on who took damage
+        playerHitDone = result != RoundResult.Lose;
+        enemyHitDone = result != RoundResult.Win;
+
+        yield return new WaitUntil(() => playerHitDone && enemyHitDone);
 
         currentSubstate = GameSubstate.Idle;
         UpdateInputStates();
@@ -159,6 +181,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
             enemyHandController.OnDeath -= OnEnemyDefeated;
+            enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
+            enemyHandController.OnHitAnimationFinished -= OnEnemyHitAnimationFinished;
         }
 
         enemyHandController = newEnemy;
@@ -167,21 +191,18 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
             enemyHandController.OnDeath += OnEnemyDefeated;
+            enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
+            enemyHandController.OnHitAnimationFinished += OnEnemyHitAnimationFinished;
         }
 
         currentSubstate = GameSubstate.Idle;
         UpdateInputStates();
     }
 
-    private void OnPlayerSignAnimationFinished(HandController hand)
-    {
-        playerSignDone = true;
-    }
-
-    private void OnEnemySignAnimationFinished(HandController hand)
-    {
-        enemySignDone = true;
-    }
+    private void OnPlayerSignAnimationFinished(HandController hand) => playerSignDone = true;
+    private void OnEnemySignAnimationFinished(HandController hand) => enemySignDone = true;
+    private void OnPlayerHitAnimationFinished(HandController hand) => playerHitDone = true;
+    private void OnEnemyHitAnimationFinished(HandController hand) => enemyHitDone = true;
 
     private void OnEnemyDefeated(HandController hand)
     {
@@ -193,6 +214,16 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             RunProgressManager.Instance.AddFavor(hand.favorReward);
             Debug.Log($"Gained {hand.favorReward} favor! Total: {RunProgressManager.Instance.currentFavor}");
+
+            currentSubstate = GameSubstate.Dying;
+            UpdateInputStates();
         }
+    }
+
+    private void OnEnemyDeathAnimationFinished(HandController hand)
+    {
+        Debug.Log($"Enemy death animation finished for {hand.name}");
+        currentSubstate = GameSubstate.Idle;
+        UpdateInputStates();
     }
 }
