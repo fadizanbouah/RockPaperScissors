@@ -106,8 +106,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Animator animator = GetComponentInChildren<Animator>();
         if (animator != null)
         {
-            Debug.Log("Animator trigger 'ActivePowerUpActivation' sent. Animator is: " + animator.name);
-            animator.SetTrigger("ActivePowerUpActivation");
+            Debug.Log("Animator trigger 'Activate' sent. Animator is: " + animator.name);
+            animator.SetTrigger("Activate");
         }
         else
         {
