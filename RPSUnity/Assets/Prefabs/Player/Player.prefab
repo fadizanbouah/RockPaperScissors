@@ -165,10 +165,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 200
+  baseMaxHealth: 10
   baseDamage: 30
-  health: 200
-  maxHealth: 200
+  health: 10
+  maxHealth: 10
   playerHitAnimation: {fileID: 4025989370840745165}
   handAnimator: {fileID: 4962887340843718462}
   handSpriteRenderer: {fileID: 7448360978216978555}
@@ -593,6 +593,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2570252648437362385}
   - component: {fileID: 4025989370840745165}
+  - component: {fileID: 6673495183894392540}
   m_Layer: 0
   m_Name: HandContainer
   m_TagString: Untagged
@@ -632,3 +633,16 @@ Animation:
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &6673495183894392540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7544561723870889125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804fa963458e6f8418e49aaa1d82082e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handController: {fileID: 8489421513858283839}

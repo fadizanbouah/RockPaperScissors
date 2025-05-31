@@ -48,6 +48,9 @@ public class HandController : MonoBehaviour
     public delegate void PlayerDiedHandler();
     public static event PlayerDiedHandler OnPlayerDied;
 
+    public delegate void HitAnimationFinishedHandler(HandController hand);
+    public event HitAnimationFinishedHandler HitAnimationFinished;
+
     void Start()
     {
         ApplyUpgrades();
@@ -247,6 +250,13 @@ public class HandController : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} death animation event triggered.");
         OnDeathAnimationFinished?.Invoke(this);
+    }
+
+    public void OnHitAnimationFinished()
+    {
+        if (isDying) return;
+        Debug.Log($"{gameObject.name} hit animation finished!");
+        HitAnimationFinished?.Invoke(this);
     }
 }
 

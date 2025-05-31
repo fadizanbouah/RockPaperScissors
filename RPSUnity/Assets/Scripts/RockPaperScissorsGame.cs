@@ -9,7 +9,8 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         Idle,
         Selecting,
-        Resolving,
+        Resolving_EvaluateOutcome,
+        Resolving_TakeDamage,
         Dying,
         EnemySpawn,
         Transitioning
@@ -24,17 +25,17 @@ public class RockPaperScissorsGame : MonoBehaviour
     public UnityEngine.UI.Button rockButton;
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
-    public GameObject roomClearedTextObject;  // Reference for RoomCleared text object
+    public GameObject roomClearedTextObject;
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
 
     private bool playerSignDone = false;
     private bool enemySignDone = false;
+    private bool playerHitDone = false;
+    private bool enemyHitDone = false;
 
     public void InitializeGame(HandController player, HandController enemy)
     {
-        Debug.Log("Initializing game...");
-
         playerInstance = player;
         enemyHandController = enemy;
 
@@ -44,17 +45,21 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
-        // Unsubscribe first to avoid duplicate listeners
+        // Unsubscribe to prevent duplicate listeners
         playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
+        playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
+        enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
 
         // Subscribe to necessary events
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
+        playerInstance.HitAnimationFinished += OnPlayerHitAnimationFinished;
+        enemyHandController.HitAnimationFinished += OnEnemyHitAnimationFinished;
 
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
@@ -79,9 +84,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
         if (spawner != null)
-        {
             spawner.SetAllCardsInteractable(false);
-        }
 
         playerSignDone = false;
         enemySignDone = false;
@@ -98,62 +101,84 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
-        //yield return new WaitForSeconds(1.0f); <- DON'T DELETE THIS PLEASE
-
-        if (enemyHandController == null) yield break;
-
-        currentSubstate = GameSubstate.Resolving;
-        Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
-
+        currentSubstate = GameSubstate.Resolving_EvaluateOutcome;
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
-        Debug.Log("Both sign animations finished.");
+        Debug.Log($"[GameSubstate] Resolving_EvaluateOutcome: {playerChoice} vs {enemyChoice}");
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
-        yield return new WaitForSeconds(0.5f);
+        currentSubstate = GameSubstate.Resolving_TakeDamage;
+        yield return StartCoroutine(HandleTakeDamage(result, playerChoice, enemyChoice));
+    }
+
+    private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
+    {
+        if (playerChoice == enemyChoice)
+        {
+            resultText.text = "It's a Draw!";
+            return RoundResult.Draw;
+        }
+        else if ((playerChoice == "Rock" && enemyChoice == "Scissors") ||
+                 (playerChoice == "Paper" && enemyChoice == "Rock") ||
+                 (playerChoice == "Scissors" && enemyChoice == "Paper"))
+        {
+            resultText.text = "You Win!";
+            return RoundResult.Win;
+        }
+        else
+        {
+            resultText.text = "You Lose!";
+            return RoundResult.Lose;
+        }
+    }
+
+    private IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice)
+    {
+        Debug.Log("[GameSubstate] Resolving_TakeDamage: Applying damage...");
+
+        playerHitDone = true;
+        enemyHitDone = true;
+
+        if (result == RoundResult.Win)
+        {
+            int damage = playerInstance.GetEffectiveDamage(playerChoice);
+            enemyHitDone = false;
+            enemyHandController.TakeDamage(damage);
+            Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
+        }
+        else if (result == RoundResult.Lose)
+        {
+            int damage = enemyHandController.GetEffectiveDamage(enemyChoice);
+            playerHitDone = false;
+            playerInstance.TakeDamage(damage);
+            Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
+        }
+        else
+        {
+            currentSubstate = GameSubstate.Idle;
+            AllowPlayerInput();
+            yield break;
+        }
+
+        yield return new WaitUntil(() => playerHitDone && enemyHitDone);
+        Debug.Log("Both hit animations finished.");
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
             currentSubstate = GameSubstate.Dying;
             Debug.Log("Enemy defeated. Entering DYING state...");
         }
+        else if (playerInstance != null && playerInstance.CurrentHealth <= 0)
+        {
+            currentSubstate = GameSubstate.Dying;
+            Debug.Log("Player defeated. Entering DYING state...");
+        }
         else
         {
             currentSubstate = GameSubstate.Idle;
-            Debug.Log("[GameSubstate] No one died. Returning to IDLE state.");
+            Debug.Log("[GameSubstate] Returning to IDLE state.");
             AllowPlayerInput();
         }
-    }
-
-    private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
-    {
-        RoundResult result;
-
-        if (playerChoice == enemyChoice)
-        {
-            result = RoundResult.Draw;
-            resultText.text = "It's a Draw!";
-        }
-        else if ((playerChoice == "Rock" && enemyChoice == "Scissors") ||
-                 (playerChoice == "Paper" && enemyChoice == "Rock") ||
-                 (playerChoice == "Scissors" && enemyChoice == "Paper"))
-        {
-            int damage = playerInstance.GetEffectiveDamage(playerChoice);
-            result = RoundResult.Win;
-            resultText.text = "You Win!";
-            enemyHandController?.TakeDamage(damage);
-            Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
-        }
-        else
-        {
-            int damage = enemyHandController.GetEffectiveDamage(enemyChoice);
-            result = RoundResult.Lose;
-            resultText.text = "You Lose!";
-            playerInstance.TakeDamage(damage);
-            Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
-        }
-
-        return result;
     }
 
     private void DisableButtons()
@@ -161,7 +186,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         rockButton.interactable = false;
         paperButton.interactable = false;
         scissorsButton.interactable = false;
-        Debug.Log("Buttons disabled.");
     }
 
     private void AllowPlayerInput()
@@ -171,13 +195,10 @@ public class RockPaperScissorsGame : MonoBehaviour
             rockButton.interactable = true;
             paperButton.interactable = true;
             scissorsButton.interactable = true;
-            Debug.Log("Buttons enabled.");
 
             PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
             if (spawner != null)
-            {
                 spawner.SetAllCardsInteractable(true);
-            }
         }
     }
 
@@ -203,15 +224,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("[GameSubstate] New enemy spawned. Entering ENEMY SPAWN state...");
     }
 
-    private void OnPlayerSignAnimationFinished(HandController hand)
-    {
-        playerSignDone = true;
-    }
-
-    private void OnEnemySignAnimationFinished(HandController hand)
-    {
-        enemySignDone = true;
-    }
+    private void OnPlayerSignAnimationFinished(HandController hand) => playerSignDone = true;
+    private void OnEnemySignAnimationFinished(HandController hand) => enemySignDone = true;
 
     private void OnEnemyDefeated(HandController hand)
     {
@@ -219,10 +233,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             PlayerProgressData.Instance.coins += hand.coinReward;
             PlayerProgressData.Save();
-            Debug.Log($"Gained {hand.coinReward} coins! Total: {PlayerProgressData.Instance.coins}");
-
             RunProgressManager.Instance.AddFavor(hand.favorReward);
-            Debug.Log($"Gained {hand.favorReward} favor! Total: {RunProgressManager.Instance.currentFavor}");
         }
     }
 
@@ -230,29 +241,34 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (currentSubstate == GameSubstate.Dying)
         {
-            Debug.Log("Enemy death animation completed. Entering ENEMYSPAWN state...");
             currentSubstate = GameSubstate.EnemySpawn;
-
-            // Listen for when the next enemy is spawned
             RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
         }
     }
 
     private void OnEnemySpawned()
     {
-        Debug.Log("EnemySpawn complete. Returning to IDLE and enabling input.");
         currentSubstate = GameSubstate.Idle;
         AllowPlayerInput();
-
-        // Important: Unsubscribe so we don't trigger this multiple times
         RoomManager.Instance.OnEnemySpawned -= OnEnemySpawned;
     }
 
     private IEnumerator WaitAndEnableInputAfterEnemySpawn()
     {
-        yield return new WaitForSeconds(0.1f); // Buffer in case new enemy takes a frame to initialize
-        Debug.Log("[GameSubstate] Returning to IDLE after enemy spawn. Enabling input.");
+        yield return new WaitForSeconds(0.1f);
         currentSubstate = GameSubstate.Idle;
         AllowPlayerInput();
+    }
+
+    private void OnPlayerHitAnimationFinished(HandController hand)
+    {
+        playerHitDone = true;
+        Debug.Log("[Hit] Player hit animation finished.");
+    }
+
+    private void OnEnemyHitAnimationFinished(HandController hand)
+    {
+        enemyHitDone = true;
+        Debug.Log("[Hit] Enemy hit animation finished.");
     }
 }

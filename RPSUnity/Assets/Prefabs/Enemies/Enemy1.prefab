@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5081159128653923750}
   - component: {fileID: 6542035435138104612}
+  - component: {fileID: 2631244065141786496}
   m_Layer: 0
   m_Name: EnemyHandContainer
   m_TagString: Untagged
@@ -49,6 +50,19 @@ Animation:
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &2631244065141786496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2863953019351338761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804fa963458e6f8418e49aaa1d82082e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handController: {fileID: -3137686536588065982}
 --- !u!1 &4555752092877891789
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,11 +556,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseMaxHealth: 30
+  baseDamage: 10
   health: 30
   maxHealth: 30
-  rockDamage: 10
-  paperDamage: 10
-  scissorsDamage: 10
   playerHitAnimation: {fileID: 6542035435138104612}
   handAnimator: {fileID: 2991300258156510983}
   handSpriteRenderer: {fileID: 7813983361860719102}
@@ -556,6 +569,8 @@ MonoBehaviour:
   healthBar: {fileID: 4552222775822232691}
   isPlayer: 0
   combatTextPrefab: {fileID: 6277306413349539318, guid: aa7b1b0d83581574c8c2d36650551b7e, type: 3}
+  coinReward: 5
+  favorReward: 3
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
