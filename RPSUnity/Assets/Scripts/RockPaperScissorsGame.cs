@@ -10,6 +10,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         Idle,
         Selecting,
         Resolving,
+        Dying,
         Transitioning
     }
 
@@ -42,13 +43,17 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
+        // Unsubscribe first to avoid duplicate listeners
         playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
+        enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
 
+        // Subscribe to necessary events
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
+        enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
 
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
@@ -94,24 +99,35 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
-        yield return new WaitForSeconds(1.0f);
+        //yield return new WaitForSeconds(1.0f); <- DON'T DELETE THIS PLEASE
 
         if (enemyHandController == null) yield break;
 
         currentSubstate = GameSubstate.Resolving;
         Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
 
-        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
-
-        // Optional: Notify PowerUpEffectManager here if you’ve connected it
-        // Example:
-        // powerUpEffectManager.OnRoundEnd(playerChoice, enemyChoice, result);
-
+        // Wait for both sign animations to finish before resolving the outcome
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log("Both sign animations finished.");
 
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
+        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
+
+        // Wait briefly to allow hit reactions
+        yield return new WaitForSeconds(0.5f);
+
+        // Check if enemy is dead
+        if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
+        {
+            currentSubstate = GameSubstate.Dying;
+            Debug.Log("Enemy defeated. Entering DYING state...");
+            // Do not allow input yet — will resume in OnEnemyDeathAnimationFinished
+        }
+        else
+        {
+            currentSubstate = GameSubstate.Idle;
+            Debug.Log("[GameSubstate] No one died. Returning to IDLE state.");
+            AllowPlayerInput();
+        }
     }
 
     private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
@@ -210,6 +226,16 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             RunProgressManager.Instance.AddFavor(hand.favorReward);
             Debug.Log($"Gained {hand.favorReward} favor! Total: {RunProgressManager.Instance.currentFavor}");
+        }
+    }
+
+    private void OnEnemyDeathAnimationFinished(HandController hand)
+    {
+        if (currentSubstate == GameSubstate.Dying)
+        {
+            Debug.Log("Enemy death animation completed. Returning to Idle.");
+            currentSubstate = GameSubstate.Idle;
+            AllowPlayerInput();
         }
     }
 }

@@ -12,6 +12,8 @@ public class HandController : MonoBehaviour
     public int health;
     public int maxHealth;
 
+    public int CurrentHealth => health;
+
     public Animation playerHitAnimation;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
@@ -239,6 +241,12 @@ public class HandController : MonoBehaviour
         if (isDying) return;
         Debug.Log($"{gameObject.name} sign animation finished!");
         SignAnimationFinished?.Invoke(this);
+    }
+
+    public void TriggerDeathAnimationFinished()
+    {
+        Debug.Log($"{gameObject.name} death animation event triggered.");
+        OnDeathAnimationFinished?.Invoke(this);
     }
 }
 

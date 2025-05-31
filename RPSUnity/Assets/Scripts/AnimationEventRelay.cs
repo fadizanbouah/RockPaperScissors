@@ -23,4 +23,13 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnSignAnimationFinished();
         }
     }
+
+    // Called by animation events at the end of the Die animation
+    public void TriggerDeathAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.TriggerDeathAnimationFinished();
+        }
+    }
 }
