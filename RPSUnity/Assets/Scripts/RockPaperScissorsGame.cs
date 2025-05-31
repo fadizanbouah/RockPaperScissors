@@ -11,6 +11,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         Selecting,
         Resolving,
         Dying,
+        EnemySpawn,
         Transitioning
     }
 
@@ -58,10 +59,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
         resultText.text = "";
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
-
-        Debug.Log("Game successfully initialized.");
+        currentSubstate = GameSubstate.EnemySpawn;
+        Debug.Log("[GameSubstate] Entering ENEMY SPAWN state.");
     }
 
     public void StartGame()
@@ -106,21 +105,17 @@ public class RockPaperScissorsGame : MonoBehaviour
         currentSubstate = GameSubstate.Resolving;
         Debug.Log($"Resolving round: {playerChoice} vs {enemyChoice}");
 
-        // Wait for both sign animations to finish before resolving the outcome
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log("Both sign animations finished.");
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
-        // Wait briefly to allow hit reactions
         yield return new WaitForSeconds(0.5f);
 
-        // Check if enemy is dead
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
             currentSubstate = GameSubstate.Dying;
             Debug.Log("Enemy defeated. Entering DYING state...");
-            // Do not allow input yet — will resume in OnEnemyDeathAnimationFinished
         }
         else
         {
@@ -192,6 +187,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
             enemyHandController.OnDeath -= OnEnemyDefeated;
+            enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
         }
 
         enemyHandController = newEnemy;
@@ -200,10 +196,11 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
             enemyHandController.OnDeath += OnEnemyDefeated;
+            enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
         }
 
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
+        currentSubstate = GameSubstate.EnemySpawn;
+        Debug.Log("[GameSubstate] New enemy spawned. Entering ENEMY SPAWN state...");
     }
 
     private void OnPlayerSignAnimationFinished(HandController hand)
@@ -233,9 +230,29 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (currentSubstate == GameSubstate.Dying)
         {
-            Debug.Log("Enemy death animation completed. Returning to Idle.");
-            currentSubstate = GameSubstate.Idle;
-            AllowPlayerInput();
+            Debug.Log("Enemy death animation completed. Entering ENEMYSPAWN state...");
+            currentSubstate = GameSubstate.EnemySpawn;
+
+            // Listen for when the next enemy is spawned
+            RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
         }
+    }
+
+    private void OnEnemySpawned()
+    {
+        Debug.Log("EnemySpawn complete. Returning to IDLE and enabling input.");
+        currentSubstate = GameSubstate.Idle;
+        AllowPlayerInput();
+
+        // Important: Unsubscribe so we don't trigger this multiple times
+        RoomManager.Instance.OnEnemySpawned -= OnEnemySpawned;
+    }
+
+    private IEnumerator WaitAndEnableInputAfterEnemySpawn()
+    {
+        yield return new WaitForSeconds(0.1f); // Buffer in case new enemy takes a frame to initialize
+        Debug.Log("[GameSubstate] Returning to IDLE after enemy spawn. Enabling input.");
+        currentSubstate = GameSubstate.Idle;
+        AllowPlayerInput();
     }
 }

@@ -13,6 +13,8 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private GameObject roomClearedTextObject;
     [SerializeField] private GameObject powerUpPanelObject;
 
+    public event System.Action OnEnemySpawned;
+
     private int currentPoolIndex = 0; // Track current pool in sequence
     private RoomData currentRoom;
     private int currentEnemyIndex = 0;
@@ -107,6 +109,9 @@ public class RoomManager : MonoBehaviour
 
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
+
+            // Notify that the enemy has been fully spawned
+            OnEnemySpawned?.Invoke();
         }
         else
         {
