@@ -81,6 +81,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (currentSubstate != GameSubstate.Idle) return;
 
         currentSubstate = GameSubstate.Selecting;
+        Debug.Log("[GameSubstate] Entering SELECTING state.");
+
         DisableButtons();
 
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
@@ -103,12 +105,16 @@ public class RockPaperScissorsGame : MonoBehaviour
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
         currentSubstate = GameSubstate.Resolving_EvaluateOutcome;
+        Debug.Log("[GameSubstate] Entering RESOLVING_EVALUATEOUTCOME state.");
+
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
         Debug.Log($"[GameSubstate] Resolving_EvaluateOutcome: {playerChoice} vs {enemyChoice}");
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
         currentSubstate = GameSubstate.Resolving_TakeDamage;
+        Debug.Log("[GameSubstate] Entering RESOLVING_TAKEDAMAGE state.");
+
         yield return StartCoroutine(HandleTakeDamage(result, playerChoice, enemyChoice));
     }
 
@@ -166,12 +172,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
             currentSubstate = GameSubstate.Dying;
-            Debug.Log("Enemy defeated. Entering DYING state...");
+            Debug.Log("[GameSubstate] Entering DYING state (enemy dead)...");
         }
         else if (playerInstance != null && playerInstance.CurrentHealth <= 0)
         {
             currentSubstate = GameSubstate.Dying;
-            Debug.Log("Player defeated. Entering DYING state...");
+            Debug.Log("[GameSubstate] Entering DYING state (player dead)...");
         }
         else
         {
@@ -203,8 +209,8 @@ public class RockPaperScissorsGame : MonoBehaviour
     private void EnterIdleState()
     {
         currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
         Debug.Log("[GameSubstate] Entering IDLE state.");
+        AllowPlayerInput();
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
@@ -246,6 +252,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         if (currentSubstate == GameSubstate.Dying)
         {
             currentSubstate = GameSubstate.EnemySpawn;
+            Debug.Log("[GameSubstate] Entering ENEMY SPAWN state (after enemy death).");
             RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
         }
     }
@@ -254,7 +261,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (currentSubstate == GameSubstate.Dying)
         {
-            Debug.Log("[Dying State] Player death animation finished. Returning to main menu...");
+            Debug.Log("[GameSubstate] Player death animation finished. Returning to main menu...");
             StartCoroutine(GameStateManager.Instance.FadeToMainMenu());
         }
     }
