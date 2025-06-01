@@ -156,7 +156,7 @@ public class GameStateManager : MonoBehaviour
         StartCoroutine(FadeToMainMenu());
     }
 
-    private IEnumerator FadeToMainMenu()
+    public IEnumerator FadeToMainMenu()
     {
         ChangeState(GameState.Transition);
 

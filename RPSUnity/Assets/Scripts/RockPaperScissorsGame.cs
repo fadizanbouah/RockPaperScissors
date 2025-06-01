@@ -50,6 +50,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
+        playerInstance.OnDeathAnimationFinished -= OnPlayerDeathAnimationFinished; // Unsubscribe player death
         playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
         enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
 
@@ -58,6 +59,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
+        playerInstance.OnDeathAnimationFinished += OnPlayerDeathAnimationFinished; // Subscribe player death
         playerInstance.HitAnimationFinished += OnPlayerHitAnimationFinished;
         enemyHandController.HitAnimationFinished += OnEnemyHitAnimationFinished;
 
@@ -243,6 +245,15 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             currentSubstate = GameSubstate.EnemySpawn;
             RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
+        }
+    }
+
+    private void OnPlayerDeathAnimationFinished(HandController hand)
+    {
+        if (currentSubstate == GameSubstate.Dying)
+        {
+            Debug.Log("[Dying State] Player death animation finished. Returning to main menu...");
+            StartCoroutine(GameStateManager.Instance.FadeToMainMenu());
         }
     }
 
