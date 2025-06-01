@@ -50,7 +50,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
-        playerInstance.OnDeathAnimationFinished -= OnPlayerDeathAnimationFinished; // Unsubscribe player death
+        playerInstance.OnDeathAnimationFinished -= OnPlayerDeathAnimationFinished;
         playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
         enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
 
@@ -59,7 +59,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
         enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
-        playerInstance.OnDeathAnimationFinished += OnPlayerDeathAnimationFinished; // Subscribe player death
+        playerInstance.OnDeathAnimationFinished += OnPlayerDeathAnimationFinished;
         playerInstance.HitAnimationFinished += OnPlayerHitAnimationFinished;
         enemyHandController.HitAnimationFinished += OnEnemyHitAnimationFinished;
 
@@ -72,8 +72,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     public void StartGame()
     {
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
+        EnterIdleState();
         Debug.Log("Game started!");
     }
 
@@ -157,8 +156,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
-            currentSubstate = GameSubstate.Idle;
-            AllowPlayerInput();
+            EnterIdleState();
             yield break;
         }
 
@@ -177,9 +175,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
-            currentSubstate = GameSubstate.Idle;
-            Debug.Log("[GameSubstate] Returning to IDLE state.");
-            AllowPlayerInput();
+            EnterIdleState();
         }
     }
 
@@ -204,6 +200,13 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
     }
 
+    private void EnterIdleState()
+    {
+        currentSubstate = GameSubstate.Idle;
+        AllowPlayerInput();
+        Debug.Log("[GameSubstate] Entering IDLE state.");
+    }
+
     public void UpdateEnemyReference(HandController newEnemy)
     {
         if (enemyHandController != null)
@@ -222,8 +225,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
         }
 
-        currentSubstate = GameSubstate.EnemySpawn;
-        Debug.Log("[GameSubstate] New enemy spawned. Entering ENEMY SPAWN state...");
+        EnterIdleState();
     }
 
     private void OnPlayerSignAnimationFinished(HandController hand) => playerSignDone = true;
@@ -259,16 +261,8 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private void OnEnemySpawned()
     {
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
         RoomManager.Instance.OnEnemySpawned -= OnEnemySpawned;
-    }
-
-    private IEnumerator WaitAndEnableInputAfterEnemySpawn()
-    {
-        yield return new WaitForSeconds(0.1f);
-        currentSubstate = GameSubstate.Idle;
-        AllowPlayerInput();
+        EnterIdleState();
     }
 
     private void OnPlayerHitAnimationFinished(HandController hand)
