@@ -191,14 +191,11 @@ public class GameStateManager : MonoBehaviour
         if (canvas != null)
         {
             canvas.SetActive(isVisible);
-            if (isVisible)
-            {
-                Debug.Log("GameplayCanvas is now VISIBLE");
-            }
+            Debug.Log($"[Canvas Visibility] {canvas.name} active = {isVisible} from GameState: {currentState}");
         }
         else
         {
-            Debug.LogError("GameplayCanvas reference is missing in GameStateManager!");
+            Debug.LogError("Canvas reference is missing in GameStateManager!");
         }
     }
 
