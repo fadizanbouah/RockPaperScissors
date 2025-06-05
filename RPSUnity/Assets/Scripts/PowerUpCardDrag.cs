@@ -80,6 +80,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
                 DisableInteraction();
                 BeginActivationSequence(zone.activationAnimationTarget.position);
+
+                // Trigger transition to PowerUpActivation substate
+                zone.BeginPowerUpActivation(gameObject);
                 return;
             }
         }

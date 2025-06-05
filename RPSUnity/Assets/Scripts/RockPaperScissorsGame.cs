@@ -5,12 +5,15 @@ using System.Collections.Generic;
 
 public class RockPaperScissorsGame : MonoBehaviour
 {
+    public static RockPaperScissorsGame Instance { get; private set; }
+
     private enum GameSubstate
     {
         Idle,
         Selecting,
         Resolving_EvaluateOutcome,
         Resolving_TakeDamage,
+        PowerUpActivation,
         Dying,
         EnemySpawn,
         Transitioning
@@ -33,6 +36,16 @@ public class RockPaperScissorsGame : MonoBehaviour
     private bool enemySignDone = false;
     private bool playerHitDone = false;
     private bool enemyHitDone = false;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     public void InitializeGame(HandController player, HandController enemy)
     {
@@ -213,6 +226,33 @@ public class RockPaperScissorsGame : MonoBehaviour
         AllowPlayerInput();
     }
 
+    public void EnterPowerUpActivationState(System.Action onAnimationComplete)
+    {
+        currentSubstate = GameSubstate.PowerUpActivation;
+        Debug.Log("[GameSubstate] Entering POWERUP ACTIVATION state.");
+
+        DisableButtons();
+
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+            spawner.SetAllCardsInteractable(false);
+
+        StartCoroutine(HandlePowerUpActivation(onAnimationComplete));
+    }
+
+    private IEnumerator HandlePowerUpActivation(System.Action onAnimationComplete)
+    {
+        Debug.Log("[GameSubstate] HandlePowerUpActivation: Waiting for power-up animation to finish...");
+
+        bool animationDone = false;
+        onAnimationComplete += () => animationDone = true;
+
+        yield return new WaitUntil(() => animationDone);
+
+        Debug.Log("[GameSubstate] Power-up animation finished. Returning to Idle.");
+        EnterIdleState();
+    }
+
     public void UpdateEnemyReference(HandController newEnemy)
     {
         if (enemyHandController != null)
@@ -282,5 +322,18 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         enemyHitDone = true;
         Debug.Log("[Hit] Enemy hit animation finished.");
+    }
+
+    public void OnPowerUpActivationComplete()
+    {
+        Debug.Log("[PowerUp] Activation animation complete.");
+        // This callback is called by DestroyOnAnimationEvent when the card's animation ends.
+
+        EnterIdleState();
+    }
+
+    public bool IsInPowerUpActivationSubstate()
+    {
+        return currentSubstate == GameSubstate.PowerUpActivation;
     }
 }
