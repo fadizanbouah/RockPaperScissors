@@ -26,6 +26,9 @@ public class CardActivationZone : MonoBehaviour
     public void BeginPowerUpActivation(GameObject cardObject)
     {
         Debug.Log("[CardActivationZone] Card dropped. Beginning power-up activation.");
-        RockPaperScissorsGame.Instance.EnterPowerUpActivationState(() => RockPaperScissorsGame.Instance.OnPowerUpActivationComplete());
+        RockPaperScissorsGame.Instance.EnterPowerUpActivationState(
+            () => RockPaperScissorsGame.Instance.OnPowerUpActivationComplete(),
+            cardObject
+        );
     }
 }

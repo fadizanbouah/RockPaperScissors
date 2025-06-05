@@ -117,19 +117,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             Debug.LogWarning("Animator not found on PowerUpCard or its children!");
         }
 
-        // Apply the power-up effect here on drag-drop activation
-        PowerUpData powerUp = cardDisplay?.GetPowerUpData();
-        if (powerUp != null)
-        {
-            RunProgressManager.Instance.ApplyPowerUpEffect(powerUp);
-            Debug.Log($"[PowerUpCardDrag] Applied active power-up effect: {powerUp.powerUpName}");
-        }
-
-        // Remove visual card's data from acquired list
-        if (powerUp != null)
-        {
-            RunProgressManager.Instance.RemoveAcquiredPowerUp(powerUp);
-        }
+        // Logic for applying power-up effect has been moved to RockPaperScissorsGame (PowerUpActivation substate)
     }
 
     private IEnumerator SmoothReturnToOriginalPosition()

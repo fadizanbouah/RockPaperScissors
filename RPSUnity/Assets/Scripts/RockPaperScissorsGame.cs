@@ -7,6 +7,9 @@ public class RockPaperScissorsGame : MonoBehaviour
 {
     public static RockPaperScissorsGame Instance { get; private set; }
 
+    private GameObject activePowerUpCardGO;
+    private System.Action onPowerUpAnimationDoneCallback;
+
     private enum GameSubstate
     {
         Idle,
@@ -223,29 +226,52 @@ public class RockPaperScissorsGame : MonoBehaviour
         AllowPlayerInput();
     }
 
-    public void EnterPowerUpActivationState(System.Action onAnimationComplete)
+    public void EnterPowerUpActivationState(System.Action unusedCallback, GameObject cardGO)
     {
         SetSubstate(GameSubstate.PowerUpActivation);
-
         DisableButtons();
 
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
         if (spawner != null)
             spawner.SetAllCardsInteractable(false);
 
-        StartCoroutine(HandlePowerUpActivation(onAnimationComplete));
+        activePowerUpCardGO = cardGO;
+
+        // Start the coroutine and store the internal callback to trigger it later
+        StartCoroutine(HandlePowerUpActivation());
     }
 
-    private IEnumerator HandlePowerUpActivation(System.Action onAnimationComplete)
+    private IEnumerator HandlePowerUpActivation()
     {
         Debug.Log("[GameSubstate] HandlePowerUpActivation: Waiting for power-up animation to finish...");
 
         bool animationDone = false;
-        onAnimationComplete += () => animationDone = true;
+        onPowerUpAnimationDoneCallback = () => animationDone = true;
 
         yield return new WaitUntil(() => animationDone);
 
-        Debug.Log("[GameSubstate] Power-up animation finished. Returning to Idle.");
+        Debug.Log("[GameSubstate] Power-up animation finished. Applying effect...");
+
+        if (activePowerUpCardGO != null)
+        {
+            PowerUpCardDisplay cardDisplay = activePowerUpCardGO.GetComponent<PowerUpCardDisplay>();
+            PowerUpData data = cardDisplay?.GetPowerUpData();
+
+            if (data != null)
+            {
+                RunProgressManager.Instance.ApplyPowerUpEffect(data);
+                RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
+                Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
+            }
+            else
+            {
+                Debug.LogWarning("[PowerUp] No PowerUpData found on activated card!");
+            }
+
+            activePowerUpCardGO = null;
+        }
+
+        Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
         EnterIdleState();
     }
 
@@ -322,9 +348,16 @@ public class RockPaperScissorsGame : MonoBehaviour
     public void OnPowerUpActivationComplete()
     {
         Debug.Log("[PowerUp] Activation animation complete.");
-        // This callback is called by DestroyOnAnimationEvent when the card's animation ends.
 
-        EnterIdleState();
+        if (onPowerUpAnimationDoneCallback != null)
+        {
+            onPowerUpAnimationDoneCallback.Invoke();
+            onPowerUpAnimationDoneCallback = null;
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUp] No callback registered for animation completion.");
+        }
     }
 
     public bool IsInPowerUpActivationSubstate()
