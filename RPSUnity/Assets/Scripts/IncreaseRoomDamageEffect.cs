@@ -2,20 +2,21 @@ using UnityEngine;
 
 public class IncreaseRoomDamageEffect : PowerUpEffectBase
 {
-    private int bonusDamage;
+    private float bonusPercentage;
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        bonusDamage = Mathf.RoundToInt(data.value);
-        Debug.Log($"[IncreaseRoomDamageEffect] Initialized: +{bonusDamage} damage for the current room.");
+        bonusPercentage = data.value / 100f; // e.g. 10 becomes 0.10 (10% boost)
+        Debug.Log($"[IncreaseRoomDamageEffect] Initialized: +{data.value}% damage for the current room.");
     }
 
     public override void ModifyDamage(ref int damage, string signUsed)
     {
         Debug.Log("[IncreaseRoomDamageEffect] ModifyDamage called");
-        damage += bonusDamage;
-        Debug.Log($"[IncreaseRoomDamageEffect] Applied bonus: +{bonusDamage} (New damage: {damage})");
+        int bonus = Mathf.RoundToInt(damage * bonusPercentage);
+        damage += bonus;
+        Debug.Log($"[IncreaseRoomDamageEffect] Applied {bonusPercentage * 100}% bonus: +{bonus} (New damage: {damage})");
     }
 
     public override void OnRoomStart()

@@ -3,29 +3,33 @@ using UnityEngine;
 public class IncreaseDamageNextHitEffect : PowerUpEffectBase
 {
     private bool used = false;
+    private float bonusPercentage;
+
+    public override void Initialize(PowerUpData data, HandController player, HandController enemy)
+    {
+        base.Initialize(data, player, enemy);
+        bonusPercentage = data.value / 100f; // Convert to decimal percentage, e.g., 20 -> 0.2 (20%)
+        Debug.Log($"[IncreaseDamageNextHitEffect] Initialized with {data.value}% bonus damage for next hit.");
+    }
 
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
         if (used || result != RoundResult.Win)
             return;
 
-        int bonusAmount = Mathf.RoundToInt(sourceData.value);
-        player.ApplyTemporaryDamageBoost(bonusAmount);
-
+        // We keep this for compatibility, but no flat bonus applied here anymore
         used = true;
-
-        Debug.Log($"[Effect] Applied {bonusAmount} bonus damage to next hit (one-time use) ({sourceData.powerUpName})");
+        Debug.Log($"[IncreaseDamageNextHitEffect] Marked as used after round win ({sourceData.powerUpName})");
     }
 
     public override void ModifyDamage(ref int damage, string signUsed)
     {
-        Debug.Log($"[IncreaseDamageNextHitEffect] Modifying damage. Bonus applied: {sourceData.value}. Player is null? {player == null}");
-
         if (used) return;
 
-        int bonus = Mathf.RoundToInt(sourceData.value);
+        int bonus = Mathf.RoundToInt(damage * bonusPercentage);
         damage += bonus;
-        Debug.Log($"[Effect] Applied {bonus} bonus damage (NextHit).");
+
+        Debug.Log($"[IncreaseDamageNextHitEffect] Applied {bonusPercentage * 100}% bonus damage: +{bonus} (New damage: {damage})");
 
         used = true;
     }

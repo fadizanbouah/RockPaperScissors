@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ActiveMockCard4
   m_EditorClassIdentifier: 
   powerUpName: Increase Room Damage 2
-  description: +10 dmg until room ends
+  description: +100% dmg until room ends
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 4387357542805192869, guid: fc6bbea20e183954b954c97a305eecfe, type: 3}
-  value: 10
+  value: 100
