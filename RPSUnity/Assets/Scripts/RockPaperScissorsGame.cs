@@ -79,8 +79,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
         resultText.text = "";
-        currentSubstate = GameSubstate.EnemySpawn;
-        Debug.Log("[GameSubstate] Entering ENEMY SPAWN state.");
+        SetSubstate(GameSubstate.EnemySpawn);
     }
 
     public void StartGame()
@@ -89,12 +88,17 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("Game started!");
     }
 
+    private void SetSubstate(GameSubstate newSubstate)
+    {
+        currentSubstate = newSubstate;
+        Debug.Log($"[GAMESUBSTATE] Entering {newSubstate.ToString().ToUpper()} state.");
+    }
+
     public void PlayerSelect(string playerChoice)
     {
         if (currentSubstate != GameSubstate.Idle) return;
 
-        currentSubstate = GameSubstate.Selecting;
-        Debug.Log("[GameSubstate] Entering SELECTING state.");
+        SetSubstate(GameSubstate.Selecting);
 
         DisableButtons();
 
@@ -117,16 +121,13 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
-        currentSubstate = GameSubstate.Resolving_EvaluateOutcome;
-        Debug.Log("[GameSubstate] Entering RESOLVING_EVALUATEOUTCOME state.");
+        SetSubstate(GameSubstate.Resolving_EvaluateOutcome);
 
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
-        Debug.Log($"[GameSubstate] Resolving_EvaluateOutcome: {playerChoice} vs {enemyChoice}");
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
-        currentSubstate = GameSubstate.Resolving_TakeDamage;
-        Debug.Log("[GameSubstate] Entering RESOLVING_TAKEDAMAGE state.");
+        SetSubstate(GameSubstate.Resolving_TakeDamage);
 
         yield return StartCoroutine(HandleTakeDamage(result, playerChoice, enemyChoice));
     }
@@ -154,7 +155,6 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice)
     {
-        Debug.Log("[GameSubstate] Resolving_TakeDamage: Applying damage...");
 
         playerHitDone = true;
         enemyHitDone = true;
@@ -184,13 +184,11 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
-            currentSubstate = GameSubstate.Dying;
-            Debug.Log("[GameSubstate] Entering DYING state (enemy dead)...");
+            SetSubstate(GameSubstate.Dying);
         }
         else if (playerInstance != null && playerInstance.CurrentHealth <= 0)
         {
-            currentSubstate = GameSubstate.Dying;
-            Debug.Log("[GameSubstate] Entering DYING state (player dead)...");
+            SetSubstate(GameSubstate.Dying);
         }
         else
         {
@@ -221,15 +219,13 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private void EnterIdleState()
     {
-        currentSubstate = GameSubstate.Idle;
-        Debug.Log("[GameSubstate] Entering IDLE state.");
+        SetSubstate(GameSubstate.Idle);
         AllowPlayerInput();
     }
 
     public void EnterPowerUpActivationState(System.Action onAnimationComplete)
     {
-        currentSubstate = GameSubstate.PowerUpActivation;
-        Debug.Log("[GameSubstate] Entering POWERUP ACTIVATION state.");
+        SetSubstate(GameSubstate.PowerUpActivation);
 
         DisableButtons();
 
@@ -291,8 +287,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (currentSubstate == GameSubstate.Dying)
         {
-            currentSubstate = GameSubstate.EnemySpawn;
-            Debug.Log("[GameSubstate] Entering ENEMY SPAWN state (after enemy death).");
+            SetSubstate(GameSubstate.EnemySpawn);
             RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
         }
     }
