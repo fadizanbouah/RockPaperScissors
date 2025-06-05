@@ -12,25 +12,23 @@ public class IncreaseDamageNextHitEffect : PowerUpEffectBase
         Debug.Log($"[IncreaseDamageNextHitEffect] Initialized with {data.value}% bonus damage for next hit.");
     }
 
+    public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
+    {
+        if (used) return;
+
+        multiplier += bonusPercentage;
+        Debug.Log($"[IncreaseDamageNextHitEffect] Added {bonusPercentage * 100}% to multiplier. Total multiplier now: {multiplier}");
+
+        used = true;
+    }
+
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
         if (used || result != RoundResult.Win)
             return;
 
-        // We keep this for compatibility, but no flat bonus applied here anymore
+        // This effect is now fully handled via ModifyDamageMultiplier
         used = true;
         Debug.Log($"[IncreaseDamageNextHitEffect] Marked as used after round win ({sourceData.powerUpName})");
-    }
-
-    public override void ModifyDamage(ref int damage, string signUsed)
-    {
-        if (used) return;
-
-        int bonus = Mathf.RoundToInt(damage * bonusPercentage);
-        damage += bonus;
-
-        Debug.Log($"[IncreaseDamageNextHitEffect] Applied {bonusPercentage * 100}% bonus damage: +{bonus} (New damage: {damage})");
-
-        used = true;
     }
 }

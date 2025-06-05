@@ -7,16 +7,14 @@ public class IncreaseRoomDamageEffect : PowerUpEffectBase
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        bonusPercentage = data.value / 100f; // e.g. 10 becomes 0.10 (10% boost)
-        Debug.Log($"[IncreaseRoomDamageEffect] Initialized: +{data.value}% damage for the current room.");
+        bonusPercentage = data.value / 100f; // e.g. 50 becomes 0.50 for +50%
+        Debug.Log($"[IncreaseRoomDamageEffect] Initialized: +{data.value}% damage multiplier for the current room.");
     }
 
-    public override void ModifyDamage(ref int damage, string signUsed)
+    public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
     {
-        Debug.Log("[IncreaseRoomDamageEffect] ModifyDamage called");
-        int bonus = Mathf.RoundToInt(damage * bonusPercentage);
-        damage += bonus;
-        Debug.Log($"[IncreaseRoomDamageEffect] Applied {bonusPercentage * 100}% bonus: +{bonus} (New damage: {damage})");
+        multiplier += bonusPercentage;
+        Debug.Log($"[IncreaseRoomDamageEffect] Added {bonusPercentage * 100}% to multiplier. Current total multiplier: {multiplier}");
     }
 
     public override void OnRoomStart()

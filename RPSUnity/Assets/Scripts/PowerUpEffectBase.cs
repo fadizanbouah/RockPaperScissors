@@ -23,5 +23,8 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
 
     public virtual void ModifyDamage(ref int damage, string signUsed) { }
 
+    // NEW: Allows percentage-based effects to contribute to a damage multiplier
+    public virtual void ModifyDamageMultiplier(ref float multiplier, string signUsed) { }
+
     public virtual void OnRoomStart() { }
 }

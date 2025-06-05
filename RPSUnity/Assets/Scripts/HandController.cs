@@ -80,31 +80,39 @@ public class HandController : MonoBehaviour
 
     public int GetEffectiveDamage(string signUsed)
     {
-        int damage = baseDamage;
+        int baseFinalDamage = baseDamage;
 
         if (isPlayer)
         {
-            // Add persistent passive boosts
-            damage += PlayerProgressData.Instance.bonusBaseDamage;
+            // Add persistent passive flat boosts
+            baseFinalDamage += PlayerProgressData.Instance.bonusBaseDamage;
 
             if (signUsed == "Rock")
-                damage += PlayerProgressData.Instance.bonusRockDamage;
+                baseFinalDamage += PlayerProgressData.Instance.bonusRockDamage;
             else if (signUsed == "Paper")
-                damage += PlayerProgressData.Instance.bonusPaperDamage;
+                baseFinalDamage += PlayerProgressData.Instance.bonusPaperDamage;
             else if (signUsed == "Scissors")
-                damage += PlayerProgressData.Instance.bonusScissorsDamage;
+                baseFinalDamage += PlayerProgressData.Instance.bonusScissorsDamage;
 
-            // Add active power-up effects
-            damage = ActivePowerUpHandler.GetModifiedDamage(damage, signUsed);
+            // Start with 1.0f (100%) multiplier
+            float multiplier = 1f;
 
-            // Apply and clear temporary boost
-            damage += temporaryBonusDamage;
+            // Let power-ups modify the multiplier
+            ActivePowerUpHandler.GetModifiedMultiplier(ref multiplier, signUsed);
+
+            // Calculate modified damage from base * multiplier
+            int finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
+
+            // Apply and clear one-time temporary bonus
+            finalDamage += temporaryBonusDamage;
             if (temporaryBonusDamage > 0)
                 Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
             temporaryBonusDamage = 0;
+
+            return finalDamage;
         }
 
-        return damage;
+        return baseFinalDamage;
     }
 
     public void TakeDamage(int damage)

@@ -2,21 +2,15 @@ using UnityEngine;
 
 public static class ActivePowerUpHandler
 {
-    public static int GetModifiedDamage(int baseDamage, string signUsed)
+    public static void GetModifiedMultiplier(ref float multiplier, string signUsed)
     {
-        int modifiedDamage = baseDamage;
-
         var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
-        if (effects == null) return modifiedDamage;
+        if (effects == null) return;
 
         foreach (var effect in effects)
         {
-            Debug.Log($"[DEBUG] Modifying damage with effect: {effect.GetType().Name}");
-            effect.ModifyDamage(ref modifiedDamage, signUsed);
+            Debug.Log($"[DEBUG] Modifying multiplier with effect: {effect.GetType().Name}");
+            effect.ModifyDamageMultiplier(ref multiplier, signUsed);
         }
-
-        return modifiedDamage;
     }
-
-    // Removed RemoveRoomScopedPowerUps method entirely
 }
