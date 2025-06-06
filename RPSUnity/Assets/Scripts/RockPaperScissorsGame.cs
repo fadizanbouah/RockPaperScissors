@@ -100,18 +100,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         GameplayStateMachine.Instance.ChangeState(new SelectingState(playerChoice));
     }
 
-    public IEnumerator ResolveRound(string playerChoice, string enemyChoice)
+    public Coroutine ResolveRoundCoroutine(string playerChoice, string enemyChoice)
     {
-        SetSubstate(GameSubstate.Resolving_EvaluateOutcome);
-        yield return new WaitUntil(() => playerSignDone && enemySignDone);
-
-        RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
-
-        SetSubstate(GameSubstate.Resolving_TakeDamage);
-        yield return StartCoroutine(HandleTakeDamage(result, playerChoice, enemyChoice));
+        return StartCoroutine(GameplayStateMachine.Instance.StartResolvingEvaluateOutcome(playerChoice, enemyChoice));
     }
 
-    private RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
+    public RoundResult DetermineOutcome(string playerChoice, string enemyChoice)
     {
         if (playerChoice == enemyChoice)
         {
@@ -333,5 +327,10 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         playerSignDone = false;
         enemySignDone = false;
+    }
+
+    public bool BothSignAnimationsDone()
+    {
+        return playerSignDone && enemySignDone;
     }
 }
