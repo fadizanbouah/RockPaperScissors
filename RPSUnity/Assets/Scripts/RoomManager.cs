@@ -14,6 +14,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private GameObject powerUpPanelObject;
 
     public event System.Action OnEnemySpawned;
+    public event System.Action OnPowerUpContinueClicked;
 
     private int currentPoolIndex = 0; // Track current pool in sequence
     private RoomData currentRoom;
@@ -225,16 +226,40 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    public void ShowPowerUpPanel()
+    {
+        Debug.Log("[RoomManager] Showing PowerUpPanel.");
+
+        if (powerUpPanelObject != null)
+        {
+            powerUpPanelObject.SetActive(true);
+
+            PowerUpCardSpawner spawner = powerUpPanelObject.GetComponent<PowerUpCardSpawner>();
+            if (spawner != null)
+            {
+                spawner.PopulatePowerUpPanel();
+            }
+            else
+            {
+                Debug.LogWarning("[RoomManager] PowerUpPanel does not have a PowerUpCardSpawner component!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[RoomManager] powerUpPanelObject is not assigned!");
+        }
+    }
+
     public void OnPowerUpContinueButtonClicked()
     {
-        Debug.Log("[RoomManager] Continue button clicked. Hiding PowerUpPanel and starting room transition.");
+        Debug.Log("[RoomManager] Continue button clicked. Hiding PowerUpPanel and raising event.");
 
         if (powerUpPanelObject != null)
         {
             powerUpPanelObject.SetActive(false);
         }
 
-        GameStateManager.Instance.BeginRoomTransition();
+        OnPowerUpContinueClicked?.Invoke();
     }
 
     private void ApplyPersistentPowerUps()
