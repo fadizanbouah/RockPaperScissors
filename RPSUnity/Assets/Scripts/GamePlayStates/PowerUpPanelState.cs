@@ -30,6 +30,6 @@ public class PowerUpPanelState : IGameplaySubstate
     {
         Debug.Log("[PowerUpPanelState] Continue button clicked.");
         continueClicked = true;
-        GameplayStateMachine.Instance.ChangeState(new TransitionState());
+        GameplayStateMachine.Instance.ChangeState(new IdleState());
     }
 }
