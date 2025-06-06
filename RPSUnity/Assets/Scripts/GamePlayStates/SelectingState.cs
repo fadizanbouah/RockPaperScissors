@@ -33,15 +33,7 @@ public class SelectingState : IGameplaySubstate
         Debug.Log($"[SelectingState] Enemy chose: {enemyChoice}");
         enemy.StartShaking(enemyChoice);
 
-        // Wait for both animations before proceeding
-        RockPaperScissorsGame.Instance.StartCoroutine(WaitForAnimationsThenResolve());
-    }
-
-    private IEnumerator WaitForAnimationsThenResolve()
-    {
-        yield return new WaitUntil(() => RockPaperScissorsGame.Instance.BothSignAnimationsDone());
-        Debug.Log("[SelectingState] Both sign animations done. Transitioning to outcome resolution...");
-        GameplayStateMachine.Instance.ChangeState(new ResolvingEvaluateOutcomeState(playerChoice, enemyChoice));
+        GameplayStateMachine.Instance.StartResolvingEvaluateOutcome(playerChoice, enemyChoice);
     }
 
     public void Exit()

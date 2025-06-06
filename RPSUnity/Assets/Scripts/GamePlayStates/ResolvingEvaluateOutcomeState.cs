@@ -33,8 +33,6 @@ public class ResolvingEvaluateOutcomeState : IGameplaySubstate
 
         RoundResult result = RockPaperScissorsGame.Instance.DetermineOutcome(playerChoice, enemyChoice);
 
-        Debug.Log($"[ResolvingEvaluateOutcomeState] Outcome: {result}");
-
         // Pass the result and choices to the next state
         GameplayStateMachine.Instance.ChangeState(new ResolvingTakeDamageState(result, playerChoice, enemyChoice));
     }
