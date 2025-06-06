@@ -34,13 +34,13 @@ public class ResolvingTakeDamageState : IGameplaySubstate
         var player = RockPaperScissorsGame.Instance.GetPlayer();
         var enemy = RockPaperScissorsGame.Instance.GetEnemy();
 
-        if (player != null && player.IsDead())
+        if (player.IsDead())
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(player));
+            GameplayStateMachine.Instance.ChangeState(new DyingState(true)); // Player died
         }
-        else if (enemy != null && enemy.IsDead())
+        else if (enemy.IsDead())
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(enemy));
+            GameplayStateMachine.Instance.ChangeState(new DyingState(false)); // Enemy died
         }
         else
         {
