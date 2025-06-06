@@ -83,7 +83,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    private void SpawnNextEnemy()
+    public void SpawnNextEnemy()
     {
         if (currentRoom == null || currentRoom.enemyPrefabs.Count == 0 || currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
         {

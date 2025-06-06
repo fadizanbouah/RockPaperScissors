@@ -10,17 +10,6 @@ public class RockPaperScissorsGame : MonoBehaviour
     private GameObject activePowerUpCardGO;
     private System.Action onPowerUpAnimationDoneCallback;
 
-    private enum GameSubstate
-    {
-        Resolving_TakeDamage,
-        PowerUpActivation,
-        Dying,
-        EnemySpawn,
-        Transitioning
-    }
-
-    private GameSubstate currentSubstate;
-
     private HandController playerInstance;
     private HandController enemyHandController;
 
@@ -148,11 +137,11 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(false)); // Enemy died
+            GameplayStateMachine.Instance.ChangeState(new DyingState(enemyHandController)); // Enemy died
         }
         else if (playerInstance != null && playerInstance.CurrentHealth <= 0)
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(true)); // Player died
+            GameplayStateMachine.Instance.ChangeState(new DyingState(playerInstance)); // Player died
         }
         else
         {
@@ -182,49 +171,13 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     public void EnterPowerUpActivationState(System.Action unusedCallback, GameObject cardGO)
     {
-        currentSubstate = GameSubstate.PowerUpActivation;
-        DisableButtons();
-
-        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-        if (spawner != null)
-            spawner.SetAllCardsInteractable(false);
-
         activePowerUpCardGO = cardGO;
-
-        StartCoroutine(HandlePowerUpActivation());
+        GameplayStateMachine.Instance.ChangeState(new PowerUpActivationState(cardGO));
     }
 
-    private IEnumerator HandlePowerUpActivation()
+    public void RegisterPowerUpAnimationCallback(System.Action callback)
     {
-        Debug.Log("[GameSubstate] HandlePowerUpActivation: Waiting for power-up animation to finish...");
-        bool animationDone = false;
-        onPowerUpAnimationDoneCallback = () => animationDone = true;
-
-        yield return new WaitUntil(() => animationDone);
-
-        Debug.Log("[GameSubstate] Power-up animation finished. Applying effect...");
-
-        if (activePowerUpCardGO != null)
-        {
-            PowerUpCardDisplay cardDisplay = activePowerUpCardGO.GetComponent<PowerUpCardDisplay>();
-            PowerUpData data = cardDisplay?.GetPowerUpData();
-
-            if (data != null)
-            {
-                RunProgressManager.Instance.ApplyPowerUpEffect(data);
-                RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
-                Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
-            }
-            else
-            {
-                Debug.LogWarning("[PowerUp] No PowerUpData found on activated card!");
-            }
-
-            activePowerUpCardGO = null;
-        }
-
-        Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
-        GameplayStateMachine.Instance.ChangeState(new IdleState());
+        onPowerUpAnimationDoneCallback = callback;
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
@@ -261,20 +214,14 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private void OnEnemyDeathAnimationFinished(HandController hand)
     {
-        if (currentSubstate == GameSubstate.Dying)
-        {
-            GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
-            RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
-        }
+        GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
+        RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
     }
 
     private void OnPlayerDeathAnimationFinished(HandController hand)
     {
-        if (currentSubstate == GameSubstate.Dying)
-        {
-            Debug.Log("[GameSubstate] Player death animation finished. Returning to main menu...");
-            StartCoroutine(GameStateManager.Instance.FadeToMainMenu());
-        }
+        Debug.Log("[GameSubstate] Player death animation finished. Returning to main menu...");
+        StartCoroutine(GameStateManager.Instance.FadeToMainMenu());
     }
 
     private void OnEnemySpawned()
@@ -302,19 +249,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         onPowerUpAnimationDoneCallback = null;
     }
 
+    public HandController GetPlayer() => playerInstance;
+    public HandController GetEnemy() => enemyHandController;
+
     public bool IsInPowerUpActivationSubstate()
     {
-        return currentSubstate == GameSubstate.PowerUpActivation;
-    }
-
-    public HandController GetPlayer()
-    {
-        return playerInstance;
-    }
-
-    public HandController GetEnemy()
-    {
-        return enemyHandController;
+        return GameplayStateMachine.Instance.IsCurrentState<PowerUpActivationState>();
     }
 
     public void ResetSignAnimationFlags()
