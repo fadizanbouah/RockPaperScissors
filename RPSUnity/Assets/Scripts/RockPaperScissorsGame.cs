@@ -214,8 +214,16 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private void OnEnemyDeathAnimationFinished(HandController hand)
     {
-        GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
-        RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
+        if (RoomManager.Instance.HasMoreEnemiesInRoom())
+        {
+            GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
+            RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
+        }
+        else
+        {
+            Debug.Log("[Room] All enemies defeated. Transitioning to next room...");
+            GameStateManager.Instance.BeginRoomTransition();
+        }
     }
 
     private void OnPlayerDeathAnimationFinished(HandController hand)

@@ -117,8 +117,6 @@ public class RoomManager : MonoBehaviour
         {
             Debug.LogError("Spawned enemy does not have a HandController script!");
         }
-
-        currentEnemyIndex++;
     }
 
     private void HandleEnemyDefeat(HandController defeatedEnemy)
@@ -137,6 +135,8 @@ public class RoomManager : MonoBehaviour
 
         Destroy(defeatedEnemy.gameObject);
         currentEnemy = null;
+
+        currentEnemyIndex++;
 
         if (currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
         {
@@ -240,5 +240,9 @@ public class RoomManager : MonoBehaviour
     private void ApplyPersistentPowerUps()
     {
         PassivePowerUpHandler.ApplyAllPersistentPowerUps();
+    }
+    public bool HasMoreEnemiesInRoom()
+    {
+        return currentEnemyIndex < currentRoom.enemyPrefabs.Count;
     }
 }
