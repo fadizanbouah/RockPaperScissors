@@ -82,7 +82,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
         resultText.text = "";
-        SetSubstate(GameSubstate.EnemySpawn);
+        //SetSubstate(GameSubstate.EnemySpawn);
     }
 
     public void StartGame()
@@ -292,8 +292,6 @@ public class RockPaperScissorsGame : MonoBehaviour
             enemyHandController.OnDeath += OnEnemyDefeated;
             enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
         }
-
-        EnterIdleState();
     }
 
     private void OnPlayerSignAnimationFinished(HandController hand) => playerSignDone = true;
