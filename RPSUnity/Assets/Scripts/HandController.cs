@@ -266,6 +266,11 @@ public class HandController : MonoBehaviour
         Debug.Log($"{gameObject.name} hit animation finished!");
         HitAnimationFinished?.Invoke(this);
     }
+
+    public bool IsDead()
+    {
+        return health <= 0;
+    }
 }
 
 // Extension method to check if a parameter exists in the Animator
