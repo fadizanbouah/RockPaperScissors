@@ -12,6 +12,8 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private enum GameSubstate
     {
+        Selecting,
+        Resolving_EvaluateOutcome,
         Resolving_TakeDamage,
         PowerUpActivation,
         Dying,
@@ -85,6 +87,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log("Game started!");
     }
 
+    private void SetSubstate(GameSubstate newSubstate)
+    {
+        currentSubstate = newSubstate;
+        Debug.Log($"[GAMESUBSTATE] Entering {newSubstate.ToString().ToUpper()} state.");
+    }
+
     public void PlayerSelect(string playerChoice)
     {
         if (!GameplayStateMachine.Instance.IsCurrentState<IdleState>()) return;
@@ -118,7 +126,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
     }
 
-    public IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice, System.Action onComplete)
+    private IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice)
     {
         playerHitDone = true;
         enemyHitDone = true;
@@ -148,18 +156,16 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(false)); // Enemy died
+            SetSubstate(GameSubstate.Dying);
         }
         else if (playerInstance != null && playerInstance.CurrentHealth <= 0)
         {
-            GameplayStateMachine.Instance.ChangeState(new DyingState(true)); // Player died
+            SetSubstate(GameSubstate.Dying);
         }
         else
         {
             GameplayStateMachine.Instance.ChangeState(new IdleState());
         }
-
-        onComplete?.Invoke();
     }
 
     public void DisableButtons()
@@ -182,7 +188,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     public void EnterPowerUpActivationState(System.Action unusedCallback, GameObject cardGO)
     {
-        currentSubstate = GameSubstate.PowerUpActivation;
+        SetSubstate(GameSubstate.PowerUpActivation);
         DisableButtons();
 
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
@@ -263,7 +269,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (currentSubstate == GameSubstate.Dying)
         {
-            GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
+            SetSubstate(GameSubstate.EnemySpawn);
             RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
         }
     }
