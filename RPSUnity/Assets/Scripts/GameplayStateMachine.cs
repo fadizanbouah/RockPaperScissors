@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class GameplayStateMachine : MonoBehaviour
 {
@@ -48,11 +47,5 @@ public class GameplayStateMachine : MonoBehaviour
     public bool IsCurrentState<T>() where T : IGameplaySubstate
     {
         return currentSubstate is T;
-    }
-
-    public IEnumerator StartResolvingEvaluateOutcome(string playerChoice, string enemyChoice)
-    {
-        yield return new WaitUntil(() => RockPaperScissorsGame.Instance.BothSignAnimationsDone());
-        ChangeState(new ResolvingEvaluateOutcomeState(playerChoice, enemyChoice));
     }
 }

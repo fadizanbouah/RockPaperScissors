@@ -33,7 +33,9 @@ public class SelectingState : IGameplaySubstate
         Debug.Log($"[SelectingState] Enemy chose: {enemyChoice}");
         enemy.StartShaking(enemyChoice);
 
-        GameplayStateMachine.Instance.StartResolvingEvaluateOutcome(playerChoice, enemyChoice);
+        RockPaperScissorsGame.Instance.StartCoroutine(
+            RockPaperScissorsGame.Instance.ResolveRound(playerChoice, enemyChoice)
+        );
     }
 
     public void Exit()
