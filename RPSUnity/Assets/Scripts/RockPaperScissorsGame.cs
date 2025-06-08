@@ -97,10 +97,28 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (!GameplayStateMachine.Instance.IsCurrentState<IdleState>()) return;
 
-        GameplayStateMachine.Instance.ChangeState(new SelectingState(playerChoice));
+        SetSubstate(GameSubstate.Selecting);
+
+        DisableButtons();
+
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+            spawner.SetAllCardsInteractable(false);
+
+        playerSignDone = false;
+        enemySignDone = false;
+
+        Debug.Log($"Player selected: {playerChoice}");
+        playerInstance.StartShaking(playerChoice);
+
+        string enemyChoice = choices[Random.Range(0, choices.Length)];
+        enemyHandController.StartShaking(enemyChoice);
+        Debug.Log($"Enemy has pre-selected: {enemyChoice}");
+
+        StartCoroutine(ResolveRound(playerChoice, enemyChoice));
     }
 
-    public IEnumerator ResolveRound(string playerChoice, string enemyChoice)
+    private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
         SetSubstate(GameSubstate.Resolving_EvaluateOutcome);
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
@@ -174,7 +192,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
     }
 
-    public void DisableButtons()
+    private void DisableButtons()
     {
         rockButton.interactable = false;
         paperButton.interactable = false;
@@ -317,21 +335,5 @@ public class RockPaperScissorsGame : MonoBehaviour
     public bool IsInPowerUpActivationSubstate()
     {
         return currentSubstate == GameSubstate.PowerUpActivation;
-    }
-
-    public HandController GetPlayer()
-    {
-        return playerInstance;
-    }
-
-    public HandController GetEnemy()
-    {
-        return enemyHandController;
-    }
-
-    public void ResetSignAnimationFlags()
-    {
-        playerSignDone = false;
-        enemySignDone = false;
     }
 }
