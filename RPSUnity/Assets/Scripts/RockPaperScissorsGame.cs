@@ -12,6 +12,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private enum GameSubstate
     {
+        Idle,
         Selecting,
         Resolving_EvaluateOutcome,
         Resolving_TakeDamage,
@@ -21,7 +22,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         Transitioning
     }
 
-    private GameSubstate currentSubstate;
+    private GameSubstate currentSubstate = GameSubstate.Idle;
 
     private HandController playerInstance;
     private HandController enemyHandController;
@@ -60,6 +61,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
+        // Unsubscribe to prevent duplicate listeners
         playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
         enemyHandController.OnDeath -= OnEnemyDefeated;
@@ -68,6 +70,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
         enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
 
+        // Subscribe to necessary events
         playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
         enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
         enemyHandController.OnDeath += OnEnemyDefeated;
@@ -79,11 +82,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
         resultText.text = "";
+        //SetSubstate(GameSubstate.EnemySpawn);
     }
 
     public void StartGame()
     {
-        GameplayStateMachine.Instance.ChangeState(new IdleState());
+        EnterIdleState();
         Debug.Log("Game started!");
     }
 
@@ -95,7 +99,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     public void PlayerSelect(string playerChoice)
     {
-        if (!GameplayStateMachine.Instance.IsCurrentState<IdleState>()) return;
+        if (currentSubstate != GameSubstate.Idle) return;
 
         SetSubstate(GameSubstate.Selecting);
 
@@ -121,11 +125,13 @@ public class RockPaperScissorsGame : MonoBehaviour
     private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
         SetSubstate(GameSubstate.Resolving_EvaluateOutcome);
+
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
 
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
         SetSubstate(GameSubstate.Resolving_TakeDamage);
+
         yield return StartCoroutine(HandleTakeDamage(result, playerChoice, enemyChoice));
     }
 
@@ -152,6 +158,7 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice)
     {
+
         playerHitDone = true;
         enemyHitDone = true;
 
@@ -171,7 +178,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
-            GameplayStateMachine.Instance.ChangeState(new IdleState());
+            EnterIdleState();
             yield break;
         }
 
@@ -188,7 +195,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
-            GameplayStateMachine.Instance.ChangeState(new IdleState());
+            EnterIdleState();
         }
     }
 
@@ -199,15 +206,24 @@ public class RockPaperScissorsGame : MonoBehaviour
         scissorsButton.interactable = false;
     }
 
-    public void AllowPlayerInput()
+    private void AllowPlayerInput()
     {
-        rockButton.interactable = true;
-        paperButton.interactable = true;
-        scissorsButton.interactable = true;
+        if (currentSubstate == GameSubstate.Idle && enemyHandController != null)
+        {
+            rockButton.interactable = true;
+            paperButton.interactable = true;
+            scissorsButton.interactable = true;
 
-        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-        if (spawner != null)
-            spawner.SetAllCardsInteractable(true);
+            PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+            if (spawner != null)
+                spawner.SetAllCardsInteractable(true);
+        }
+    }
+
+    private void EnterIdleState()
+    {
+        SetSubstate(GameSubstate.Idle);
+        AllowPlayerInput();
     }
 
     public void EnterPowerUpActivationState(System.Action unusedCallback, GameObject cardGO)
@@ -221,12 +237,14 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         activePowerUpCardGO = cardGO;
 
+        // Start the coroutine and store the internal callback to trigger it later
         StartCoroutine(HandlePowerUpActivation());
     }
 
     private IEnumerator HandlePowerUpActivation()
     {
         Debug.Log("[GameSubstate] HandlePowerUpActivation: Waiting for power-up animation to finish...");
+
         bool animationDone = false;
         onPowerUpAnimationDoneCallback = () => animationDone = true;
 
@@ -254,7 +272,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
 
         Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
-        GameplayStateMachine.Instance.ChangeState(new IdleState());
+        EnterIdleState();
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
@@ -310,7 +328,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     private void OnEnemySpawned()
     {
         RoomManager.Instance.OnEnemySpawned -= OnEnemySpawned;
-        GameplayStateMachine.Instance.ChangeState(new IdleState());
+        EnterIdleState();
     }
 
     private void OnPlayerHitAnimationFinished(HandController hand)
@@ -328,8 +346,16 @@ public class RockPaperScissorsGame : MonoBehaviour
     public void OnPowerUpActivationComplete()
     {
         Debug.Log("[PowerUp] Activation animation complete.");
-        onPowerUpAnimationDoneCallback?.Invoke();
-        onPowerUpAnimationDoneCallback = null;
+
+        if (onPowerUpAnimationDoneCallback != null)
+        {
+            onPowerUpAnimationDoneCallback.Invoke();
+            onPowerUpAnimationDoneCallback = null;
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUp] No callback registered for animation completion.");
+        }
     }
 
     public bool IsInPowerUpActivationSubstate()
