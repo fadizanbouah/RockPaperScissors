@@ -97,28 +97,10 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         if (!GameplayStateMachine.Instance.IsCurrentState<IdleState>()) return;
 
-        SetSubstate(GameSubstate.Selecting);
-
-        DisableButtons();
-
-        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-        if (spawner != null)
-            spawner.SetAllCardsInteractable(false);
-
-        playerSignDone = false;
-        enemySignDone = false;
-
-        Debug.Log($"Player selected: {playerChoice}");
-        playerInstance.StartShaking(playerChoice);
-
-        string enemyChoice = choices[Random.Range(0, choices.Length)];
-        enemyHandController.StartShaking(enemyChoice);
-        Debug.Log($"Enemy has pre-selected: {enemyChoice}");
-
-        StartCoroutine(ResolveRound(playerChoice, enemyChoice));
+        GameplayStateMachine.Instance.ChangeState(new SelectingState(playerChoice));
     }
 
-    private IEnumerator ResolveRound(string playerChoice, string enemyChoice)
+    public IEnumerator ResolveRound(string playerChoice, string enemyChoice)
     {
         SetSubstate(GameSubstate.Resolving_EvaluateOutcome);
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
@@ -192,7 +174,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
     }
 
-    private void DisableButtons()
+    public void DisableButtons()
     {
         rockButton.interactable = false;
         paperButton.interactable = false;
@@ -335,5 +317,48 @@ public class RockPaperScissorsGame : MonoBehaviour
     public bool IsInPowerUpActivationSubstate()
     {
         return currentSubstate == GameSubstate.PowerUpActivation;
+    }
+
+    // --- Public methods for state machine usage (SelectingState) ---
+
+    public void DisablePlayerInput()
+    {
+        DisableButtons();
+
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+            spawner.SetAllCardsInteractable(false);
+    }
+
+    public void SetPlayerSign(string sign)
+    {
+        playerSignDone = false;
+        playerInstance.StartShaking(sign);
+    }
+
+    public void SetEnemySign(string sign)
+    {
+        enemySignDone = false;
+        enemyHandController.StartShaking(sign);
+    }
+
+    public string GetRandomSign()
+    {
+        return choices[Random.Range(0, choices.Length)];
+    }
+
+    public HandController GetPlayer()
+    {
+        return playerInstance;
+    }
+
+    public HandController GetEnemy()
+    {
+        return enemyHandController;
+    }
+
+    public Coroutine ResolveRoundCoroutine(string playerChoice, string enemyChoice)
+    {
+        return StartCoroutine(ResolveRound(playerChoice, enemyChoice));
     }
 }
