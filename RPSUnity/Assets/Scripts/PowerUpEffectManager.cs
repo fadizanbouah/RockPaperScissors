@@ -117,9 +117,26 @@ public class PowerUpEffectManager : MonoBehaviour
         // Create a copy of the list before iterating to avoid modification errors
         var effectsCopy = new List<PowerUpEffectBase>(activeEffects);
 
+        // Track any null effects we find
+        List<PowerUpEffectBase> nullEffects = new List<PowerUpEffectBase>();
+
         foreach (var effect in effectsCopy)
         {
-            effect.OnRoomStart();
+            if (effect != null)
+            {
+                effect.OnRoomStart();
+            }
+            else
+            {
+                nullEffects.Add(effect);
+                Debug.LogWarning("[PowerUpEffectManager] Found null effect in activeEffects list");
+            }
+        }
+
+        // Clean up any null effects
+        foreach (var nullEffect in nullEffects)
+        {
+            activeEffects.Remove(nullEffect);
         }
     }
 }

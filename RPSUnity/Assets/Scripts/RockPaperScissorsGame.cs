@@ -276,21 +276,42 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             if (data != null)
             {
-                // ADD THIS: Mark power-up as used
+                // CHECK FIRST: Is this a Double Use power-up?
+                bool isDoubleUseCard = data.powerUpName == "Double Activation" ||
+                                      (data.effectPrefab != null && data.effectPrefab.GetComponent<DoubleUsePowerUpEffect>() != null);
+
+                // Mark power-up as used BEFORE applying effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
+                    Debug.Log($"[HandlePowerUpActivation] About to mark {data.powerUpName} as used");
                     PowerUpUsageTracker.Instance.MarkPowerUpUsed();
                 }
 
+                // Apply the power-up effect
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
 
-                // ADD THIS: Keep cards disabled after use
-                PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-                if (spawner != null)
+                // Always check if more power-ups can be used after applying ANY effect
+                if (PowerUpUsageTracker.Instance != null)
                 {
-                    spawner.SetAllCardsInteractable(false);
+                    PowerUpUsageTracker.Instance.DebugState();
+
+                    PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+                    if (spawner != null)
+                    {
+                        bool canUseMore = PowerUpUsageTracker.Instance.CanUsePowerUp();
+                        spawner.SetAllCardsInteractable(canUseMore);
+
+                        if (canUseMore)
+                        {
+                            Debug.Log($"[HandlePowerUpActivation] Cards remain enabled - more uses available!");
+                        }
+                        else
+                        {
+                            Debug.Log($"[HandlePowerUpActivation] Cards disabled - no more uses this round");
+                        }
+                    }
                 }
             }
             else
@@ -306,11 +327,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         // IMPORTANT: Don't call EnterIdleState() here, just set the state
         SetSubstate(GameSubstate.Idle);
 
-        // Re-enable RPS buttons but NOT power-up cards
+        // Re-enable RPS buttons
         rockButton.interactable = true;
         paperButton.interactable = true;
         scissorsButton.interactable = true;
     }
+
 
     public void UpdateEnemyReference(HandController newEnemy)
     {
