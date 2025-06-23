@@ -189,4 +189,40 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             Debug.LogWarning("[PowerUpCardDisplay] AnimatedContainer or Checkmark not found!");
         }
     }
+
+    public void SetUsableState(bool canUse)
+    {
+        CanvasGroup group = GetComponent<CanvasGroup>();
+        if (group != null)
+        {
+            // Visual feedback for unusable state
+            group.alpha = canUse ? 1.0f : 0.5f;
+        }
+
+        // Optional: Add a "Used this round" overlay
+        Transform usedOverlay = transform.Find("UsedThisRoundOverlay");
+        if (usedOverlay != null)
+        {
+            usedOverlay.gameObject.SetActive(!canUse);
+        }
+    }
+
+    // Call this when updating card states
+    public void UpdateCardState()
+    {
+        bool canUse = PowerUpUsageTracker.Instance == null || PowerUpUsageTracker.Instance.CanUsePowerUp();
+        SetUsableState(canUse);
+
+        // Also update draggability
+        PowerUpCardDrag drag = GetComponent<PowerUpCardDrag>();
+        if (drag != null && drag.isDraggable)
+        {
+            CanvasGroup group = GetComponent<CanvasGroup>();
+            if (group != null)
+            {
+                group.interactable = canUse;
+                group.blocksRaycasts = canUse;
+            }
+        }
+    }
 }

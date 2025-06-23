@@ -36,6 +36,14 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
+        // ADD THIS CHECK: Prevent dragging if power-up already used
+        if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
+        {
+            Debug.Log("[PowerUpCardDrag] Cannot drag - power-up already used this round!");
+            eventData.pointerDrag = null; // Cancel the drag
+            return;
+        }
+
         originalAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
 
@@ -60,6 +68,14 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
+        // Additional check during drag
+        if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
+        {
+            // Cancel the drag
+            OnEndDrag(eventData);
+            return;
+        }
+
         rectTransform.anchoredPosition += eventData.delta / transform.root.GetComponent<Canvas>().scaleFactor;
     }
 
@@ -75,9 +91,20 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
             canvasGroup.blocksRaycasts = true;
 
+            // ADD THIS CHECK: Additional safety check
+            if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
+            {
+                Debug.Log("[PowerUpCardDrag] Cannot activate - power-up already used this round!");
+                StartCoroutine(SmoothReturnToOriginalPosition());
+                return;
+            }
+
             if (RectTransformUtility.RectangleContainsScreenPoint(zone.GetComponent<RectTransform>(), Input.mousePosition, eventData.enterEventCamera))
             {
                 Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
+
+                // NO LONGER MARK AS USED HERE - Let RockPaperScissorsGame handle it
+
                 DisableInteraction();
                 BeginActivationSequence(zone.activationAnimationTarget.position);
 
@@ -89,6 +116,15 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
         StartCoroutine(SmoothReturnToOriginalPosition());
+    }
+
+    private void DisableAllOtherPowerUpCards()
+    {
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+        {
+            spawner.SetAllCardsInteractable(false);
+        }
     }
 
     public void DisableInteraction()

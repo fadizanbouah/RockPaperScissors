@@ -216,13 +216,30 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
             if (spawner != null)
-                spawner.SetAllCardsInteractable(true);
+            {
+                // MODIFY THIS PART: Check if power-ups can still be used
+                bool canUsePowerUp = PowerUpUsageTracker.Instance == null || PowerUpUsageTracker.Instance.CanUsePowerUp();
+                spawner.SetAllCardsInteractable(canUsePowerUp);
+
+                if (!canUsePowerUp)
+                {
+                    Debug.Log("[RockPaperScissorsGame] Power-ups disabled - already used this round");
+                }
+            }
         }
     }
 
     private void EnterIdleState()
     {
         SetSubstate(GameSubstate.Idle);
+
+        // ADD THIS LINE: Reset power-up usage for the new round
+        if (PowerUpUsageTracker.Instance != null)
+        {
+            PowerUpUsageTracker.Instance.ResetRoundUsage();
+            Debug.Log("[RockPaperScissorsGame] Power-up usage reset for new round");
+        }
+
         AllowPlayerInput();
     }
 
@@ -259,9 +276,22 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             if (data != null)
             {
+                // ADD THIS: Mark power-up as used
+                if (PowerUpUsageTracker.Instance != null)
+                {
+                    PowerUpUsageTracker.Instance.MarkPowerUpUsed();
+                }
+
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
+
+                // ADD THIS: Keep cards disabled after use
+                PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+                if (spawner != null)
+                {
+                    spawner.SetAllCardsInteractable(false);
+                }
             }
             else
             {
@@ -272,7 +302,14 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
 
         Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
-        EnterIdleState();
+
+        // IMPORTANT: Don't call EnterIdleState() here, just set the state
+        SetSubstate(GameSubstate.Idle);
+
+        // Re-enable RPS buttons but NOT power-up cards
+        rockButton.interactable = true;
+        paperButton.interactable = true;
+        scissorsButton.interactable = true;
     }
 
     public void UpdateEnemyReference(HandController newEnemy)
