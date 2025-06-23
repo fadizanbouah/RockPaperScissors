@@ -44,9 +44,10 @@ public class DyingState : IGameplaySubstate
         }
         else
         {
-            Debug.Log("[DyingState] Enemy died. Proceeding to spawn next enemy.");
-            RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
-            RoomManager.Instance.SpawnNextEnemy();
+            GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
+            //Debug.Log("[DyingState] Enemy died. Proceeding to spawn next enemy.");
+            //RoomManager.Instance.OnEnemySpawned += OnEnemySpawned;
+            //RoomManager.Instance.SpawnNextEnemy();
         }
     }
 

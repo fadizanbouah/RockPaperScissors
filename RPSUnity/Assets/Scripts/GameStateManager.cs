@@ -15,14 +15,14 @@ public class GameStateManager : MonoBehaviour
 
     public GameState currentState { get; private set; }
 
-    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame;
-    [SerializeField] private HandController playerPrefab;
-    [SerializeField] private Transform playerSpawnPoint;
+    [SerializeField] public RockPaperScissorsGame rockPaperScissorsGame;
+    [SerializeField] public HandController playerPrefab;
+    [SerializeField] public Transform playerSpawnPoint;
     [SerializeField] private GameObject gameplayCanvas;
     [SerializeField] private GameObject mainMenuCanvas;
 
-    private HandController playerInstance;
-    private HandController currentEnemyInstance;
+    //private HandController playerInstance;
+    //private HandController currentEnemyInstance;
 
     private bool hasStartedRoomSequence = false;
 
@@ -88,22 +88,7 @@ public class GameStateManager : MonoBehaviour
 
                 if (rockPaperScissorsGame != null)
                 {
-                    InitializePlayer();
-
-                    if (!hasStartedRoomSequence)
-                    {
-                        if (RoomManager.Instance != null)
-                        {
-                            RoomManager.Instance.StartRoomSequence();
-                            hasStartedRoomSequence = true;
-                        }
-                        else
-                        {
-                            Debug.LogError("RoomManager instance is missing!");
-                        }
-                    }
-
-                    StartCoroutine(WaitForRoomAndInitializeGame());
+                    rockPaperScissorsGame.InitializeGame();
                 }
                 else
                 {
@@ -123,34 +108,7 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    private void InitializePlayer()
-    {
-        if (playerPrefab == null)
-        {
-            Debug.LogError("Player prefab is not assigned!");
-            return;
-        }
-
-        if (playerSpawnPoint == null)
-        {
-            Debug.LogError("Player spawn point is not assigned!");
-            return;
-        }
-
-        if (playerInstance == null)
-        {
-            playerInstance = Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
-            Debug.Log("Player initialized at spawn point.");
-
-            playerInstance.OnDeathAnimationFinished += HandlePlayerDeathAnimationFinished;
-        }
-        else
-        {
-            Debug.LogWarning("Player already exists. Skipping instantiation.");
-        }
-    }
-
-    private void HandlePlayerDeathAnimationFinished(HandController player)
+    public void HandlePlayerDeathAnimationFinished(HandController player)
     {
         Debug.Log("Player death animation finished. Returning to main menu...");
         StartCoroutine(FadeToMainMenu());
@@ -179,10 +137,10 @@ public class GameStateManager : MonoBehaviour
 
     private void CleanupGame()
     {
-        if (playerInstance != null)
+        if (rockPaperScissorsGame.playerInstance != null)
         {
-            playerInstance.OnDeathAnimationFinished -= HandlePlayerDeathAnimationFinished;
-            Destroy(playerInstance.gameObject);
+            rockPaperScissorsGame.playerInstance.OnDeathAnimationFinished -= HandlePlayerDeathAnimationFinished;
+            Destroy(rockPaperScissorsGame.playerInstance.gameObject);
         }
     }
 
@@ -197,28 +155,6 @@ public class GameStateManager : MonoBehaviour
         {
             Debug.LogError("Canvas reference is missing in GameStateManager!");
         }
-    }
-
-    private IEnumerator WaitForRoomAndInitializeGame()
-    {
-        Debug.Log("Waiting for the room to be ready...");
-
-        while (RoomManager.Instance.GetCurrentEnemy() == null)
-        {
-            yield return null;
-        }
-
-        Debug.Log("Room and enemy are ready. Initializing game...");
-        currentEnemyInstance = RoomManager.Instance.GetCurrentEnemy();
-        rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
-        rockPaperScissorsGame.StartGame();
-    }
-
-    public void UpdateEnemy(HandController newEnemy)
-    {
-        Debug.Log($"Updating GameStateManager enemy reference: {newEnemy.name}");
-        currentEnemyInstance = newEnemy;
-        rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
     }
 
     public void BeginRoomTransition()
@@ -241,7 +177,7 @@ public class GameStateManager : MonoBehaviour
     {
         yield return StartCoroutine(fader.FadeOutRoutine());
 
-        RoomManager.Instance.SelectNextRoom();
+        //RoomManager.Instance.SelectNextRoom();
 
         yield return StartCoroutine(fader.FadeInRoutine());
 

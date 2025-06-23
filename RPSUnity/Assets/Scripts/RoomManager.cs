@@ -65,7 +65,7 @@ public class RoomManager : MonoBehaviour
         PowerUpEffectManager.Instance?.TriggerRoomStart();
 
         FadeInAfterRoomLoad();
-        SpawnNextEnemy();
+        //SpawnNextEnemy();
 
         FindObjectOfType<PowerUpCardSpawnerGameplay>()?.SpawnActivePowerUps();
     }
@@ -107,7 +107,7 @@ public class RoomManager : MonoBehaviour
             currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
 
-            GameStateManager.Instance.UpdateEnemy(currentEnemy);
+            //GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
 
             // Notify that the enemy has been fully spawned
@@ -156,7 +156,7 @@ public class RoomManager : MonoBehaviour
         }
         else
         {
-            StartCoroutine(DelayedSpawnNextEnemy(0.5f));
+            //StartCoroutine(DelayedSpawnNextEnemy(0.5f));
         }
     }
 

@@ -8,6 +8,7 @@ public class EnemySpawnState : IGameplaySubstate
 
         // Subscribe to the RoomManager event to know when the enemy is ready
         RoomManager.Instance.OnEnemySpawned += HandleEnemySpawned;
+        RoomManager.Instance.SpawnNextEnemy();
     }
 
     public void Exit()

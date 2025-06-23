@@ -10,8 +10,8 @@ public class RockPaperScissorsGame : MonoBehaviour
     private GameObject activePowerUpCardGO;
     private System.Action onPowerUpAnimationDoneCallback;
 
-    private HandController playerInstance;
-    private HandController enemyHandController;
+    public HandController playerInstance;
+    public HandController enemyHandController;
 
     public TextMeshProUGUI resultText;
     public UnityEngine.UI.Button rockButton;
@@ -36,41 +36,60 @@ public class RockPaperScissorsGame : MonoBehaviour
         Instance = this;
     }
 
-    public void InitializeGame(HandController player, HandController enemy)
+    public void InitializeGame()
     {
-        playerInstance = player;
-        enemyHandController = enemy;
+        resultText.text = "";
+        GameplayStateMachine.Instance.ChangeState(new InitializeMatchState());
+    }
 
-        if (playerInstance == null || enemyHandController == null)
+    public void UpdatePlayerReference(HandController player)
+    {
+        if (playerInstance != null)
         {
-            Debug.LogError("Player or Enemy instance is missing!");
-            return;
+            playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
+            playerInstance.OnDeathAnimationFinished -= OnPlayerDeathAnimationFinished;
+            playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
         }
 
-        playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
-        enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
-        enemyHandController.OnDeath -= OnEnemyDefeated;
-        enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
-        playerInstance.OnDeathAnimationFinished -= OnPlayerDeathAnimationFinished;
-        playerInstance.HitAnimationFinished -= OnPlayerHitAnimationFinished;
-        enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
+        playerInstance = player;
 
-        playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
-        enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
-        enemyHandController.OnDeath += OnEnemyDefeated;
-        enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
-        playerInstance.OnDeathAnimationFinished += OnPlayerDeathAnimationFinished;
-        playerInstance.HitAnimationFinished += OnPlayerHitAnimationFinished;
-        enemyHandController.HitAnimationFinished += OnEnemyHitAnimationFinished;
-
-        PowerUpEffectManager.Instance?.Initialize(player, enemy);
-
-        resultText.text = "";
+        if (playerInstance != null)
+        {
+            playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
+            playerInstance.OnDeathAnimationFinished += OnPlayerDeathAnimationFinished;
+            playerInstance.HitAnimationFinished += OnPlayerHitAnimationFinished;
+        }
     }
+
+    //public void OnMatchInitialized()
+    //{
+    //    playerInstance = player;
+    //    enemyHandController = enemy;
+
+    //    if (playerInstance == null || enemyHandController == null)
+    //    {
+    //        Debug.LogError("Player or Enemy instance is missing!");
+    //        return;
+    //    }
+
+    //    playerInstance.SignAnimationFinished -= OnPlayerSignAnimationFinished;
+    //    enemyHandController.SignAnimationFinished -= OnEnemySignAnimationFinished;
+    //    enemyHandController.OnDeath -= OnEnemyDefeated;
+    //    enemyHandController.OnDeathAnimationFinished -= OnEnemyDeathAnimationFinished;
+    //    enemyHandController.HitAnimationFinished -= OnEnemyHitAnimationFinished;
+
+    //    playerInstance.SignAnimationFinished += OnPlayerSignAnimationFinished;
+    //    enemyHandController.SignAnimationFinished += OnEnemySignAnimationFinished;
+    //    enemyHandController.OnDeath += OnEnemyDefeated;
+    //    enemyHandController.OnDeathAnimationFinished += OnEnemyDeathAnimationFinished;
+    //    enemyHandController.HitAnimationFinished += OnEnemyHitAnimationFinished;
+
+    //    PowerUpEffectManager.Instance?.Initialize(player, enemy);
+    //}
 
     public void StartGame()
     {
-        GameplayStateMachine.Instance.ChangeState(new IdleState());
+        GameplayStateMachine.Instance.ChangeState(new EnemySpawnState());
         Debug.Log("Game started!");
     }
 
