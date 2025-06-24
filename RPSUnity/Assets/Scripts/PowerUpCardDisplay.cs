@@ -225,4 +225,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }
     }
+
+    public Vector3 GetStoredFanPosition()
+    {
+        return originalLocalPosition;
+    }
 }

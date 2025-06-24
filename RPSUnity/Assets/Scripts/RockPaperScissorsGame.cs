@@ -292,6 +292,21 @@ public class RockPaperScissorsGame : MonoBehaviour
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
 
+                PowerUpCardSpawnerGameplay gameplaySpawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+                if (gameplaySpawner != null)
+                {
+                    Transform cardContainer = gameplaySpawner.transform.Find("CardContainer");
+                    if (cardContainer != null)
+                    {
+                        FanLayout fanLayout = cardContainer.GetComponent<FanLayout>();
+                        if (fanLayout != null)
+                        {
+                            // Wait a frame for the card to be destroyed, then refresh
+                            StartCoroutine(RefreshFanLayoutNextFrame(fanLayout));
+                        }
+                    }
+                }
+
                 // Always check if more power-ups can be used after applying ANY effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
@@ -331,6 +346,12 @@ public class RockPaperScissorsGame : MonoBehaviour
         rockButton.interactable = true;
         paperButton.interactable = true;
         scissorsButton.interactable = true;
+    }
+
+    private IEnumerator RefreshFanLayoutNextFrame(FanLayout fanLayout)
+    {
+        yield return null; // Wait one frame for card destruction
+        fanLayout.RefreshLayout();
     }
 
 

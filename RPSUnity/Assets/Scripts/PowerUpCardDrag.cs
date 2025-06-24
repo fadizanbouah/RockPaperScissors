@@ -11,6 +11,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private RectTransform rectTransform;
     private Vector2 originalAnchoredPosition;
     private PowerUpCardDisplay cardDisplay;
+    private FanLayout fanLayout;
+    private int originalSiblingIndex;
 
     private RectTransform activationZoneRect;
 
@@ -19,6 +21,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
         cardDisplay = GetComponent<PowerUpCardDisplay>();
+
+        // Find the FanLayout in parent
+        fanLayout = GetComponentInParent<FanLayout>();
 
         // Find the CardActivationZone once at runtime
         CardActivationZone zone = FindObjectOfType<CardActivationZone>();
@@ -36,16 +41,21 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
-        // ADD THIS CHECK: Prevent dragging if power-up already used
-        if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
-        {
-            Debug.Log("[PowerUpCardDrag] Cannot drag - power-up already used this round!");
-            eventData.pointerDrag = null; // Cancel the drag
-            return;
-        }
+        // Store the original sibling index (layer order)
+        originalSiblingIndex = transform.GetSiblingIndex();
 
+        // Store the current anchored position (not world position)
         originalAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
+
+        // Move card to top layer while dragging
+        transform.SetAsLastSibling();
+
+        // Notify FanLayout that we're dragging
+        if (fanLayout != null)
+        {
+            fanLayout.OnCardDragStart(gameObject);
+        }
 
         // Reset hover offset before dragging
         if (cardDisplay != null)
@@ -61,6 +71,15 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
             // Straighten the card by resetting rotation
             transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    private void NotifyCardUsed()
+    {
+        // Notify FanLayout to re-center remaining cards
+        if (fanLayout != null)
+        {
+            fanLayout.OnCardRemoved();
         }
     }
 
@@ -81,17 +100,20 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isDraggable) return;
+
+        // Clear the drag state immediately
+        eventData.pointerDrag = null;
+
         // Always hide the activation zone visual when drag ends
         CardActivationZone zone = FindObjectOfType<CardActivationZone>();
         if (zone != null)
         {
             zone.HideVisual();
 
-            if (!isDraggable) return;
-
             canvasGroup.blocksRaycasts = true;
 
-            // ADD THIS CHECK: Additional safety check
+            // Check if power-up can be used
             if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
             {
                 Debug.Log("[PowerUpCardDrag] Cannot activate - power-up already used this round!");
@@ -102,8 +124,6 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             if (RectTransformUtility.RectangleContainsScreenPoint(zone.GetComponent<RectTransform>(), Input.mousePosition, eventData.enterEventCamera))
             {
                 Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
-
-                // NO LONGER MARK AS USED HERE - Let RockPaperScissorsGame handle it
 
                 DisableInteraction();
                 BeginActivationSequence(zone.activationAnimationTarget.position);
@@ -158,18 +178,66 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private IEnumerator SmoothReturnToOriginalPosition()
     {
+        // Disable all interactions during the return animation
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
+        // Disable the EventSystem temporarily to prevent interference
+        var eventSystem = EventSystem.current;
+        bool wasEventSystemEnabled = false;
+        if (eventSystem != null)
+        {
+            wasEventSystemEnabled = eventSystem.enabled;
+            eventSystem.enabled = false;
+        }
+
         float duration = 0.15f;
         float time = 0f;
         Vector2 start = rectTransform.anchoredPosition;
 
+        // Get the stored fan position from the card display
+        PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
+        Vector2 targetPosition = originalAnchoredPosition;
+
+        if (display != null)
+        {
+            // Use the fan layout position if available
+            Vector3 fanPos = display.GetStoredFanPosition();
+            targetPosition = new Vector2(fanPos.x, fanPos.y);
+        }
+
         while (time < duration)
         {
-            rectTransform.anchoredPosition = Vector2.Lerp(start, originalAnchoredPosition, time / duration);
+            if (rectTransform == null) break; // Safety check
+
+            rectTransform.anchoredPosition = Vector2.Lerp(start, targetPosition, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
 
-        rectTransform.anchoredPosition = originalAnchoredPosition;
-        gameObject.GetComponent<PowerUpCardDisplay>().ResetToFanPosition();
+        // Ensure we end at the exact target position
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = targetPosition;
+        }
+
+        // Reset rotation and scale as well
+        if (display != null)
+        {
+            display.ResetToFanPosition();
+        }
+
+        // IMPORTANT: Restore the original sibling index (layer order)
+        transform.SetSiblingIndex(originalSiblingIndex);
+
+        // Re-enable the EventSystem
+        if (eventSystem != null && wasEventSystemEnabled)
+        {
+            eventSystem.enabled = true;
+        }
+
+        // Re-enable interactions after animation completes
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
     }
 }
