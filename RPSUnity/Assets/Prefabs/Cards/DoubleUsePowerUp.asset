@@ -18,4 +18,4 @@ MonoBehaviour:
   favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 6717762807998786352, guid: cc4b0a75b210dc0418d41255b78df435, type: 3}
-  value: 3
+  value: 2
