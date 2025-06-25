@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
-  m_Name: PassiveMockCard1
+  m_Name: PassiveIncreaseScissorsDamage
   m_EditorClassIdentifier: 
-  powerUpName: Rock Damage
-  description: Increase Rock Damage by 5
+  powerUpName: Scissors Damage
+  description: Increase Scissors Damage by 5
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
-  effectPrefab: {fileID: 7775916174280671573, guid: 8e46df40ba84a0c4cb60d0f0681a3b6f, type: 3}
+  effectPrefab: {fileID: 1272108500094884972, guid: a5f100052fb48cf47a138901986d209e, type: 3}
   value: 5
