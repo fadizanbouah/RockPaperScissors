@@ -27,12 +27,12 @@ public class PowerUpUsageTracker : MonoBehaviour
         if (bonusUsesRemaining > 0)
         {
             canUse = true;
-            Debug.Log($"[CanUsePowerUp] YES - Using bonus. Bonus remaining: {bonusUsesRemaining}");
+            //Debug.Log($"[CanUsePowerUp] YES - Using bonus. Bonus remaining: {bonusUsesRemaining}");
         }
         else if (powerUpsUsedThisRound < allowedPowerUpsPerRound)
         {
             canUse = true;
-            Debug.Log($"[CanUsePowerUp] YES - Using normal allowance. Used: {powerUpsUsedThisRound}/{allowedPowerUpsPerRound}");
+            //Debug.Log($"[CanUsePowerUp] YES - Using normal allowance. Used: {powerUpsUsedThisRound}/{allowedPowerUpsPerRound}");
         }
         else
         {

@@ -115,9 +115,19 @@ public class HandController : MonoBehaviour
         return baseFinalDamage;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, HandController source = null)
     {
         if (isDying) return;
+
+        // If this is the player taking damage, check for damage reduction effects
+        if (isPlayer && PowerUpEffectManager.Instance != null)
+        {
+            var effects = PowerUpEffectManager.Instance.GetActiveEffects();
+            foreach (var effect in effects)
+            {
+                effect.ModifyIncomingDamage(ref damage, source);
+            }
+        }
 
         health -= damage;
         if (health < 0) health = 0;

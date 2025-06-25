@@ -27,4 +27,6 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
     public virtual void ModifyDamageMultiplier(ref float multiplier, string signUsed) { }
 
     public virtual void OnRoomStart() { }
+
+    public virtual void ModifyIncomingDamage(ref int damage, HandController source) { }
 }

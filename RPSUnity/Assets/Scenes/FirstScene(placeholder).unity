@@ -6009,6 +6009,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f05a56d7010b2724491201c932879fff, type: 2}
   - {fileID: 11400000, guid: 8e75986db2d1b20448e3b0b28a012a3f, type: 2}
   - {fileID: 11400000, guid: 84e292c0fd63c5742a574bfd94f8ccad, type: 2}
+  - {fileID: 11400000, guid: c00694bc3ce55114ab2d0e34be8082de, type: 2}
   passivePowerUps:
   - {fileID: 11400000, guid: 83894d0aef38ac44487e9fe5cad77911, type: 2}
   - {fileID: 11400000, guid: 9e02ed40022546d4d9bb68281e155ffa, type: 2}
