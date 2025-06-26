@@ -19,6 +19,9 @@ public class UpgradeButtonController : MonoBehaviour
 
     private int currentLevel;
 
+    [Header("Stat Increases Per Level")]
+    [SerializeField] private int[] statIncreases;
+
     private void Start()
     {
         if (upgradeButton != null)
@@ -119,6 +122,30 @@ public class UpgradeButtonController : MonoBehaviour
                 total += levelCosts[i];
         }
         return total;
+    }
+
+    public int GetTotalStatIncrease()
+    {
+        int total = 0;
+        int currentLevel = GetCurrentLevel();
+
+        // Sum up all stat increases up to current level
+        for (int i = 0; i < currentLevel && i < statIncreases.Length; i++)
+        {
+            total += statIncreases[i];
+        }
+
+        return total;
+    }
+
+    public int GetNextLevelStatIncrease()
+    {
+        int currentLevel = GetCurrentLevel();
+
+        if (currentLevel >= maxLevel || currentLevel >= statIncreases.Length)
+            return 0;
+
+        return statIncreases[currentLevel];
     }
 }
 

@@ -62,8 +62,18 @@ public class HandController : MonoBehaviour
     {
         if (isPlayer)
         {
-            maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
-            baseDamage += PlayerProgressData.Instance.baseDamageLevel * 2;
+            // Try to use the new upgrade system first
+            if (UpgradeManager.Instance != null)
+            {
+                maxHealth = baseMaxHealth + UpgradeManager.Instance.GetMaxHealthBonus();
+                baseDamage = baseDamage + UpgradeManager.Instance.GetBaseDamageBonus();
+            }
+            else
+            {
+                // Fallback to old hardcoded system
+                maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
+                baseDamage += PlayerProgressData.Instance.baseDamageLevel * 2;
+            }
         }
         else
         {
