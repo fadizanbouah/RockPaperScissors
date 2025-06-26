@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: IncreaseRoomDamage2
   m_EditorClassIdentifier: 
-  powerUpName: Increase Room Damage 2
+  powerUpName: DigBick 2
   description: +100% dmg until room ends
   icon: {fileID: 0}
   favorCost: 1
