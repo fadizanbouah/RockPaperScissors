@@ -31,15 +31,6 @@ public class GamblerUI : MonoBehaviour
             betSlider.minValue = 0;
             betSlider.onValueChanged.AddListener(OnSliderValueChanged);
         }
-
-        // Position the UI (you might want to adjust this)
-        RectTransform rect = GetComponent<RectTransform>();
-        if (rect != null)
-        {
-            rect.anchorMin = new Vector2(0.5f, 0f);
-            rect.anchorMax = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = new Vector2(0, 150); // Above the RPS buttons
-        }
     }
 
     private void Update()

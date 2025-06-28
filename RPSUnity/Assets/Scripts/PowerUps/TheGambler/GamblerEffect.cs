@@ -47,68 +47,31 @@ public class GamblerEffect : PowerUpEffectBase
 
     private void CreateGamblerUI()
     {
-        if (uiCreated)
+        Debug.Log("[GamblerEffect] CreateGamblerUI called - looking for existing UI");
+
+        // Find the existing GamblerUI in the scene (even if inactive)
+        GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
+
+        foreach (var ui in allGamblerUIs)
         {
-            Debug.Log("[GamblerEffect] UI already created, skipping");
-            return;
-        }
-
-        Debug.Log("[GamblerEffect] CreateGamblerUI called");
-
-        // Find or create the UI
-        gamblerUI = FindObjectOfType<GamblerUI>();
-        if (gamblerUI == null)
-        {
-            // Load the prefab from Resources
-            GameObject uiPrefab = Resources.Load<GameObject>("GamblerUI");
-            if (uiPrefab != null)
+            // Make sure it's in the scene (not a prefab)
+            if (ui.gameObject.scene.IsValid())
             {
-                Debug.Log("[GamblerEffect] GamblerUI prefab loaded");
-
-                // Find the GameplayCanvas to parent the UI
-                Canvas gameplayCanvas = GameObject.Find("GameplayCanvas")?.GetComponent<Canvas>();
-                if (gameplayCanvas == null)
-                {
-                    // Try to find any canvas tagged as gameplay
-                    Canvas[] allCanvases = FindObjectsOfType<Canvas>();
-                    foreach (var canvas in allCanvases)
-                    {
-                        if (canvas.gameObject.name.Contains("Gameplay") || canvas.gameObject.name.Contains("Game"))
-                        {
-                            gameplayCanvas = canvas;
-                            break;
-                        }
-                    }
-                }
-
-                GameObject uiInstance = Instantiate(uiPrefab);
-
-                // Parent to the gameplay canvas
-                if (gameplayCanvas != null)
-                {
-                    uiInstance.transform.SetParent(gameplayCanvas.transform, false);
-                    Debug.Log($"[GamblerEffect] UI parented to {gameplayCanvas.name}");
-                }
-                else
-                {
-                    Debug.LogWarning("[GamblerEffect] Could not find GameplayCanvas! UI may not display correctly.");
-                }
-
-                gamblerUI = uiInstance.GetComponent<GamblerUI>();
-            }
-            else
-            {
-                Debug.LogError("[GamblerEffect] GamblerUI prefab not found in Resources folder!");
-                return;
+                gamblerUI = ui;
+                break;
             }
         }
 
         if (gamblerUI != null)
         {
+            Debug.Log("[GamblerEffect] Found existing GamblerUI in scene - activating it");
+            gamblerUI.gameObject.SetActive(true);
             gamblerUI.Initialize(this, player);
-            gamblerUI.Show();
-            uiCreated = true;
-            Debug.Log("[GamblerEffect] GamblerUI created and initialized successfully");
+            Debug.Log("[GamblerEffect] GamblerUI activated and initialized successfully");
+        }
+        else
+        {
+            Debug.LogError("[GamblerEffect] No GamblerUI found in scene! Make sure you have one placed in GameplayCanvas.");
         }
     }
 
@@ -259,10 +222,11 @@ public class GamblerEffect : PowerUpEffectBase
 
     public override void Cleanup()
     {
+        Debug.Log("[GamblerEffect] Cleanup called");
         if (gamblerUI != null)
         {
-            gamblerUI.Hide();
-            Destroy(gamblerUI.gameObject);
+            gamblerUI.gameObject.SetActive(false);
+            Debug.Log("[GamblerEffect] GamblerUI deactivated");
         }
     }
 }
