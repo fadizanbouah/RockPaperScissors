@@ -149,11 +149,29 @@ public class HandController : MonoBehaviour
                 Debug.Log($"[BONUS SCISSORS] Added bonusScissorsDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
 
+            // NEW: Add flat damage bonuses from active power-ups (like The Gambler)
+            int flatPowerUpBonus = 0;
+            var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
+            if (effects != null)
+            {
+                foreach (var effect in effects)
+                {
+                    int bonus = effect.GetFlatDamageBonus(signUsed);
+                    if (bonus > 0)
+                    {
+                        flatPowerUpBonus += bonus;
+                        Debug.Log($"[FLAT POWERUP] {effect.GetType().Name} added {bonus} flat damage");
+                    }
+                }
+            }
+            baseFinalDamage += flatPowerUpBonus;
+            Debug.Log($"[TOTAL FLAT BONUSES] Added {flatPowerUpBonus} from power-ups, new total: {baseFinalDamage}");
+
             // Start with 1.0f (100%) multiplier
             float multiplier = 1f;
             Debug.Log($"[MULTIPLIER START] multiplier: {multiplier}");
 
-            // Let power-ups modify the multiplier
+            // Let power-ups modify the multiplier (percentage-based effects only)
             ActivePowerUpHandler.GetModifiedMultiplier(ref multiplier, signUsed);
             Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
 

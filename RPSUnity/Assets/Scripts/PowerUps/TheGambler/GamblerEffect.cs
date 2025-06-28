@@ -235,22 +235,15 @@ public class GamblerEffect : PowerUpEffectBase
         Debug.Log($"[GamblerEffect] Round complete. Bet state reset for next round.");
     }
 
-    public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
+    public override int GetFlatDamageBonus(string signUsed)
     {
         if (hasBetThisRound && currentBetAmount > 0)
         {
-            // Calculate how much to add to multiplier for flat damage bonus
-            int bonusDamage = GetBonusDamage();
-
-            // Add the bonus as additional multiplier
-            // If base damage is 25 and we want +15 bonus, multiplier becomes (25+15)/25 = 1.6
-            if (player != null && player.baseDamage > 0)
-            {
-                float bonusMultiplier = (float)bonusDamage / player.baseDamage;
-                multiplier += bonusMultiplier;
-                Debug.Log($"[GamblerEffect] Added {bonusMultiplier} to multiplier for +{bonusDamage} damage bonus");
-            }
+            int bonus = GetBonusDamage();
+            Debug.Log($"[GamblerEffect] Providing {bonus} flat damage bonus from bet");
+            return bonus;
         }
+        return 0;
     }
 
     public override void OnRoomStart()

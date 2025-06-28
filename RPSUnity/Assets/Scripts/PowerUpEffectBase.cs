@@ -30,6 +30,11 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
 
     public virtual void ModifyIncomingDamage(ref int damage, HandController source) { }
 
+    public virtual int GetFlatDamageBonus(string signUsed)
+    {
+        return 0;
+    }
+
     public virtual void UpdateReferences(HandController newPlayer, HandController newEnemy)
     {
         this.player = newPlayer;
