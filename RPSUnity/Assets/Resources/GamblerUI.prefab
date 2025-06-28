@@ -407,10 +407,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc3e8fa82518d041b75b9fd10197a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betSlider: {fileID: 0}
-  betAmountText: {fileID: 0}
-  bonusDamageText: {fileID: 0}
-  canvasGroup: {fileID: 0}
+  betSlider: {fileID: 4273904026834877545}
+  betAmountText: {fileID: 61986167530593924}
+  bonusDamageText: {fileID: 6818993792594927470}
+  canvasGroup: {fileID: 7939542294538010703}
 --- !u!1 &4731288264712358152
 GameObject:
   m_ObjectHideFlags: 0
