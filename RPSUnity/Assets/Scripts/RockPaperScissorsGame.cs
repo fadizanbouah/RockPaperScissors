@@ -442,4 +442,9 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         return currentSubstate == GameSubstate.PowerUpActivation;
     }
+
+    public bool IsInCombat()
+    {
+        return currentSubstate != GameSubstate.Idle;
+    }
 }
