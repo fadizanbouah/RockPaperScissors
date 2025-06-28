@@ -5,18 +5,56 @@ public class GamblerEffect : PowerUpEffectBase
     private int currentBetAmount = 0;
     private bool hasBetThisRound = false;
     private GamblerUI gamblerUI;
+    private bool uiCreated = false;
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        Debug.Log("[GamblerEffect] The Gambler effect activated!");
+        Debug.Log($"[GamblerEffect] Initialize - Player: {player?.name ?? "NULL"}, Enemy: {enemy?.name ?? "NULL"}");
 
-        // Create the UI
-        CreateGamblerUI();
+        // Don't create UI yet if player is null - wait for player reference update
+        if (player != null)
+        {
+            CreateGamblerUI();
+        }
+        else
+        {
+            Debug.Log("[GamblerEffect] Player is null, delaying UI creation until player reference is updated");
+        }
+    }
+
+    // Override the base UpdateReferences to also update UI
+    public override void UpdateReferences(HandController newPlayer, HandController newEnemy)
+    {
+        base.UpdateReferences(newPlayer, newEnemy);
+        UpdatePlayerReference(newPlayer, newEnemy);
+    }
+
+    // NEW: Method to update player reference when it becomes available
+    public void UpdatePlayerReference(HandController newPlayer, HandController newEnemy)
+    {
+        Debug.Log($"[GamblerEffect] UpdatePlayerReference - Player: {newPlayer?.name ?? "NULL"}, Enemy: {newEnemy?.name ?? "NULL"}");
+
+        this.player = newPlayer;
+        this.enemy = newEnemy;
+
+        // Create UI now that we have a valid player reference
+        if (player != null && !uiCreated)
+        {
+            CreateGamblerUI();
+        }
     }
 
     private void CreateGamblerUI()
     {
+        if (uiCreated)
+        {
+            Debug.Log("[GamblerEffect] UI already created, skipping");
+            return;
+        }
+
+        Debug.Log("[GamblerEffect] CreateGamblerUI called");
+
         // Find or create the UI
         gamblerUI = FindObjectOfType<GamblerUI>();
         if (gamblerUI == null)
@@ -25,6 +63,8 @@ public class GamblerEffect : PowerUpEffectBase
             GameObject uiPrefab = Resources.Load<GameObject>("GamblerUI");
             if (uiPrefab != null)
             {
+                Debug.Log("[GamblerEffect] GamblerUI prefab loaded");
+
                 // Find the GameplayCanvas to parent the UI
                 Canvas gameplayCanvas = GameObject.Find("GameplayCanvas")?.GetComponent<Canvas>();
                 if (gameplayCanvas == null)
@@ -47,6 +87,7 @@ public class GamblerEffect : PowerUpEffectBase
                 if (gameplayCanvas != null)
                 {
                     uiInstance.transform.SetParent(gameplayCanvas.transform, false);
+                    Debug.Log($"[GamblerEffect] UI parented to {gameplayCanvas.name}");
                 }
                 else
                 {
@@ -58,6 +99,7 @@ public class GamblerEffect : PowerUpEffectBase
             else
             {
                 Debug.LogError("[GamblerEffect] GamblerUI prefab not found in Resources folder!");
+                return;
             }
         }
 
@@ -65,17 +107,27 @@ public class GamblerEffect : PowerUpEffectBase
         {
             gamblerUI.Initialize(this, player);
             gamblerUI.Show();
+            uiCreated = true;
             Debug.Log("[GamblerEffect] GamblerUI created and initialized successfully");
         }
     }
 
     public void SetBetAmount(int amount)
     {
+        Debug.Log($"[GamblerEffect] SetBetAmount called with amount: {amount}");
+
+        // Check if player is null
+        if (player == null)
+        {
+            Debug.LogError("[GamblerEffect] Player is null! Cannot set bet amount.");
+            return;
+        }
+
         // Ensure bet doesn't exceed current HP - 1
         int maxBet = Mathf.Max(0, player.CurrentHealth - 1);
         currentBetAmount = Mathf.Clamp(amount, 0, maxBet);
 
-        Debug.Log($"[GamblerEffect] Bet amount set to: {currentBetAmount}");
+        Debug.Log($"[GamblerEffect] Bet amount set to: {currentBetAmount} (max was {maxBet})");
     }
 
     public int GetCurrentBet()
@@ -85,6 +137,11 @@ public class GamblerEffect : PowerUpEffectBase
 
     public int GetMaxBet()
     {
+        if (player == null)
+        {
+            Debug.LogWarning("[GamblerEffect] Player is null in GetMaxBet!");
+            return 0;
+        }
         return Mathf.Max(0, player.CurrentHealth - 1);
     }
 
@@ -96,6 +153,14 @@ public class GamblerEffect : PowerUpEffectBase
 
     public override void OnRoundStart()
     {
+        Debug.Log($"[GamblerEffect] OnRoundStart - Player: {player?.name ?? "NULL"}");
+
+        if (player == null)
+        {
+            Debug.LogError("[GamblerEffect] Player is null in OnRoundStart!");
+            return;
+        }
+
         if (currentBetAmount > 0 && !hasBetThisRound)
         {
             // Deduct the bet HP at round start
@@ -110,6 +175,12 @@ public class GamblerEffect : PowerUpEffectBase
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
         if (!hasBetThisRound || currentBetAmount == 0) return;
+
+        if (player == null)
+        {
+            Debug.LogError("[GamblerEffect] Player is null in OnRoundEnd!");
+            return;
+        }
 
         switch (result)
         {
@@ -136,12 +207,21 @@ public class GamblerEffect : PowerUpEffectBase
         hasBetThisRound = false;
     }
 
-    public override void ModifyDamage(ref int damage, string signUsed)
+    public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
     {
         if (hasBetThisRound && currentBetAmount > 0)
         {
-            damage += GetBonusDamage();
-            Debug.Log($"[GamblerEffect] Added {GetBonusDamage()} bonus damage from bet");
+            // Calculate how much to add to multiplier for flat damage bonus
+            int bonusDamage = GetBonusDamage();
+
+            // Add the bonus as additional multiplier
+            // If base damage is 25 and we want +15 bonus, multiplier becomes (25+15)/25 = 1.6
+            if (player != null && player.baseDamage > 0)
+            {
+                float bonusMultiplier = (float)bonusDamage / player.baseDamage;
+                multiplier += bonusMultiplier;
+                Debug.Log($"[GamblerEffect] Added {bonusMultiplier} to multiplier for +{bonusDamage} damage bonus");
+            }
         }
     }
 

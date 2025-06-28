@@ -27,10 +27,22 @@ public static class PassivePowerUpHandler
             {
                 effect.Initialize(data, null, null);
                 effect.OnRoomStart(); // Apply effect immediately (e.g., stat boost)
+
+                // IMPORTANT: Register with PowerUpEffectManager so it gets callbacks
+                if (PowerUpEffectManager.Instance != null)
+                {
+                    PowerUpEffectManager.Instance.RegisterEffect(effect);
+                    Debug.Log($"[PassivePowerUpHandler] Registered {data.powerUpName} with PowerUpEffectManager");
+                }
+                else
+                {
+                    Debug.LogWarning($"[PassivePowerUpHandler] PowerUpEffectManager not found! {data.powerUpName} won't get callbacks");
+                }
             }
             else
             {
                 Debug.LogWarning($"[PassivePowerUpHandler] No PowerUpEffectBase found on prefab for {data.powerUpName}");
+                GameObject.Destroy(instance); // Clean up failed instantiation
             }
         }
     }

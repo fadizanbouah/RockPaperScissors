@@ -24,13 +24,25 @@ public class PowerUpEffectManager : MonoBehaviour
 
     public void Initialize(HandController player, HandController enemy)
     {
-        // Only update player/enemy references — no cleanup
         this.player = player;
         this.enemy = enemy;
 
         Debug.Log($"[PowerUpEffectManager] Re-linked references: Player = {player?.name}, Enemy = {enemy?.name}");
+        Debug.Log($"[PowerUpEffectManager] Found {activeEffects.Count} active effects to update");
 
-        // DO NOT call CleanupAllEffects here anymore!
+        // Update all existing effects with the new player/enemy references
+        foreach (var effect in activeEffects)
+        {
+            if (effect != null)
+            {
+                Debug.Log($"[PowerUpEffectManager] Updating references for {effect.GetType().Name}");
+                effect.UpdateReferences(player, enemy);
+            }
+            else
+            {
+                Debug.LogWarning("[PowerUpEffectManager] Found null effect in activeEffects!");
+            }
+        }
     }
 
     public void OnRoundStart()

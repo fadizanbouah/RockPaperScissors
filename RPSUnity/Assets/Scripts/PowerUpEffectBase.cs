@@ -29,4 +29,11 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
     public virtual void OnRoomStart() { }
 
     public virtual void ModifyIncomingDamage(ref int damage, HandController source) { }
+
+    public virtual void UpdateReferences(HandController newPlayer, HandController newEnemy)
+    {
+        this.player = newPlayer;
+        this.enemy = newEnemy;
+        Debug.Log($"[PowerUpEffectBase] Updated references for {GetType().Name}");
+    }
 }
