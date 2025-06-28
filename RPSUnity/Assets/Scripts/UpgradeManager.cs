@@ -16,7 +16,7 @@ public class UpgradeManager : MonoBehaviour
             return;
         }
         Instance = this;
-        // REMOVED: DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnDestroy()

@@ -62,22 +62,47 @@ public class HandController : MonoBehaviour
     {
         if (isPlayer)
         {
+            Debug.Log($"=== DAMAGE CALCULATION DEBUG ===");
+            Debug.Log($"[START] baseDamage: {baseDamage}");
+            Debug.Log($"[START] baseMaxHealth: {baseMaxHealth}");
+
+            Debug.Log($"UpgradeManager.Instance exists: {UpgradeManager.Instance != null}");
+            if (UpgradeManager.Instance != null)
+            {
+                Debug.Log($"UpgradeManager.GetBaseDamageBonus(): {UpgradeManager.Instance.GetBaseDamageBonus()}");
+                Debug.Log($"UpgradeManager.GetMaxHealthBonus(): {UpgradeManager.Instance.GetMaxHealthBonus()}");
+            }
+
+            Debug.Log($"PlayerProgressData.baseDamageLevel: {PlayerProgressData.Instance.baseDamageLevel}");
+            Debug.Log($"PlayerProgressData.maxHealthLevel: {PlayerProgressData.Instance.maxHealthLevel}");
+            Debug.Log($"PlayerProgressData.bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}");
+            Debug.Log($"PlayerProgressData.bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}");
+            Debug.Log($"PlayerProgressData.bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}");
+            Debug.Log($"PlayerProgressData.bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
+
             // Try to use the new upgrade system first
             if (UpgradeManager.Instance != null)
             {
                 maxHealth = baseMaxHealth + UpgradeManager.Instance.GetMaxHealthBonus();
                 baseDamage = baseDamage + UpgradeManager.Instance.GetBaseDamageBonus();
+                Debug.Log($"[USING UPGRADE MANAGER] Applied UpgradeManager bonuses");
             }
             else
             {
                 // Fallback to old hardcoded system
                 maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
                 baseDamage += PlayerProgressData.Instance.baseDamageLevel * 2;
+                Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (baseDamageLevel * 2 = {PlayerProgressData.Instance.baseDamageLevel * 2})");
             }
+
+            Debug.Log($"[FINAL] baseDamage: {baseDamage}");
+            Debug.Log($"[FINAL] maxHealth: {maxHealth}");
+            Debug.Log($"=== END DAMAGE DEBUG ===");
         }
         else
         {
             maxHealth = baseMaxHealth;
+            Debug.Log($"[ENEMY] maxHealth set to baseMaxHealth: {maxHealth}");
         }
 
         health = maxHealth;
@@ -90,38 +115,67 @@ public class HandController : MonoBehaviour
 
     public int GetEffectiveDamage(string signUsed)
     {
+        Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
+        Debug.Log($"[START] baseDamage: {baseDamage}, signUsed: {signUsed}, isPlayer: {isPlayer}");
+
         int baseFinalDamage = baseDamage;
 
         if (isPlayer)
         {
-            // Add persistent passive flat boosts
-            baseFinalDamage += PlayerProgressData.Instance.bonusBaseDamage;
+            Debug.Log($"[BEFORE BONUSES] baseFinalDamage: {baseFinalDamage}");
 
+            // Add persistent passive flat boosts
+            int bonusBaseDamage = PlayerProgressData.Instance.bonusBaseDamage;
+            baseFinalDamage += bonusBaseDamage;
+            Debug.Log($"[BONUS BASE] Added bonusBaseDamage: {bonusBaseDamage}, new total: {baseFinalDamage}");
+
+            int signSpecificBonus = 0;
             if (signUsed == "Rock")
-                baseFinalDamage += PlayerProgressData.Instance.bonusRockDamage;
+            {
+                signSpecificBonus = PlayerProgressData.Instance.bonusRockDamage;
+                baseFinalDamage += signSpecificBonus;
+                Debug.Log($"[BONUS ROCK] Added bonusRockDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+            }
             else if (signUsed == "Paper")
-                baseFinalDamage += PlayerProgressData.Instance.bonusPaperDamage;
+            {
+                signSpecificBonus = PlayerProgressData.Instance.bonusPaperDamage;
+                baseFinalDamage += signSpecificBonus;
+                Debug.Log($"[BONUS PAPER] Added bonusPaperDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+            }
             else if (signUsed == "Scissors")
-                baseFinalDamage += PlayerProgressData.Instance.bonusScissorsDamage;
+            {
+                signSpecificBonus = PlayerProgressData.Instance.bonusScissorsDamage;
+                baseFinalDamage += signSpecificBonus;
+                Debug.Log($"[BONUS SCISSORS] Added bonusScissorsDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+            }
 
             // Start with 1.0f (100%) multiplier
             float multiplier = 1f;
+            Debug.Log($"[MULTIPLIER START] multiplier: {multiplier}");
 
             // Let power-ups modify the multiplier
             ActivePowerUpHandler.GetModifiedMultiplier(ref multiplier, signUsed);
+            Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
 
             // Calculate modified damage from base * multiplier
             int finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
+            Debug.Log($"[AFTER MULTIPLIER] baseFinalDamage: {baseFinalDamage} * multiplier: {multiplier} = finalDamage: {finalDamage}");
 
             // Apply and clear one-time temporary bonus
             finalDamage += temporaryBonusDamage;
             if (temporaryBonusDamage > 0)
+            {
                 Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
+            }
             temporaryBonusDamage = 0;
+
+            Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
+            Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
 
             return finalDamage;
         }
 
+        Debug.Log($"[ENEMY DAMAGE] returning baseFinalDamage: {baseFinalDamage}");
         return baseFinalDamage;
     }
 
