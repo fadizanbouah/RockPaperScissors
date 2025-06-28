@@ -114,7 +114,7 @@ public class GamblerEffect : PowerUpEffectBase
 
     public void SetBetAmount(int amount)
     {
-        Debug.Log($"[GamblerEffect] SetBetAmount called with amount: {amount}");
+        Debug.Log($"[GamblerEffect] SetBetAmount called with amount: {amount} (previous amount was: {currentBetAmount})");
 
         // Check if player is null
         if (player == null)
@@ -125,9 +125,18 @@ public class GamblerEffect : PowerUpEffectBase
 
         // Ensure bet doesn't exceed current HP - 1
         int maxBet = Mathf.Max(0, player.CurrentHealth - 1);
-        currentBetAmount = Mathf.Clamp(amount, 0, maxBet);
+        int newBetAmount = Mathf.Clamp(amount, 0, maxBet);
 
-        Debug.Log($"[GamblerEffect] Bet amount set to: {currentBetAmount} (max was {maxBet})");
+        // Only update if the amount actually changed
+        if (newBetAmount != currentBetAmount)
+        {
+            currentBetAmount = newBetAmount;
+            Debug.Log($"[GamblerEffect] Bet amount updated to: {currentBetAmount} (max was {maxBet})");
+        }
+        else
+        {
+            Debug.Log($"[GamblerEffect] Bet amount unchanged: {currentBetAmount}");
+        }
     }
 
     public int GetCurrentBet()
@@ -153,7 +162,7 @@ public class GamblerEffect : PowerUpEffectBase
 
     public override void OnRoundStart()
     {
-        Debug.Log($"[GamblerEffect] OnRoundStart - Player: {player?.name ?? "NULL"}");
+        Debug.Log($"[GamblerEffect] OnRoundStart - Player: {player?.name ?? "NULL"}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
 
         if (player == null)
         {
@@ -161,6 +170,7 @@ public class GamblerEffect : PowerUpEffectBase
             return;
         }
 
+        // Only deduct HP if we haven't already bet this round AND there's a bet amount set
         if (currentBetAmount > 0 && !hasBetThisRound)
         {
             // Deduct the bet HP at round start
@@ -170,11 +180,25 @@ public class GamblerEffect : PowerUpEffectBase
 
             Debug.Log($"[GamblerEffect] Bet {currentBetAmount} HP for +{GetBonusDamage()} damage");
         }
+        else if (hasBetThisRound)
+        {
+            Debug.Log($"[GamblerEffect] Already bet this round, skipping HP deduction");
+        }
+        else
+        {
+            Debug.Log($"[GamblerEffect] No bet amount set, skipping");
+        }
     }
 
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
-        if (!hasBetThisRound || currentBetAmount == 0) return;
+        Debug.Log($"[GamblerEffect] OnRoundEnd called - Result: {result}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
+
+        if (!hasBetThisRound || currentBetAmount == 0)
+        {
+            Debug.Log("[GamblerEffect] No active bet, skipping round end logic");
+            return;
+        }
 
         if (player == null)
         {
@@ -204,7 +228,11 @@ public class GamblerEffect : PowerUpEffectBase
                 break;
         }
 
+        // IMPORTANT: Reset the bet state for the next round
         hasBetThisRound = false;
+        // Keep currentBetAmount so player can see their last bet, but reset the "used" flag
+
+        Debug.Log($"[GamblerEffect] Round complete. Bet state reset for next round.");
     }
 
     public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
@@ -223,6 +251,17 @@ public class GamblerEffect : PowerUpEffectBase
                 Debug.Log($"[GamblerEffect] Added {bonusMultiplier} to multiplier for +{bonusDamage} damage bonus");
             }
         }
+    }
+
+    public override void OnRoomStart()
+    {
+        Debug.Log($"[GamblerEffect] OnRoomStart called - Resetting bet state for new room");
+
+        // Reset bet state completely when entering a new room
+        currentBetAmount = 0;
+        hasBetThisRound = false;
+
+        Debug.Log($"[GamblerEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}");
     }
 
     public override void Cleanup()

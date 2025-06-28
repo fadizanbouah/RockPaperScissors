@@ -161,7 +161,6 @@ public class RockPaperScissorsGame : MonoBehaviour
 
     private IEnumerator HandleTakeDamage(RoundResult result, string playerChoice, string enemyChoice)
     {
-
         playerHitDone = true;
         enemyHitDone = true;
 
@@ -181,12 +180,20 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
+            // IMPORTANT: Call OnRoundEnd even for draws
+            PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
+            Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for Draw result");
+
             EnterIdleState();
             yield break;
         }
 
         yield return new WaitUntil(() => playerHitDone && enemyHitDone);
         Debug.Log("Both hit animations finished.");
+
+        // IMPORTANT: Call OnRoundEnd after damage is dealt but before state transitions
+        PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
+        Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for {result} result");
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
