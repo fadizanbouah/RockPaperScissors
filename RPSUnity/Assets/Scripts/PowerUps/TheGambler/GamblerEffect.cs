@@ -48,6 +48,7 @@ public class GamblerEffect : PowerUpEffectBase
     private void CreateGamblerUI()
     {
         Debug.Log("[GamblerEffect] CreateGamblerUI called - looking for existing UI");
+        Debug.Log("[GamblerEffect] *** THIS SHOULD NOT HAPPEN IF GAMBLER WASN'T PURCHASED ***");
 
         // Find the existing GamblerUI in the scene (even if inactive)
         GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();

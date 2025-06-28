@@ -54,8 +54,12 @@ public class RunProgressManager : MonoBehaviour
 
     public void ResetRun()
     {
+        Debug.Log("[RunProgressManager] ===== RESET RUN CALLED =====");
+        Debug.Log($"[RunProgressManager] BEFORE RESET - persistentPowerUps count: {persistentPowerUps.Count}");
+
         favor = 0;
         acquiredPowerUps.Clear();
+        persistentPowerUps.Clear();
 
         foreach (var effect in activeEffects)
         {
@@ -64,9 +68,27 @@ public class RunProgressManager : MonoBehaviour
         }
 
         activeEffects.Clear();
-        persistentPowerUps.Clear();
+
+        // NEW: Clean up ALL effects registered with PowerUpEffectManager
+        if (PowerUpEffectManager.Instance != null)
+        {
+            PowerUpEffectManager.Instance.CleanupAllEffects();
+            Debug.Log("[RunProgressManager] Cleaned up all PowerUpEffectManager effects");
+        }
+
+        // Deactivate GamblerUI (as backup)
+        GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
+        foreach (var gamblerUI in allGamblerUIs)
+        {
+            if (gamblerUI.gameObject.scene.IsValid() && gamblerUI.gameObject.activeInHierarchy)
+            {
+                gamblerUI.gameObject.SetActive(false);
+                Debug.Log($"[RunProgressManager] Deactivated GamblerUI: {gamblerUI.name}");
+            }
+        }
 
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
+        Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");
     }
 
     public void ApplyPowerUpEffect(PowerUpData data)
