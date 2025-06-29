@@ -129,4 +129,13 @@ public class GamblerUI : MonoBehaviour
             canvasGroup.alpha = interactable ? 1f : 0.5f;
         }
     }
+
+    public void ResetSlider()
+    {
+        if (betSlider != null)
+        {
+            betSlider.value = 0;
+            OnSliderValueChanged(0); // This will update the text displays as well
+        }
+    }
 }

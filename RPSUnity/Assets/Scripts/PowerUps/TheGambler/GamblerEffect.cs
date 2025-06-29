@@ -218,6 +218,13 @@ public class GamblerEffect : PowerUpEffectBase
         currentBetAmount = 0;
         hasBetThisRound = false;
 
+        // Reset the UI slider to match the reset bet amount
+        if (gamblerUI != null && gamblerUI.gameObject.activeInHierarchy)
+        {
+            gamblerUI.ResetSlider();
+            Debug.Log("[GamblerEffect] Reset GamblerUI slider to 0");
+        }
+
         Debug.Log($"[GamblerEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}");
     }
 
