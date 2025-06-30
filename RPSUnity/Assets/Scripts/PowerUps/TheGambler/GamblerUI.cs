@@ -37,26 +37,32 @@ public class GamblerUI : MonoBehaviour
     {
         if (gamblerEffect == null || player == null) return;
 
-        // Update slider max value based on current HP
-        int maxBet = gamblerEffect.GetMaxBet();
-        if (betSlider != null && betSlider.maxValue != maxBet)
+        // Don't update the slider during combat - the bet is locked in
+        bool isInCombat = RockPaperScissorsGame.Instance != null &&
+                          RockPaperScissorsGame.Instance.IsInCombat();
+
+        if (!isInCombat)
         {
-            betSlider.maxValue = maxBet;
-            // Clamp current value if it exceeds new max
-            if (betSlider.value > maxBet)
+            // Only update slider max value when NOT in combat
+            int maxBet = gamblerEffect.GetMaxBet();
+            if (betSlider != null && betSlider.maxValue != maxBet)
             {
-                betSlider.value = maxBet;
+                betSlider.maxValue = maxBet;
+                // Don't clamp or change the current value - let the player's choice stand
             }
         }
 
-        // Disable during combat
-        bool canBet = RockPaperScissorsGame.Instance == null ||
-                      !RockPaperScissorsGame.Instance.IsInCombat();
-        SetInteractable(canBet);
+        // Disable interaction during combat
+        SetInteractable(!isInCombat);
     }
 
     private void OnSliderValueChanged(float value)
     {
+        // Don't process changes during combat
+        bool isInCombat = RockPaperScissorsGame.Instance != null &&
+                          RockPaperScissorsGame.Instance.IsInCombat();
+        if (isInCombat) return;
+
         int betAmount = Mathf.RoundToInt(value);
 
         // Update the effect
@@ -65,17 +71,8 @@ public class GamblerUI : MonoBehaviour
             gamblerEffect.SetBetAmount(betAmount);
         }
 
-        // Update UI text
-        if (betAmountText != null)
-        {
-            betAmountText.text = $"Bet: {betAmount} HP";
-        }
-
-        if (bonusDamageText != null)
-        {
-            int bonusDamage = betAmount / 2;
-            bonusDamageText.text = $"+{bonusDamage} Damage";
-        }
+        // Update UI display
+        UpdateBetDisplay(betAmount);
 
         // Update health bar preview
         UpdateHealthBarPreview(betAmount);
@@ -134,8 +131,48 @@ public class GamblerUI : MonoBehaviour
     {
         if (betSlider != null)
         {
+            // Temporarily remove the listener to avoid any recursion
+            betSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+
+            // Set slider to 0
             betSlider.value = 0;
-            OnSliderValueChanged(0); // This will update the text displays as well
+
+            // Re-add the listener
+            betSlider.onValueChanged.AddListener(OnSliderValueChanged);
+
+            // Manually update the UI to ensure texts are synchronized
+            UpdateBetDisplay(0);
         }
+    }
+
+    private void UpdateBetDisplay(int betAmount)
+    {
+        if (betAmountText != null)
+        {
+            betAmountText.text = $"Bet: {betAmount} HP";
+        }
+
+        if (bonusDamageText != null)
+        {
+            int bonusDamage = betAmount / 2;
+            bonusDamageText.text = $"+{bonusDamage} Damage";
+        }
+    }
+
+    public void FullReset()
+    {
+        // Reset slider
+        if (betSlider != null)
+        {
+            betSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            betSlider.value = 0;
+            betSlider.onValueChanged.AddListener(OnSliderValueChanged);
+        }
+
+        // Reset display texts
+        UpdateBetDisplay(0);
+
+        // Hide the UI
+        gameObject.SetActive(false);
     }
 }

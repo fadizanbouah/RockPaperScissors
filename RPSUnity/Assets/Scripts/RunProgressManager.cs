@@ -76,14 +76,14 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log("[RunProgressManager] Cleaned up all PowerUpEffectManager effects");
         }
 
-        // Deactivate GamblerUI (as backup)
+        // UPDATED: Properly reset GamblerUI
         GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
         foreach (var gamblerUI in allGamblerUIs)
         {
-            if (gamblerUI.gameObject.scene.IsValid() && gamblerUI.gameObject.activeInHierarchy)
+            if (gamblerUI.gameObject.scene.IsValid())
             {
-                gamblerUI.gameObject.SetActive(false);
-                Debug.Log($"[RunProgressManager] Deactivated GamblerUI: {gamblerUI.name}");
+                gamblerUI.FullReset();  // Call FullReset instead of just SetActive(false)
+                Debug.Log($"[RunProgressManager] Fully reset GamblerUI: {gamblerUI.name}");
             }
         }
 
