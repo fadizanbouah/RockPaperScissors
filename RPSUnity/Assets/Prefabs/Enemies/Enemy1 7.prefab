@@ -571,6 +571,10 @@ MonoBehaviour:
   combatTextPrefab: {fileID: 6277306413349539318, guid: aa7b1b0d83581574c8c2d36650551b7e, type: 3}
   coinReward: 5
   favorReward: 3
+  usesPredictionSystem: 1
+  hardMode: 0
+  sequenceLength: 3
+  predeterminedSequence: []
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
