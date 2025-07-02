@@ -32,6 +32,7 @@ public class RockPaperScissorsGame : MonoBehaviour
     public UnityEngine.UI.Button paperButton;
     public UnityEngine.UI.Button scissorsButton;
     public GameObject roomClearedTextObject;
+    private PredictionUI predictionUI;
 
     private string[] choices = { "Rock", "Paper", "Scissors" };
 
@@ -48,6 +49,9 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
         Instance = this;
+
+        // Find prediction UI
+        predictionUI = FindObjectOfType<PredictionUI>();
     }
 
     public void InitializeGame(HandController player, HandController enemy)
@@ -81,8 +85,13 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         PowerUpEffectManager.Instance?.Initialize(player, enemy);
 
+        // Set up prediction UI for the enemy
+        if (predictionUI != null)
+        {
+            predictionUI.SetupPrediction(enemy);
+        }
+
         resultText.text = "";
-        //SetSubstate(GameSubstate.EnemySpawn);
     }
 
     public void StartGame()
@@ -118,7 +127,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         Debug.Log($"Player selected: {playerChoice}");
         playerInstance.StartShaking(playerChoice);
 
-        string enemyChoice = choices[Random.Range(0, choices.Length)];
+        string enemyChoice = enemyHandController.GetNextPredeterminedChoice();
         enemyHandController.StartShaking(enemyChoice);
         Debug.Log($"Enemy has pre-selected: {enemyChoice}");
 

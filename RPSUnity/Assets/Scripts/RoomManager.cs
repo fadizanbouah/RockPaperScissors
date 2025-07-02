@@ -110,6 +110,14 @@ public class RoomManager : MonoBehaviour
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
 
+
+            // Set up prediction UI for the new enemy
+            PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
+            if (predictionUI != null)
+            {
+                predictionUI.SetupPrediction(currentEnemy);
+            }
+
             // Notify that the enemy has been fully spawned
             OnEnemySpawned?.Invoke();
         }

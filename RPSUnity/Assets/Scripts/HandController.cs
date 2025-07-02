@@ -36,6 +36,15 @@ public class HandController : MonoBehaviour
     public int coinReward = 5;
     public int favorReward = 3;
 
+    [Header("Prediction System")]
+    [SerializeField] private bool usesPredictionSystem = false;
+    [SerializeField] private bool hardMode = false;
+    [SerializeField] private int sequenceLength = 3;
+    [SerializeField] private List<string> predeterminedSequence = new List<string>();
+    private int currentSequenceIndex = 0;
+    private List<string> currentSequence = new List<string>();
+    private string[] choices = { "Rock", "Paper", "Scissors" };
+
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
 
@@ -56,6 +65,12 @@ public class HandController : MonoBehaviour
         ApplyUpgrades();
         handSpriteRenderer.sprite = defaultHandSprite;
         UpdateHealthBar();
+
+        // Initialize prediction sequence if this is an enemy
+        if (!isPlayer && usesPredictionSystem)
+        {
+            GenerateNewSequence();
+        }
     }
 
     private void ApplyUpgrades()
@@ -357,6 +372,77 @@ public class HandController : MonoBehaviour
         if (isDying) return;
         Debug.Log($"{gameObject.name} hit animation finished!");
         HitAnimationFinished?.Invoke(this);
+    }
+
+    // Prediction System Methods
+    private void GenerateNewSequence()
+    {
+        if (hardMode || !usesPredictionSystem)
+        {
+            // Hard mode doesn't use sequences
+            return;
+        }
+
+        currentSequence.Clear();
+        currentSequenceIndex = 0;
+
+        // Generate sequence based on configured length
+        for (int i = 0; i < sequenceLength; i++)
+        {
+            currentSequence.Add(choices[Random.Range(0, choices.Length)]);
+        }
+
+        // Copy for display (this will be shuffled in the UI)
+        predeterminedSequence = new List<string>(currentSequence);
+
+        Debug.Log($"[HandController] Generated new sequence for {gameObject.name}: {string.Join(", ", currentSequence)}");
+    }
+
+    public string GetNextPredeterminedChoice()
+    {
+        if (!usesPredictionSystem || isPlayer)
+        {
+            // Player or non-prediction enemies use random
+            return choices[Random.Range(0, choices.Length)];
+        }
+
+        if (hardMode)
+        {
+            // Hard mode is truly random
+            return choices[Random.Range(0, choices.Length)];
+        }
+
+        // Use predetermined sequence
+        if (currentSequence.Count == 0 || currentSequenceIndex >= currentSequence.Count)
+        {
+            GenerateNewSequence();
+        }
+
+        string choice = currentSequence[currentSequenceIndex];
+        currentSequenceIndex++;
+
+        Debug.Log($"[HandController] {gameObject.name} playing sign {currentSequenceIndex}/{currentSequence.Count}: {choice}");
+
+        return choice;
+    }
+
+    public List<string> GetCurrentPredictionSequence()
+    {
+        if (!usesPredictionSystem || hardMode || isPlayer)
+        {
+            return null;
+        }
+        return new List<string>(predeterminedSequence);
+    }
+
+    public int GetCurrentSequenceIndex()
+    {
+        return currentSequenceIndex;
+    }
+
+    public bool UsesPredictionSystem()
+    {
+        return usesPredictionSystem && !hardMode && !isPlayer;
     }
 }
 

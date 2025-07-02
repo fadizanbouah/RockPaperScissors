@@ -87,6 +87,14 @@ public class RunProgressManager : MonoBehaviour
             }
         }
 
+        // Clear prediction UI on run reset
+        PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
+        if (predictionUI != null)
+        {
+            predictionUI.ClearPrediction();
+            Debug.Log("[RunProgressManager] Cleared prediction UI");
+        }
+
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");
     }
