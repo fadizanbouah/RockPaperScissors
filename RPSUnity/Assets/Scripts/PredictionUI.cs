@@ -23,6 +23,8 @@ public class PredictionUI : MonoBehaviour
     private List<string> displayedSequence = new List<string>();
     private HandController currentEnemy;
     private int lastKnownIndex = 0;
+    private List<bool> usedSlots = new List<bool>();
+    private int lastProcessedIndex = -1;
 
     private void Awake()
     {
@@ -58,6 +60,7 @@ public class PredictionUI : MonoBehaviour
         CreateSlots(displayedSequence);
         predictionPanel.SetActive(true);
         lastKnownIndex = 0;
+        lastProcessedIndex = -1;
 
         Debug.Log($"[PredictionUI] Set up prediction for {enemy.name} with {displayedSequence.Count} signs");
     }
@@ -85,6 +88,8 @@ public class PredictionUI : MonoBehaviour
 
     private void CreateSlots(List<string> sequence)
     {
+        usedSlots.Clear();  // ADD THIS LINE
+
         foreach (string sign in sequence)
         {
             GameObject slot = Instantiate(slotPrefab, slotsContainer);
@@ -97,22 +102,43 @@ public class PredictionUI : MonoBehaviour
             }
 
             currentSlots.Add(slot);
+            usedSlots.Add(false);  // ADD THIS LINE
         }
     }
 
-    private void UpdateUsedSigns(int usedCount)
+    private void UpdateUsedSigns(int currentIndex)
     {
-        // Gray out the appropriate number of signs
-        // Note: We don't know which specific signs were used since the display is shuffled
-        // So we just gray out 'usedCount' number of signs from the display
-        for (int i = 0; i < currentSlots.Count; i++)
+        if (currentEnemy == null) return;
+
+        // Get the actual sequence from the enemy
+        List<string> actualSequence = currentEnemy.GetCurrentPredictionSequence();
+        if (actualSequence == null) return;
+
+        // Only process newly used signs (from lastProcessedIndex+1 to currentIndex-1)
+        for (int i = lastProcessedIndex + 1; i < currentIndex && i < actualSequence.Count; i++)
         {
-            Image slotImage = currentSlots[i].GetComponent<Image>();
-            if (slotImage != null)
+            string usedSign = actualSequence[i];
+            Debug.Log($"[PredictionUI] Processing used sign at index {i}: {usedSign}");
+
+            // Find a matching sign in our display that hasn't been grayed out yet
+            for (int j = 0; j < displayedSequence.Count; j++)
             {
-                slotImage.color = i < usedCount ? usedColor : activeColor;
+                if (displayedSequence[j] == usedSign && !usedSlots[j])
+                {
+                    // Gray out this slot
+                    Image slotImage = currentSlots[j].GetComponent<Image>();
+                    if (slotImage != null)
+                    {
+                        slotImage.color = usedColor;
+                    }
+                    usedSlots[j] = true;
+                    Debug.Log($"[PredictionUI] Grayed out slot {j} ({displayedSequence[j]})");
+                    break; // Only gray out one instance of this sign
+                }
             }
         }
+
+        lastProcessedIndex = currentIndex - 1;
     }
 
     private void ClearSlots()
@@ -123,6 +149,7 @@ public class PredictionUI : MonoBehaviour
         }
         currentSlots.Clear();
         displayedSequence.Clear();
+        usedSlots.Clear();
     }
 
     private Sprite GetSpriteForSign(string sign)
