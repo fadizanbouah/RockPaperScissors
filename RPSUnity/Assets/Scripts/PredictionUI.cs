@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class PredictionUI : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class PredictionUI : MonoBehaviour
     private int lastKnownIndex = 0;
     private List<bool> usedSlots = new List<bool>();
     private int lastProcessedIndex = -1;
+    private Coroutine refreshCoroutine;
 
     private void Awake()
     {
@@ -34,10 +36,13 @@ public class PredictionUI : MonoBehaviour
 
     public void SetupPrediction(HandController enemy)
     {
+        Debug.Log($"[PredictionUI] SetupPrediction called with enemy: {(enemy != null ? enemy.name : "null")}");
+
         ClearSlots();
 
         if (enemy == null || !enemy.UsesPredictionSystem())
         {
+            Debug.Log($"[PredictionUI] Enemy null or doesn't use prediction system. UsesPrediction: {enemy?.UsesPredictionSystem()}");
             predictionPanel.SetActive(false);
             currentEnemy = null;
             return;
@@ -46,8 +51,11 @@ public class PredictionUI : MonoBehaviour
         currentEnemy = enemy;
         List<string> sequence = enemy.GetCurrentPredictionSequence();
 
+        Debug.Log($"[PredictionUI] Got sequence: {(sequence != null ? string.Join(", ", sequence) : "null")}");
+
         if (sequence == null || sequence.Count == 0)
         {
+            Debug.Log("[PredictionUI] Sequence is null or empty");
             predictionPanel.SetActive(false);
             return;
         }
@@ -60,7 +68,7 @@ public class PredictionUI : MonoBehaviour
         CreateSlots(displayedSequence);
         predictionPanel.SetActive(true);
         lastKnownIndex = 0;
-        lastProcessedIndex = -1;
+        lastProcessedIndex = -1;  // Make sure this is reset
 
         Debug.Log($"[PredictionUI] Set up prediction for {enemy.name} with {displayedSequence.Count} signs");
     }
@@ -71,17 +79,26 @@ public class PredictionUI : MonoBehaviour
         {
             int currentIndex = currentEnemy.GetCurrentSequenceIndex();
 
-            // Check if we need to update the UI
-            if (currentIndex != lastKnownIndex)
+            // Check if we need to update the UI (new sign was used)
+            if (currentIndex != lastKnownIndex && currentIndex > 0)
             {
                 UpdateUsedSigns(currentIndex);
                 lastKnownIndex = currentIndex;
-            }
 
-            // Check if we need to refresh (all signs used)
-            if (currentIndex >= displayedSequence.Count)
-            {
-                SetupPrediction(currentEnemy);
+                // Check if all signs have been used
+                if (currentIndex >= displayedSequence.Count)
+                {
+                    Debug.Log($"[PredictionUI] All signs used ({currentIndex}/{displayedSequence.Count}). Scheduling refresh...");
+
+                    // Cancel any existing refresh coroutine
+                    if (refreshCoroutine != null)
+                    {
+                        StopCoroutine(refreshCoroutine);
+                    }
+
+                    // Start a delayed refresh
+                    refreshCoroutine = StartCoroutine(DelayedRefresh());
+                }
             }
         }
     }
@@ -177,5 +194,23 @@ public class PredictionUI : MonoBehaviour
         ClearSlots();
         predictionPanel.SetActive(false);
         currentEnemy = null;
+    }
+
+    private IEnumerator DelayedRefresh()
+    {
+        // Wait for the current round to fully complete
+        yield return new WaitForSeconds(0.5f);
+
+        // Force the enemy to generate a new sequence if needed
+        if (currentEnemy != null && currentEnemy.UsesPredictionSystem())
+        {
+            // Tell the enemy to generate a new sequence
+            currentEnemy.ForceNewSequenceIfNeeded();
+
+            // Now refresh the UI with the new sequence
+            SetupPrediction(currentEnemy);
+        }
+
+        refreshCoroutine = null;
     }
 }

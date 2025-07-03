@@ -60,17 +60,21 @@ public class HandController : MonoBehaviour
     public delegate void HitAnimationFinishedHandler(HandController hand);
     public event HitAnimationFinishedHandler HitAnimationFinished;
 
-    void Start()
+    private void Awake()
     {
-        ApplyUpgrades();
-        handSpriteRenderer.sprite = defaultHandSprite;
-        UpdateHealthBar();
-
         // Initialize prediction sequence if this is an enemy
         if (!isPlayer && usesPredictionSystem)
         {
             GenerateNewSequence();
         }
+    }
+
+    void Start()
+    {
+        ApplyUpgrades();
+        handSpriteRenderer.sprite = defaultHandSprite;
+        UpdateHealthBar();
+        // Remove the sequence generation from here
     }
 
     private void ApplyUpgrades()
@@ -384,7 +388,7 @@ public class HandController : MonoBehaviour
         }
 
         currentSequence.Clear();
-        currentSequenceIndex = 0;
+        currentSequenceIndex = 0;  // Make sure this is reset to 0
 
         // Generate sequence based on configured length
         for (int i = 0; i < sequenceLength; i++)
@@ -395,7 +399,7 @@ public class HandController : MonoBehaviour
         // Copy for display (this will be shuffled in the UI)
         predeterminedSequence = new List<string>(currentSequence);
 
-        Debug.Log($"[HandController] Generated new sequence for {gameObject.name}: {string.Join(", ", currentSequence)}");
+        Debug.Log($"[HandController] Generated new sequence for {gameObject.name}: {string.Join(", ", currentSequence)}. Index reset to 0.");
     }
 
     public string GetNextPredeterminedChoice()
@@ -415,6 +419,7 @@ public class HandController : MonoBehaviour
         // Use predetermined sequence
         if (currentSequence.Count == 0 || currentSequenceIndex >= currentSequence.Count)
         {
+            Debug.Log($"[HandController] Sequence exhausted for {gameObject.name}. Generating new sequence...");
             GenerateNewSequence();
         }
 
@@ -443,6 +448,19 @@ public class HandController : MonoBehaviour
     public bool UsesPredictionSystem()
     {
         return usesPredictionSystem && !hardMode && !isPlayer;
+    }
+
+    public void ForceNewSequenceIfNeeded()
+    {
+        if (!usesPredictionSystem || isPlayer || hardMode)
+            return;
+
+        // If we've used all signs, generate a new sequence
+        if (currentSequenceIndex >= currentSequence.Count && currentSequence.Count > 0)
+        {
+            Debug.Log($"[HandController] Forcing new sequence for {gameObject.name} (used {currentSequenceIndex}/{currentSequence.Count})");
+            GenerateNewSequence();
+        }
     }
 }
 
