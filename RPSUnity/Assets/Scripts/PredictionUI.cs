@@ -75,32 +75,8 @@ public class PredictionUI : MonoBehaviour
 
     private void Update()
     {
-        if (currentEnemy != null && currentEnemy.UsesPredictionSystem())
-        {
-            int currentIndex = currentEnemy.GetCurrentSequenceIndex();
-
-            // Check if we need to update the UI (new sign was used)
-            if (currentIndex != lastKnownIndex && currentIndex > 0)
-            {
-                UpdateUsedSigns(currentIndex);
-                lastKnownIndex = currentIndex;
-
-                // Check if all signs have been used
-                if (currentIndex >= displayedSequence.Count)
-                {
-                    Debug.Log($"[PredictionUI] All signs used ({currentIndex}/{displayedSequence.Count}). Scheduling refresh...");
-
-                    // Cancel any existing refresh coroutine
-                    if (refreshCoroutine != null)
-                    {
-                        StopCoroutine(refreshCoroutine);
-                    }
-
-                    // Start a delayed refresh
-                    refreshCoroutine = StartCoroutine(DelayedRefresh());
-                }
-            }
-        }
+        // Empty - all updates now happen through UpdateAfterSignRevealed()
+        // which is called after the enemy's sign animation finishes
     }
 
     private void CreateSlots(List<string> sequence)
@@ -212,5 +188,41 @@ public class PredictionUI : MonoBehaviour
         }
 
         refreshCoroutine = null;
+    }
+
+    public void UpdateAfterSignRevealed()
+    {
+        if (currentEnemy != null && currentEnemy.UsesPredictionSystem())
+        {
+            int currentIndex = currentEnemy.GetCurrentSequenceIndex();
+
+            // Update the used signs now that the animation has finished
+            UpdateUsedSigns(currentIndex);
+            lastKnownIndex = currentIndex;
+
+            // Check if all signs have been used
+            if (currentIndex >= displayedSequence.Count)
+            {
+                Debug.Log($"[PredictionUI] All signs used ({currentIndex}/{displayedSequence.Count}). Scheduling refresh...");
+            }
+        }
+    }
+
+    public bool NeedsRefresh()
+    {
+        if (currentEnemy == null || !currentEnemy.UsesPredictionSystem())
+            return false;
+
+        return currentEnemy.GetCurrentSequenceIndex() >= displayedSequence.Count;
+    }
+
+    public void RefreshIfNeeded()
+    {
+        if (NeedsRefresh() && currentEnemy != null)
+        {
+            Debug.Log("[PredictionUI] Refreshing prediction display for next round");
+            currentEnemy.ForceNewSequenceIfNeeded();
+            SetupPrediction(currentEnemy);
+        }
     }
 }

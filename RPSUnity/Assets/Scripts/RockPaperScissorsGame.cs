@@ -252,11 +252,17 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         SetSubstate(GameSubstate.Idle);
 
-        // ADD THIS LINE: Reset power-up usage for the new round
+        // Reset power-up usage for the new round
         if (PowerUpUsageTracker.Instance != null)
         {
             PowerUpUsageTracker.Instance.ResetRoundUsage();
             Debug.Log("[RockPaperScissorsGame] Power-up usage reset for new round");
+        }
+
+        // Refresh prediction UI if all signs were used
+        if (predictionUI != null && enemyHandController != null && enemyHandController.CurrentHealth > 0)
+        {
+            predictionUI.RefreshIfNeeded();
         }
 
         AllowPlayerInput();
@@ -394,7 +400,17 @@ public class RockPaperScissorsGame : MonoBehaviour
     }
 
     private void OnPlayerSignAnimationFinished(HandController hand) => playerSignDone = true;
-    private void OnEnemySignAnimationFinished(HandController hand) => enemySignDone = true;
+
+    private void OnEnemySignAnimationFinished(HandController hand)
+    {
+        enemySignDone = true;
+
+        // Update prediction UI after enemy shows their sign
+        if (predictionUI != null)
+        {
+            predictionUI.UpdateAfterSignRevealed();
+        }
+    }
 
     private void OnEnemyDefeated(HandController hand)
     {
