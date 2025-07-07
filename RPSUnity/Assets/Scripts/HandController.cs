@@ -388,18 +388,69 @@ public class HandController : MonoBehaviour
         }
 
         currentSequence.Clear();
-        currentSequenceIndex = 0;  // Make sure this is reset to 0
+        currentSequenceIndex = 0;
 
-        // Generate sequence based on configured length
-        for (int i = 0; i < sequenceLength; i++)
+        // Generate sequence with variety rules
+        bool validSequence = false;
+        int attempts = 0;
+        const int maxAttempts = 100; // Prevent infinite loops
+
+        while (!validSequence && attempts < maxAttempts)
         {
-            currentSequence.Add(choices[Random.Range(0, choices.Length)]);
+            attempts++;
+            currentSequence.Clear();
+
+            // Generate random sequence
+            for (int i = 0; i < sequenceLength; i++)
+            {
+                currentSequence.Add(choices[Random.Range(0, choices.Length)]);
+            }
+
+            // Check if sequence meets variety requirements
+            validSequence = IsSequenceValid(currentSequence);
         }
 
         // Copy for display (this will be shuffled in the UI)
         predeterminedSequence = new List<string>(currentSequence);
 
         Debug.Log($"[HandController] Generated new sequence for {gameObject.name}: {string.Join(", ", currentSequence)}. Index reset to 0.");
+    }
+
+    private bool IsSequenceValid(List<string> sequence)
+    {
+        if (sequence.Count < 2) return true;
+
+        // Count occurrences of each sign
+        Dictionary<string, int> signCounts = new Dictionary<string, int>();
+        foreach (string sign in sequence)
+        {
+            if (!signCounts.ContainsKey(sign))
+                signCounts[sign] = 0;
+            signCounts[sign]++;
+        }
+
+        // Find the maximum count of any single sign
+        int maxCount = 0;
+        foreach (var count in signCounts.Values)
+        {
+            if (count > maxCount)
+                maxCount = count;
+        }
+
+        // Apply rules based on sequence length
+        switch (sequence.Count)
+        {
+            case 2:
+                return maxCount < 2; // No duplicates allowed
+            case 3:
+                return maxCount < 3; // No triple identical signs
+            case 4:
+                return maxCount < 4; // No quad identical signs
+            case 5:
+                return maxCount < 4; // No quad or quint identical signs
+            default:
+                return true;
+        }
     }
 
     public string GetNextPredeterminedChoice()
