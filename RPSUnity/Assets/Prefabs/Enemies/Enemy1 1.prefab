@@ -573,7 +573,7 @@ MonoBehaviour:
   favorReward: 3
   usesPredictionSystem: 1
   hardMode: 0
-  sequenceLength: 4
+  sequenceLength: 5
   predeterminedSequence: []
 --- !u!1 &8532900606797542106
 GameObject:
