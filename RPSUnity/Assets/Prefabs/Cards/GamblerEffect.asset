@@ -19,3 +19,4 @@ MonoBehaviour:
   isPassive: 1
   effectPrefab: {fileID: 2964787549337628771, guid: ab6d076714d620b479e3391917ef1517, type: 3}
   value: 0
+  isUnique: 1

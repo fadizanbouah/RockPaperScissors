@@ -13,4 +13,8 @@ public class PowerUpData : ScriptableObject
     public GameObject effectPrefab;
 
     public float value;  // Used by many effects, e.g. +5% damage or +10 health
+
+    [Header("Spawn Settings")]
+    [Tooltip("If true, this power-up can only be acquired once per run")]
+    public bool isUnique = false;
 }

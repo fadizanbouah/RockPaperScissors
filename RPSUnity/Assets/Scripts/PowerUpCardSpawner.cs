@@ -48,12 +48,33 @@ public class PowerUpCardSpawner : MonoBehaviour
         if (pool == null || slots == null || slots.Length == 0) return;
 
         List<PowerUpData> list = new List<PowerUpData>(pool);
+
+        // Filter out already acquired unique power-ups
+        if (RunProgressManager.Instance != null)
+        {
+            list.RemoveAll(powerUp =>
+                powerUp.isUnique &&
+                RunProgressManager.Instance.acquiredUniquePowerUps.Contains(powerUp)
+            );
+
+            if (list.Count < pool.Length)
+            {
+                Debug.Log($"[PowerUpCardSpawner] Filtered out {pool.Length - list.Count} already-acquired unique power-ups");
+            }
+        }
+
         ShuffleList(list);
 
         for (int i = 0; i < Mathf.Min(slots.Length, list.Count); i++)
         {
             ClearSlot(slots[i]);
             SpawnCardToSlot(slots[i], list[i], favor, isPassive);
+        }
+
+        // Clear any remaining empty slots if we filtered out too many
+        for (int i = list.Count; i < slots.Length; i++)
+        {
+            ClearSlot(slots[i]);
         }
     }
 

@@ -9,7 +9,7 @@ public class HealthBar : MonoBehaviour
     public TextMeshProUGUI playerHealthText;
 
     [Header("Animation Settings")]
-    [SerializeField] private float animationDuration = 0.5f; // How long the animation takes
+    [SerializeField] private float animationDuration = 0.8f; // How long the animation takes
 
     private Coroutine animationCoroutine;
     private float targetFillAmount;

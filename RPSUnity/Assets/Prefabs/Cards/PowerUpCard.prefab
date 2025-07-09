@@ -532,6 +532,7 @@ MonoBehaviour:
   nameText: {fileID: 547511275785748820}
   descriptionText: {fileID: 5116884728576305902}
   costText: {fileID: 6450014006151700455}
+  isPassiveCard: 0
 --- !u!114 &3528959825341640282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -648,7 +649,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 200}
+  m_SizeDelta: {x: 120, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3669538505326195656
 CanvasRenderer:

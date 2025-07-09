@@ -18,6 +18,9 @@ public class RunProgressManager : MonoBehaviour
     [Header("Persistent Passive PowerUps")]
     public List<PowerUpData> persistentPowerUps = new List<PowerUpData>();
 
+    [Header("Acquired Unique PowerUps (Won't spawn again)")]
+    public List<PowerUpData> acquiredUniquePowerUps = new List<PowerUpData>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -60,6 +63,7 @@ public class RunProgressManager : MonoBehaviour
         favor = 0;
         acquiredPowerUps.Clear();
         persistentPowerUps.Clear();
+        acquiredUniquePowerUps.Clear();
 
         foreach (var effect in activeEffects)
         {
@@ -103,6 +107,13 @@ public class RunProgressManager : MonoBehaviour
     {
         if (data == null) return;
 
+        // Track unique power-ups
+        if (data.isUnique && !acquiredUniquePowerUps.Contains(data))
+        {
+            acquiredUniquePowerUps.Add(data);
+            Debug.Log($"[RunProgressManager] Marked unique power-up as acquired: {data.powerUpName}");
+        }
+
         if (data.isPassive)
         {
             persistentPowerUps.Add(data);
@@ -115,27 +126,22 @@ public class RunProgressManager : MonoBehaviour
                 Debug.LogWarning($"[RunProgressManager] No prefab assigned for active power-up: {data.powerUpName}");
                 return;
             }
-
             GameObject instance = Instantiate(data.effectPrefab);
             PowerUpEffectBase effect = instance.GetComponent<PowerUpEffectBase>();
-
             if (effect == null)
             {
                 Debug.LogError($"[RunProgressManager] Prefab for {data.powerUpName} is missing a PowerUpEffectBase script!");
                 Destroy(instance);
                 return;
             }
-
             HandController player = PowerUpEffectManager.Instance != null ? PowerUpEffectManager.Instance.GetPlayer() : null;
             HandController enemy = PowerUpEffectManager.Instance != null ? PowerUpEffectManager.Instance.GetEnemy() : null;
             if (player == null)
             {
                 Debug.LogWarning("[RunProgressManager] Could not find player HandController when initializing power-up!");
             }
-
             effect.Initialize(data, player, enemy);
             effect.OnRoomStart();
-
             activeEffects.Add(effect);
             Debug.Log($"[DEBUG] About to register effect: {effect.GetType().Name}");
             PowerUpEffectManager.Instance?.RegisterEffect(effect); // Register with central manager
