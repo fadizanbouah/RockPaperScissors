@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseMaxHealth: 200
-  baseDamage: 30
+  baseDamage: 15
   health: 200
   maxHealth: 200
   playerHitAnimation: {fileID: 4025989370840745165}
@@ -276,6 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarFill: {fileID: 6453740692373778657}
   playerHealthText: {fileID: 7583093443645351556}
+  animationDuration: 0.5
 --- !u!1 &3402126457231362122
 GameObject:
   m_ObjectHideFlags: 0
