@@ -26,7 +26,7 @@ public class PredictionUI : MonoBehaviour
     private int lastKnownIndex = 0;
     private List<bool> usedSlots = new List<bool>();
     private int lastProcessedIndex = -1;
-    private Coroutine refreshCoroutine;
+    private Coroutine refreshCoroutine = null;
 
     private void Awake()
     {
