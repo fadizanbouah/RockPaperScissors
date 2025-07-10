@@ -21,6 +21,9 @@ public class RunProgressManager : MonoBehaviour
     [Header("Acquired Unique PowerUps (Won't spawn again)")]
     public List<PowerUpData> acquiredUniquePowerUps = new List<PowerUpData>();
 
+    [Header("PowerUp Upgrade Tracking")]
+    private Dictionary<PowerUpData, int> powerUpLevels = new Dictionary<PowerUpData, int>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -64,6 +67,7 @@ public class RunProgressManager : MonoBehaviour
         acquiredPowerUps.Clear();
         persistentPowerUps.Clear();
         acquiredUniquePowerUps.Clear();
+        powerUpLevels.Clear();
 
         foreach (var effect in activeEffects)
         {
@@ -114,6 +118,29 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log($"[RunProgressManager] Marked unique power-up as acquired: {data.powerUpName}");
         }
 
+        // Check upgrade status BEFORE adding to any lists
+        bool isFirstTimeAcquiring = !HasPowerUp(data);
+
+        // Track power-up level
+        if (data.isUpgradeable)
+        {
+            if (!isFirstTimeAcquiring)
+            {
+                // Upgrading existing power-up
+                int currentLevel = GetPowerUpLevel(data);
+                UpgradePowerUp(data, currentLevel + 1);
+                Debug.Log($"[RunProgressManager] Upgrading {data.powerUpName} from level {currentLevel} to {currentLevel + 1}");
+                return; // Don't add it again, just upgrade
+            }
+            else
+            {
+                // First time getting this power-up
+                powerUpLevels[data] = 0;
+                Debug.Log($"[RunProgressManager] First time acquiring {data.powerUpName} at level 0");
+            }
+        }
+
+        // Now proceed with adding to lists and applying effects
         if (data.isPassive)
         {
             persistentPowerUps.Add(data);
@@ -146,6 +173,44 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log($"[DEBUG] About to register effect: {effect.GetType().Name}");
             PowerUpEffectManager.Instance?.RegisterEffect(effect); // Register with central manager
             Debug.Log($"[RunProgressManager] Instantiated and registered effect: {data.powerUpName}");
+        }
+    }
+
+    public int GetPowerUpLevel(PowerUpData data)
+    {
+        if (data == null || !powerUpLevels.ContainsKey(data))
+            return 0;
+        return powerUpLevels[data];
+    }
+
+    public bool HasPowerUp(PowerUpData data)
+    {
+        if (data == null) return false;
+
+        // For passive power-ups, check if it's in persistentPowerUps
+        if (data.isPassive)
+        {
+            bool hasPowerUp = persistentPowerUps.Contains(data);
+            Debug.Log($"[HasPowerUp] Checking passive {data.powerUpName}: {hasPowerUp}");
+            return hasPowerUp;
+        }
+
+        // For active power-ups, check acquiredPowerUps
+        return acquiredPowerUps.Contains(data);
+    }
+
+    public void UpgradePowerUp(PowerUpData data, int newLevel)
+    {
+        if (data == null) return;
+
+        powerUpLevels[data] = newLevel;
+        Debug.Log($"[RunProgressManager] Upgraded {data.powerUpName} to level {newLevel}");
+
+        // If it's a passive power-up, we need to recalculate bonuses
+        if (data.isPassive)
+        {
+            // Trigger reapplication of all passive effects
+            PassivePowerUpHandler.ApplyAllPersistentPowerUps();
         }
     }
 }

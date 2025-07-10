@@ -14,6 +14,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
     private bool isGameplayCard = false;
+    private int displayLevel = 0; // Track what level this card is showing
 
     private Vector3 originalLocalPosition; // Stores the fan layout position
     private Quaternion originalRotation;   // Stores the fan layout rotation
@@ -24,14 +25,36 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         panelManager = manager;
         isGameplayCard = isGameplay;
 
+        // Determine display level for upgradeable power-ups
+        displayLevel = 0;
+        if (data.isUpgradeable && RunProgressManager.Instance != null)
+        {
+            if (RunProgressManager.Instance.HasPowerUp(data))
+            {
+                displayLevel = RunProgressManager.Instance.GetPowerUpLevel(data) + 1;
+
+                // Check if already at max level
+                if (data.IsMaxLevel(displayLevel - 1))
+                {
+                    // Hide this card - it's maxed out
+                    gameObject.SetActive(false);
+                    return;
+                }
+            }
+        }
+
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
 
         if (nameText != null)
-            nameText.text = data.powerUpName;
+        {
+            nameText.text = data.powerUpName + data.GetLevelSuffix(displayLevel);
+        }
 
         if (descriptionText != null)
-            descriptionText.text = data.description;
+        {
+            descriptionText.text = data.GetDescriptionForLevel(displayLevel);
+        }
 
         if (!isPassiveCard)
             UpdateAffordability(currentFavor);

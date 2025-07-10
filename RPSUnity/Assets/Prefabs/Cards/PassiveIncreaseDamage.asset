@@ -13,9 +13,19 @@ MonoBehaviour:
   m_Name: PassiveIncreaseDamage
   m_EditorClassIdentifier: 
   powerUpName: Damage Increase
-  description: Increase Overall Damage by 5
+  description: Increase Overall Damage
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
   effectPrefab: {fileID: 6127053077995485677, guid: b33c6b69a7ce2314f9a78a1ca9435f01, type: 3}
-  value: 5
+  value: 0
+  isUnique: 1
+  isUpgradeable: 1
+  upgradeLevels:
+  - levelSuffix: I
+    value: 5
+    descriptionOverride: 
+  - levelSuffix: II
+    value: 7
+    descriptionOverride: 
+  descriptionTemplate: Increase all damage by {0}

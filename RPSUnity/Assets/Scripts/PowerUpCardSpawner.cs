@@ -49,17 +49,32 @@ public class PowerUpCardSpawner : MonoBehaviour
 
         List<PowerUpData> list = new List<PowerUpData>(pool);
 
-        // Filter out already acquired unique power-ups
+        // Filter out already acquired unique power-ups (unless they're upgradeable and not maxed)
         if (RunProgressManager.Instance != null)
         {
             list.RemoveAll(powerUp =>
-                powerUp.isUnique &&
-                RunProgressManager.Instance.acquiredUniquePowerUps.Contains(powerUp)
-            );
+            {
+                // Not unique? Always show
+                if (!powerUp.isUnique) return false;
+
+                // Unique but not owned? Show it
+                if (!RunProgressManager.Instance.HasPowerUp(powerUp)) return false;
+
+                // Unique and acquired - check if upgradeable
+                if (powerUp.isUpgradeable)
+                {
+                    int currentLevel = RunProgressManager.Instance.GetPowerUpLevel(powerUp);
+                    // Show if not at max level
+                    return powerUp.IsMaxLevel(currentLevel);
+                }
+
+                // Unique, acquired, not upgradeable - filter out
+                return true;
+            });
 
             if (list.Count < pool.Length)
             {
-                Debug.Log($"[PowerUpCardSpawner] Filtered out {pool.Length - list.Count} already-acquired unique power-ups");
+                Debug.Log($"[PowerUpCardSpawner] Filtered out {pool.Length - list.Count} maxed or non-upgradeable unique power-ups");
             }
         }
 
