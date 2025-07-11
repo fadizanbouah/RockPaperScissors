@@ -13,9 +13,22 @@ MonoBehaviour:
   m_Name: PassiveIncreaseScissorsDamage
   m_EditorClassIdentifier: 
   powerUpName: Scissors Damage
-  description: Increase Scissors Damage by 5
+  description: 0
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
   effectPrefab: {fileID: 1272108500094884972, guid: a5f100052fb48cf47a138901986d209e, type: 3}
-  value: 5
+  value: 0
+  isUnique: 1
+  isUpgradeable: 1
+  upgradeLevels:
+  - levelSuffix: I
+    value: 2
+    descriptionOverride: 
+  - levelSuffix: II
+    value: 4
+    descriptionOverride: 
+  - levelSuffix: III
+    value: 6
+    descriptionOverride: 
+  descriptionTemplate: Increase Scissors damage by {0}

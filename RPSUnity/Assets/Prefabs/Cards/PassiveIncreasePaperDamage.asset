@@ -13,9 +13,22 @@ MonoBehaviour:
   m_Name: PassiveIncreasePaperDamage
   m_EditorClassIdentifier: 
   powerUpName: Paper Damage
-  description: Increase Paper Damage by 5
+  description: 
   icon: {fileID: 0}
   favorCost: 1
   isPassive: 1
   effectPrefab: {fileID: 2964787549337628771, guid: a17125a0b2a29f94387f08ff84a2e9d6, type: 3}
-  value: 5
+  value: 0
+  isUnique: 1
+  isUpgradeable: 1
+  upgradeLevels:
+  - levelSuffix: I
+    value: 2
+    descriptionOverride: 
+  - levelSuffix: II
+    value: 4
+    descriptionOverride: 
+  - levelSuffix: III
+    value: 6
+    descriptionOverride: 
+  descriptionTemplate: Increase Paper damage by {0}
