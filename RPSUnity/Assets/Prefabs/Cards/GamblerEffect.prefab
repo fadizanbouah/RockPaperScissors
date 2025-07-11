@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c758789cf4e448c43e419d7e64bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  betPercentageLimit: 0.3
+  hpToDamageRatio: 2

@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class GamblerEffect : PowerUpEffectBase
 {
+    [Header("Gambler Configuration")]
+    [SerializeField] protected float betPercentageLimit = 0.5f; // 50% of max HP
+    [SerializeField] protected float hpToDamageRatio = 2.0f; // 2 HP = 1 damage
+
     private int currentBetAmount = 0;
     private bool hasBetThisRound = false;
     private GamblerUI gamblerUI;
@@ -115,13 +119,22 @@ public class GamblerEffect : PowerUpEffectBase
             Debug.LogWarning("[GamblerEffect] Player is null in GetMaxBet!");
             return 0;
         }
-        return Mathf.Max(0, player.CurrentHealth - 1);
+
+        // Calculate based on max HP, but can't bet more than current HP - 1
+        int percentageBasedMax = Mathf.FloorToInt(player.maxHealth * betPercentageLimit);
+        int currentHPLimit = player.CurrentHealth - 1;
+        int actualMax = Mathf.Min(currentHPLimit, percentageBasedMax);
+
+        Debug.Log($"[GamblerEffect] GetMaxBet - MaxHP: {player.maxHealth}, CurrentHP: {player.CurrentHealth}, " +
+                  $"PercentageLimit: {percentageBasedMax}, CurrentHPLimit: {currentHPLimit}, Final: {actualMax}");
+
+        return Mathf.Max(0, actualMax);
     }
 
     public int GetBonusDamage()
     {
-        // 2:1 ratio - every 2 HP bet gives 1 damage
-        return currentBetAmount / 2;
+        // Use the configurable ratio
+        return Mathf.FloorToInt(currentBetAmount / hpToDamageRatio);
     }
 
     public override void OnRoundStart()

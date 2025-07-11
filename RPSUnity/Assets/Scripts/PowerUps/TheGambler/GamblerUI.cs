@@ -149,12 +149,13 @@ public class GamblerUI : MonoBehaviour
     {
         if (betAmountText != null)
         {
-            betAmountText.text = $"Bet: {betAmount} HP";
+            int maxBet = gamblerEffect != null ? gamblerEffect.GetMaxBet() : 0;
+            betAmountText.text = $"Bet: {betAmount}/{maxBet} HP";
         }
 
         if (bonusDamageText != null)
         {
-            int bonusDamage = betAmount / 2;
+            int bonusDamage = gamblerEffect != null ? gamblerEffect.GetBonusDamage() : 0;
             bonusDamageText.text = $"+{bonusDamage} Damage";
         }
     }
