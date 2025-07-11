@@ -30,7 +30,14 @@ public class GamblerUI : MonoBehaviour
         {
             betSlider.minValue = 0;
             betSlider.onValueChanged.AddListener(OnSliderValueChanged);
+
+            // Set initial max value
+            int maxBet = gamblerEffect.GetMaxBet();
+            betSlider.maxValue = maxBet;
         }
+
+        // Update display immediately
+        UpdateBetDisplay(0);
     }
 
     private void Update()
@@ -145,7 +152,7 @@ public class GamblerUI : MonoBehaviour
         }
     }
 
-    private void UpdateBetDisplay(int betAmount)
+    public void UpdateBetDisplay(int betAmount)
     {
         if (betAmountText != null)
         {
@@ -156,7 +163,7 @@ public class GamblerUI : MonoBehaviour
         if (bonusDamageText != null)
         {
             int bonusDamage = gamblerEffect != null ? gamblerEffect.GetBonusDamage() : 0;
-            bonusDamageText.text = $"+{bonusDamage} Damage";
+            bonusDamageText.text = $"+{bonusDamage} dmg";
         }
     }
 

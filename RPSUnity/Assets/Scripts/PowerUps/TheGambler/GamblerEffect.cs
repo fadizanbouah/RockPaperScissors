@@ -4,7 +4,8 @@ public class GamblerEffect : PowerUpEffectBase
 {
     [Header("Gambler Configuration")]
     [SerializeField] protected float betPercentageLimit = 0.5f; // 50% of max HP
-    [SerializeField] protected float hpToDamageRatio = 2.0f; // 2 HP = 1 damage
+    [SerializeField] protected int hpCost = 2;        // HP required
+    [SerializeField] protected int damageGained = 1;  // Damage received for that HP
 
     private int currentBetAmount = 0;
     private bool hasBetThisRound = false;
@@ -46,6 +47,12 @@ public class GamblerEffect : PowerUpEffectBase
         if (player != null && !uiCreated)
         {
             CreateGamblerUI();
+        }
+
+        // Update UI to reflect current bet (don't reset the amount)
+        if (gamblerUI != null && gamblerUI.gameObject.activeInHierarchy)
+        {
+            gamblerUI.UpdateBetDisplay(currentBetAmount); // Add this method to GamblerUI
         }
     }
 
@@ -133,8 +140,9 @@ public class GamblerEffect : PowerUpEffectBase
 
     public int GetBonusDamage()
     {
-        // Use the configurable ratio
-        return Mathf.FloorToInt(currentBetAmount / hpToDamageRatio);
+        // Calculate how many "sets" of the ratio we can afford
+        int ratioSets = currentBetAmount / hpCost;
+        return ratioSets * damageGained;
     }
 
     public override void OnRoundStart()
