@@ -54,6 +54,12 @@ public class PowerUpCardSpawner : MonoBehaviour
         {
             list.RemoveAll(powerUp =>
             {
+                // Check prerequisites first
+                if (!powerUp.HasMetPrerequisites())
+                {
+                    return true; // Remove if prerequisites not met
+                }
+
                 // Not unique? Always show
                 if (!powerUp.isUnique) return false;
 

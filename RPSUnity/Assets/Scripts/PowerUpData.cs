@@ -24,6 +24,10 @@ public class PowerUpData : ScriptableObject
     [Tooltip("Can this power-up be upgraded to higher levels?")]
     public bool isUpgradeable = false;
 
+    [Header("Prerequisite Settings")]
+    [Tooltip("Power-ups required before this can appear")]
+    public List<PowerUpData> prerequisitePowerUps = new List<PowerUpData>();
+
     [System.Serializable]
     public class UpgradeLevel
     {
@@ -80,5 +84,22 @@ public class PowerUpData : ScriptableObject
     public bool IsMaxLevel(int currentLevel)
     {
         return currentLevel >= upgradeLevels.Count - 1;
+    }
+
+    public bool HasMetPrerequisites()
+    {
+        if (prerequisitePowerUps == null || prerequisitePowerUps.Count == 0)
+            return true; // No prerequisites
+
+        // Check if player has ALL required power-ups
+        foreach (var prereq in prerequisitePowerUps)
+        {
+            if (prereq != null && !RunProgressManager.Instance.HasPowerUp(prereq))
+            {
+                return false; // Missing a prerequisite
+            }
+        }
+
+        return true; // Has all prerequisites
     }
 }
