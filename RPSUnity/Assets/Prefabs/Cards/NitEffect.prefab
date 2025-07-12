@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2964787549337628771
+--- !u!1 &3155533687058344564
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,42 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3959724489133634751}
-  - component: {fileID: 7410320427778229683}
+  - component: {fileID: 3266306777191777893}
+  - component: {fileID: 3704774871819037326}
   m_Layer: 0
-  m_Name: GamblerEffect
+  m_Name: NitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3959724489133634751
+--- !u!4 &3266306777191777893
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2964787549337628771}
+  m_GameObject: {fileID: 3155533687058344564}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 958.2655, y: 984.7466, z: -4.2644596}
+  m_LocalPosition: {x: 653.5464, y: 516.60376, z: -15.009735}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7410320427778229683
+--- !u!114 &3704774871819037326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2964787549337628771}
+  m_GameObject: {fileID: 3155533687058344564}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9852c758789cf4e448c43e419d7e64bf, type: 3}
+  m_Script: {fileID: 11500000, guid: ac5f92d965e2827468edb5b92b3acd9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betPercentageLimit: 0.3
-  hpCost: 2
+  betPercentageLimit: 0.25
+  hpCost: 1
   damageGained: 1

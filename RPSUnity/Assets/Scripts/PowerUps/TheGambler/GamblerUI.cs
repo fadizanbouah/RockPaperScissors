@@ -10,11 +10,11 @@ public class GamblerUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI bonusDamageText;
     [SerializeField] private CanvasGroup canvasGroup;
 
-    private GamblerEffect gamblerEffect;
+    private IGamblerEffect gamblerEffect;
     private HandController player;
     private HealthBar playerHealthBar;
 
-    public void Initialize(GamblerEffect effect, HandController playerController)
+    public void Initialize(IGamblerEffect effect, HandController playerController)
     {
         gamblerEffect = effect;
         player = playerController;

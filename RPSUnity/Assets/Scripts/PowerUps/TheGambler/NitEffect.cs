@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
+public class NitEffect : PowerUpEffectBase, IGamblerEffect
 {
-    [Header("Gambler Configuration")]
-    [SerializeField] protected float betPercentageLimit = 0.5f; // 50% of max HP
-    [SerializeField] protected int hpCost = 2;        // HP required
+    [Header("Nit Configuration")]
+    [SerializeField] protected float betPercentageLimit = 0.25f; // 25% of max HP
+    [SerializeField] protected int hpCost = 1;        // HP required
     [SerializeField] protected int damageGained = 1;  // Damage received for that HP
 
     private int currentBetAmount = 0;
@@ -15,7 +15,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        Debug.Log($"[GamblerEffect] Initialize - Player: {player?.name ?? "NULL"}, Enemy: {enemy?.name ?? "NULL"}");
+        Debug.Log($"[NitEffect] Initialize - Player: {player?.name ?? "NULL"}, Enemy: {enemy?.name ?? "NULL"}");
 
         // Don't create UI yet if player is null - wait for player reference update
         if (player != null)
@@ -38,7 +38,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
     // NEW: Method to update player reference when it becomes available
     public void UpdatePlayerReference(HandController newPlayer, HandController newEnemy)
     {
-        Debug.Log($"[GamblerEffect] UpdatePlayerReference - Player: {newPlayer?.name ?? "NULL"}, Enemy: {newEnemy?.name ?? "NULL"}");
+        Debug.Log($"[NitEffect] UpdatePlayerReference - Player: {newPlayer?.name ?? "NULL"}, Enemy: {newEnemy?.name ?? "NULL"}");
 
         this.player = newPlayer;
         this.enemy = newEnemy;
@@ -63,6 +63,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
 
         // Find the existing GamblerUI in the scene (even if inactive)
         GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
+        Debug.Log($"[NitEffect] Found {allGamblerUIs.Length} GamblerUI objects total");
 
         foreach (var ui in allGamblerUIs)
         {
@@ -89,12 +90,12 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
 
     public void SetBetAmount(int amount)
     {
-        Debug.Log($"[GamblerEffect] SetBetAmount called with amount: {amount} (previous amount was: {currentBetAmount})");
+        Debug.Log($"[NitEffect] SetBetAmount called with amount: {amount} (previous amount was: {currentBetAmount})");
 
         // Check if player is null
         if (player == null)
         {
-            Debug.LogError("[GamblerEffect] Player is null! Cannot set bet amount.");
+            Debug.LogError("[NitEffect] Player is null! Cannot set bet amount.");
             return;
         }
 
@@ -106,11 +107,11 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
         if (newBetAmount != currentBetAmount)
         {
             currentBetAmount = newBetAmount;
-            Debug.Log($"[GamblerEffect] Bet amount updated to: {currentBetAmount} (max was {maxBet})");
+            Debug.Log($"[NitEffect] Bet amount updated to: {currentBetAmount} (max was {maxBet})");
         }
         else
         {
-            Debug.Log($"[GamblerEffect] Bet amount unchanged: {currentBetAmount}");
+            Debug.Log($"[NitEffect] Bet amount unchanged: {currentBetAmount}");
         }
     }
 
@@ -123,7 +124,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
     {
         if (player == null)
         {
-            Debug.LogWarning("[GamblerEffect] Player is null in GetMaxBet!");
+            Debug.LogWarning("[NitEffect] Player is null in GetMaxBet!");
             return 0;
         }
 
@@ -147,11 +148,11 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
 
     public override void OnRoundStart()
     {
-        Debug.Log($"[GamblerEffect] OnRoundStart - Player: {player?.name ?? "NULL"}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
+        Debug.Log($"[NitEffect] OnRoundStart - Player: {player?.name ?? "NULL"}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
 
         if (player == null)
         {
-            Debug.LogError("[GamblerEffect] Player is null in OnRoundStart!");
+            Debug.LogError("[NitEffect] Player is null in OnRoundStart!");
             return;
         }
 
@@ -163,31 +164,31 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
             player.UpdateHealthBar();
             hasBetThisRound = true;
 
-            Debug.Log($"[GamblerEffect] Bet {currentBetAmount} HP for +{GetBonusDamage()} damage");
+            Debug.Log($"[NitEffect] Bet {currentBetAmount} HP for +{GetBonusDamage()} damage");
         }
         else if (hasBetThisRound)
         {
-            Debug.Log($"[GamblerEffect] Already bet this round, skipping HP deduction");
+            Debug.Log($"[NitEffect] Already bet this round, skipping HP deduction");
         }
         else
         {
-            Debug.Log($"[GamblerEffect] No bet amount set, skipping");
+            Debug.Log($"[NitEffect] No bet amount set, skipping");
         }
     }
 
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
-        Debug.Log($"[GamblerEffect] OnRoundEnd called - Result: {result}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
+        Debug.Log($"[NitEffect] OnRoundEnd called - Result: {result}, hasBetThisRound: {hasBetThisRound}, currentBetAmount: {currentBetAmount}");
 
         if (!hasBetThisRound || currentBetAmount == 0)
         {
-            Debug.Log("[GamblerEffect] No active bet, skipping round end logic");
+            Debug.Log("[NitEffect] No active bet, skipping round end logic");
             return;
         }
 
         if (player == null)
         {
-            Debug.LogError("[GamblerEffect] Player is null in OnRoundEnd!");
+            Debug.LogError("[NitEffect] Player is null in OnRoundEnd!");
             return;
         }
 
@@ -197,19 +198,19 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
                 // Restore HP on win
                 player.health += currentBetAmount;
                 player.UpdateHealthBar();
-                Debug.Log($"[GamblerEffect] Won! Restored {currentBetAmount} HP");
+                Debug.Log($"[NitEffect] Won! Restored {currentBetAmount} HP");
                 break;
 
             case RoundResult.Draw:
                 // Restore HP on draw
                 player.health += currentBetAmount;
                 player.UpdateHealthBar();
-                Debug.Log($"[GamblerEffect] Draw! Restored {currentBetAmount} HP");
+                Debug.Log($"[NitEffect] Draw! Restored {currentBetAmount} HP");
                 break;
 
             case RoundResult.Lose:
                 // HP stays lost
-                Debug.Log($"[GamblerEffect] Lost! {currentBetAmount} HP remains lost");
+                Debug.Log($"[NitEffect] Lost! {currentBetAmount} HP remains lost");
                 break;
         }
 
@@ -217,7 +218,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
         hasBetThisRound = false;
         // Keep currentBetAmount so player can see their last bet, but reset the "used" flag
 
-        Debug.Log($"[GamblerEffect] Round complete. Bet state reset for next round.");
+        Debug.Log($"[NitEffect] Round complete. Bet state reset for next round.");
     }
 
     public override int GetFlatDamageBonus(string signUsed)
@@ -225,7 +226,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
         if (hasBetThisRound && currentBetAmount > 0)
         {
             int bonus = GetBonusDamage();
-            Debug.Log($"[GamblerEffect] Providing {bonus} flat damage bonus from bet");
+            Debug.Log($"[NitEffect] Providing {bonus} flat damage bonus from bet");
             return bonus;
         }
         return 0;
@@ -233,7 +234,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
 
     public override void OnRoomStart()
     {
-        Debug.Log($"[GamblerEffect] OnRoomStart called - Resetting bet state for new room");
+        Debug.Log($"[NitEffect] OnRoomStart called - Resetting bet state for new room");
 
         // Reset bet state completely when entering a new room
         currentBetAmount = 0;
@@ -251,7 +252,7 @@ public class GamblerEffect : PowerUpEffectBase, IGamblerEffect
 
     public override void Cleanup()
     {
-        Debug.Log("[GamblerEffect] Cleanup called");
+        Debug.Log("[NitEffect] Cleanup called");
         if (gamblerUI != null)
         {
             gamblerUI.gameObject.SetActive(false);

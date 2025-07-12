@@ -41,7 +41,7 @@ public static class PassivePowerUpHandler
 
                 // SPECIAL CASE: Only register The Gambler with PowerUpEffectManager since it needs callbacks
                 // Regular passive effects (like +5 damage) should NOT be registered
-                if (data.powerUpName == "The Gambler" || effect is GamblerEffect)
+                if (data.powerUpName == "The Gambler" || effect is GamblerEffect || effect is IGamblerEffect)
                 {
                     if (PowerUpEffectManager.Instance != null)
                     {

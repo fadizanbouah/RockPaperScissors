@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
-  m_Name: GamblerEffect
+  m_Name: NitEffect
   m_EditorClassIdentifier: 
-  powerUpName: The Gambler
-  description: Bet HP for bonus damage
+  powerUpName: Nit
+  description: Bet up to only 25% HP at 1HP:1DMG ratio
   icon: {fileID: 0}
   favorCost: 0
   isPassive: 1
-  effectPrefab: {fileID: 2964787549337628771, guid: ab6d076714d620b479e3391917ef1517, type: 3}
+  effectPrefab: {fileID: 3155533687058344564, guid: 185fdacecc390df44be64085541685d9, type: 3}
   value: 0
   isUnique: 1
   isUpgradeable: 0
