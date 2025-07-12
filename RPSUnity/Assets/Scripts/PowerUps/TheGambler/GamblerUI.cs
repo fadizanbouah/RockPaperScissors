@@ -70,19 +70,32 @@ public class GamblerUI : MonoBehaviour
                           RockPaperScissorsGame.Instance.IsInCombat();
         if (isInCombat) return;
 
-        int betAmount = Mathf.RoundToInt(value);
+        int rawAmount = Mathf.RoundToInt(value);
+
+        // Get snapped amount from gambler effect
+        int snappedAmount = rawAmount;
+        if (gamblerEffect != null)
+        {
+            snappedAmount = gamblerEffect.GetSnappedBetAmount(rawAmount);
+        }
+
+        // Snap the slider to valid increment
+        if (betSlider != null && Mathf.Abs(betSlider.value - snappedAmount) > 0.01f)
+        {
+            betSlider.SetValueWithoutNotify(snappedAmount);
+        }
 
         // Update the effect
         if (gamblerEffect != null)
         {
-            gamblerEffect.SetBetAmount(betAmount);
+            gamblerEffect.SetBetAmount(snappedAmount);
         }
 
         // Update UI display
-        UpdateBetDisplay(betAmount);
+        UpdateBetDisplay(snappedAmount);
 
         // Update health bar preview
-        UpdateHealthBarPreview(betAmount);
+        UpdateHealthBarPreview(snappedAmount);
     }
 
     private void UpdateHealthBarPreview(int betAmount)

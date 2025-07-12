@@ -132,8 +132,8 @@ public class GamblerEffect : PowerUpEffectBase
         int currentHPLimit = player.CurrentHealth - 1;
         int actualMax = Mathf.Min(currentHPLimit, percentageBasedMax);
 
-        Debug.Log($"[GamblerEffect] GetMaxBet - MaxHP: {player.maxHealth}, CurrentHP: {player.CurrentHealth}, " +
-                  $"PercentageLimit: {percentageBasedMax}, CurrentHPLimit: {currentHPLimit}, Final: {actualMax}");
+        //Debug.Log($"[GamblerEffect] GetMaxBet - MaxHP: {player.maxHealth}, CurrentHP: {player.CurrentHealth}, " +
+                  //$"PercentageLimit: {percentageBasedMax}, CurrentHPLimit: {currentHPLimit}, Final: {actualMax}");
 
         return Mathf.Max(0, actualMax);
     }
@@ -257,5 +257,12 @@ public class GamblerEffect : PowerUpEffectBase
             gamblerUI.gameObject.SetActive(false);
             Debug.Log("[GamblerEffect] GamblerUI deactivated");
         }
+    }
+
+    public int GetSnappedBetAmount(int rawAmount)
+    {
+        // Round down to nearest multiple of hpCost
+        int snappedAmount = (rawAmount / hpCost) * hpCost;
+        return Mathf.Min(snappedAmount, GetMaxBet());
     }
 }
