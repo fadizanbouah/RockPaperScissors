@@ -196,4 +196,13 @@ public class GamblerUI : MonoBehaviour
         // Hide the UI
         gameObject.SetActive(false);
     }
+
+    private void LateUpdate()
+    {
+        if (gamblerEffect != null && player != null)
+        {
+            // Always refresh the display to show current max
+            UpdateBetDisplay(gamblerEffect.GetCurrentBet());
+        }
+    }
 }
