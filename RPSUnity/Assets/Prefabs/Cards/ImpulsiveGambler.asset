@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
+  m_Name: ImpulsiveGambler
+  m_EditorClassIdentifier: 
+  powerUpName: Impulsive Gambler
+  description: Betting over 20% of your HP 3 times in a row, gives you -50% damage
+    taken NEXT ROUND
+  icon: {fileID: 0}
+  favorCost: 0
+  isPassive: 1
+  effectPrefab: {fileID: 245403546880206159, guid: aa84753ea200e1d4fbe1e5d6fcfcbf06, type: 3}
+  value: 0
+  isUnique: 1
+  isUpgradeable: 0
+  prerequisitePowerUps:
+  - {fileID: 11400000, guid: 9eb0c561ab0e71b47bbfbb71f2b104b2, type: 2}
+  upgradeLevels: []
+  descriptionTemplate: 

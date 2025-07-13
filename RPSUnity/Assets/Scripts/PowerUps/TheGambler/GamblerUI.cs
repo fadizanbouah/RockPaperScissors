@@ -10,6 +10,11 @@ public class GamblerUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI bonusDamageText;
     [SerializeField] private CanvasGroup canvasGroup;
 
+    [Header("Impulsive Gambler UI")]
+    [SerializeField] private GameObject impulsiveTrackerPanel;
+    [SerializeField] private TextMeshProUGUI progressText; // "High Bets: 2/3"
+    [SerializeField] private Image damageReductionIcon; // Shows when active
+
     private IGamblerEffect gamblerEffect;
     private HandController player;
     private HealthBar playerHealthBar;
@@ -188,6 +193,7 @@ public class GamblerUI : MonoBehaviour
             betSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
             betSlider.value = 0;
             betSlider.onValueChanged.AddListener(OnSliderValueChanged);
+            SetupForImpulsiveGambler(false);
         }
 
         // Reset display texts
@@ -203,6 +209,23 @@ public class GamblerUI : MonoBehaviour
         {
             // Always refresh the display to show current max
             UpdateBetDisplay(gamblerEffect.GetCurrentBet());
+        }
+    }
+
+    public void SetupForImpulsiveGambler(bool show)
+    {
+        if (impulsiveTrackerPanel != null)
+        {
+            impulsiveTrackerPanel.SetActive(show);
+            Debug.Log($"[GamblerUI] Impulsive tracker panel set to: {show}");
+        }
+    }
+
+    public void UpdateImpulsiveProgress(int current, int required, bool hasReduction)
+    {
+        if (progressText != null)
+        {
+            progressText.text = $"High Bets: {current}/{required}";
         }
     }
 }

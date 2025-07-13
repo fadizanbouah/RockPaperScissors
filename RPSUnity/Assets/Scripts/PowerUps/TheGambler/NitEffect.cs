@@ -24,7 +24,7 @@ public class NitEffect : PowerUpEffectBase, IGamblerEffect
         }
         else
         {
-            Debug.Log("[GamblerEffect] Player is null, delaying UI creation until player reference is updated");
+            Debug.Log("[NitEffect] Player is null, delaying UI creation until player reference is updated");
         }
     }
 
@@ -58,8 +58,8 @@ public class NitEffect : PowerUpEffectBase, IGamblerEffect
 
     private void CreateGamblerUI()
     {
-        Debug.Log("[GamblerEffect] CreateGamblerUI called - looking for existing UI");
-        Debug.Log("[GamblerEffect] *** THIS SHOULD NOT HAPPEN IF GAMBLER WASN'T PURCHASED ***");
+        Debug.Log("[NitEffect] CreateGamblerUI called - looking for existing UI");
+        Debug.Log("[NitEffect] *** THIS SHOULD NOT HAPPEN IF GAMBLER WASN'T PURCHASED ***");
 
         // Find the existing GamblerUI in the scene (even if inactive)
         GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
@@ -77,14 +77,14 @@ public class NitEffect : PowerUpEffectBase, IGamblerEffect
 
         if (gamblerUI != null)
         {
-            Debug.Log("[GamblerEffect] Found existing GamblerUI in scene - activating it");
+            Debug.Log("[NitEffect] Found existing GamblerUI in scene - activating it");
             gamblerUI.gameObject.SetActive(true);
             gamblerUI.Initialize(this, player);
-            Debug.Log("[GamblerEffect] GamblerUI activated and initialized successfully");
+            Debug.Log("[NitEffect] GamblerUI activated and initialized successfully");
         }
         else
         {
-            Debug.LogError("[GamblerEffect] No GamblerUI found in scene! Make sure you have one placed in GameplayCanvas.");
+            Debug.LogError("[NitEffect] No GamblerUI found in scene! Make sure you have one placed in GameplayCanvas.");
         }
     }
 
@@ -244,10 +244,10 @@ public class NitEffect : PowerUpEffectBase, IGamblerEffect
         if (gamblerUI != null && gamblerUI.gameObject.activeInHierarchy)
         {
             gamblerUI.ResetSlider();
-            Debug.Log("[GamblerEffect] Reset GamblerUI slider to 0");
+            Debug.Log("[NitEffect] Reset GamblerUI slider to 0");
         }
 
-        Debug.Log($"[GamblerEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}");
+        Debug.Log($"[NitEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}");
     }
 
     public override void Cleanup()
@@ -256,7 +256,7 @@ public class NitEffect : PowerUpEffectBase, IGamblerEffect
         if (gamblerUI != null)
         {
             gamblerUI.gameObject.SetActive(false);
-            Debug.Log("[GamblerEffect] GamblerUI deactivated");
+            Debug.Log("[NitEffect] GamblerUI deactivated");
         }
     }
 
