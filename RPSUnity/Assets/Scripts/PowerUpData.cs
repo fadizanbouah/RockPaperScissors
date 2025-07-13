@@ -28,6 +28,10 @@ public class PowerUpData : ScriptableObject
     [Tooltip("Power-ups required before this can appear")]
     public List<PowerUpData> prerequisitePowerUps = new List<PowerUpData>();
 
+    [Header("Exclusion Settings")]
+    [Tooltip("Power-ups that should be blocked after acquiring this one")]
+    public List<PowerUpData> blocksThesePowerUps = new List<PowerUpData>();
+
     [System.Serializable]
     public class UpgradeLevel
     {

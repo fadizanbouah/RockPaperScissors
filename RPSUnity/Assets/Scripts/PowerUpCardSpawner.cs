@@ -54,7 +54,13 @@ public class PowerUpCardSpawner : MonoBehaviour
         {
             list.RemoveAll(powerUp =>
             {
-                // Check prerequisites first
+                // Check if blocked
+                if (RunProgressManager.Instance != null && RunProgressManager.Instance.IsPowerUpBlocked(powerUp))
+                {
+                    return true; // Remove if blocked
+                }
+
+                // Check prerequisites
                 if (!powerUp.HasMetPrerequisites())
                 {
                     return true; // Remove if prerequisites not met

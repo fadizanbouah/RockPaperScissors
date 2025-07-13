@@ -24,6 +24,9 @@ public class RunProgressManager : MonoBehaviour
     [Header("PowerUp Upgrade Tracking")]
     private Dictionary<PowerUpData, int> powerUpLevels = new Dictionary<PowerUpData, int>();
 
+    [Header("Blocked PowerUps")]
+    private List<PowerUpData> blockedPowerUps = new List<PowerUpData>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -68,6 +71,7 @@ public class RunProgressManager : MonoBehaviour
         persistentPowerUps.Clear();
         acquiredUniquePowerUps.Clear();
         powerUpLevels.Clear();
+        blockedPowerUps.Clear();
 
         foreach (var effect in activeEffects)
         {
@@ -116,6 +120,19 @@ public class RunProgressManager : MonoBehaviour
         {
             acquiredUniquePowerUps.Add(data);
             Debug.Log($"[RunProgressManager] Marked unique power-up as acquired: {data.powerUpName}");
+        }
+
+        // Track blocked power-ups
+        if (data.blocksThesePowerUps != null && data.blocksThesePowerUps.Count > 0)
+        {
+            foreach (var blockedPowerUp in data.blocksThesePowerUps)
+            {
+                if (blockedPowerUp != null && !blockedPowerUps.Contains(blockedPowerUp))
+                {
+                    blockedPowerUps.Add(blockedPowerUp);
+                    Debug.Log($"[RunProgressManager] Blocked power-up: {blockedPowerUp.powerUpName}");
+                }
+            }
         }
 
         // Check upgrade status BEFORE adding to any lists
@@ -212,5 +229,10 @@ public class RunProgressManager : MonoBehaviour
             // Trigger reapplication of all passive effects
             PassivePowerUpHandler.ApplyAllPersistentPowerUps();
         }
+    }
+
+    public bool IsPowerUpBlocked(PowerUpData data)
+    {
+        return blockedPowerUps.Contains(data);
     }
 }

@@ -24,5 +24,7 @@ MonoBehaviour:
   isUpgradeable: 0
   prerequisitePowerUps:
   - {fileID: 11400000, guid: 9eb0c561ab0e71b47bbfbb71f2b104b2, type: 2}
+  blocksThesePowerUps:
+  - {fileID: 11400000, guid: 3c63916aef40dd645a67f2f58857daa4, type: 2}
   upgradeLevels: []
   descriptionTemplate: 
