@@ -341,4 +341,28 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
             gamblerUI.UpdateImpulsiveProgress(consecutiveHighBets, requiredHighBets, damageReductionActive);
         }
     }
+
+    public void CheckAndUpdateHighBetProgress()
+    {
+        // Only update if damage reduction is not active or pending
+        if (!damageReductionActive && !hasDamageReductionNextRound)
+        {
+            float highBetMinimum = player.maxHealth * highBetThreshold;
+            bool isHighBet = currentBetAmount >= highBetMinimum;
+
+            if (isHighBet)
+            {
+                // Temporarily increment to show progress
+                int tempCount = consecutiveHighBets + 1;
+                if (tempCount > requiredHighBets)
+                    tempCount = requiredHighBets;
+
+                // Update UI to show projected progress
+                if (gamblerUI != null)
+                {
+                    gamblerUI.UpdateImpulsiveProgress(tempCount, requiredHighBets, damageReductionActive);
+                }
+            }
+        }
+    }
 }

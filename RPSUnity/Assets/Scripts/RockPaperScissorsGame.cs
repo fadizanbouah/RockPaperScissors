@@ -115,6 +115,19 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.OnRoundStart();
         Debug.Log("[TEST] About to start round - checking if GamblerEffect OnRoundStart gets called");
 
+        // Update Impulsive Gambler tracker immediately
+        var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
+        if (effects != null)
+        {
+            foreach (var effect in effects)
+            {
+                if (effect is ImpulsiveGamblerEffect impulsiveEffect)
+                {
+                    impulsiveEffect.CheckAndUpdateHighBetProgress();
+                }
+            }
+        }
+
         DisableButtons();
 
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
