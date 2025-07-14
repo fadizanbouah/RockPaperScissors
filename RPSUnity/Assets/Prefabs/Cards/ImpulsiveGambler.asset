@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ImpulsiveGambler
   m_EditorClassIdentifier: 
   powerUpName: Impulsive Gambler
-  description: Betting over 20% of your HP 3 times in a row, gives you -50% damage
+  description: Betting over 20% of your HP 2 times in a row, gives you -20% damage
     taken NEXT ROUND
   icon: {fileID: 0}
   favorCost: 0
