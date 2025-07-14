@@ -14,6 +14,9 @@ public class GamblerUI : MonoBehaviour
     [SerializeField] private GameObject impulsiveTrackerPanel;
     [SerializeField] private TextMeshProUGUI progressText; // "High Bets: 2/3"
     [SerializeField] private Image damageReductionIcon; // Shows when active
+    [SerializeField] private Image trackerBackgroundImage; // The background to tint blue
+    [SerializeField] private Color normalBackgroundColor = Color.white;
+    [SerializeField] private Color activeReductionColor = new Color(0.5f, 0.7f, 1f, 1f); // Light blue
 
     private IGamblerEffect gamblerEffect;
     private HandController player;
@@ -221,11 +224,38 @@ public class GamblerUI : MonoBehaviour
         }
     }
 
-    public void UpdateImpulsiveProgress(int current, int required, bool hasReduction)
+    public void UpdateImpulsiveProgress(int current, int required, bool hasReduction, float reductionPercentage = 0f)
     {
         if (progressText != null)
         {
-            progressText.text = $"High Bets: {current}/{required}";
+            if (hasReduction)
+            {
+                // Show the damage reduction active text
+                progressText.text = $"{Mathf.RoundToInt(reductionPercentage * 100)}% DR ACTIVE!";
+
+                // Tint the background blue
+                if (trackerBackgroundImage != null)
+                {
+                    trackerBackgroundImage.color = activeReductionColor;
+                }
+            }
+            else
+            {
+                // Show normal progress
+                progressText.text = $"High Bets: {current}/{required}";
+
+                // Reset background to normal color
+                if (trackerBackgroundImage != null)
+                {
+                    trackerBackgroundImage.color = normalBackgroundColor;
+                }
+            }
+        }
+
+        // Optional: Show/hide a damage reduction icon
+        if (damageReductionIcon != null)
+        {
+            damageReductionIcon.gameObject.SetActive(hasReduction);
         }
     }
 }
