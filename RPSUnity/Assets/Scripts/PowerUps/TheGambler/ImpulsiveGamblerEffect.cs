@@ -289,12 +289,17 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
     public override void OnRoomStart()
     {
         Debug.Log($"[ImpulsiveGamblerEffect] OnRoomStart called - Resetting bet state for new room");
+
         // Reset bet state completely when entering a new room
         currentBetAmount = 0;
         hasBetThisRound = false;
 
-        // NEW: Reset consecutive bets for new room
+        // Reset all streak progress and clear any queued/active damage reduction
         consecutiveHighBets = 0;
+        hasDamageReductionNextRound = false;
+        damageReductionActive = false;
+
+        // Update the UI to reflect the reset streak and cleared buffs
         UpdateUIProgress();
 
         // Reset the UI slider to match the reset bet amount
@@ -303,7 +308,8 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
             gamblerUI.ResetSlider();
             Debug.Log("[ImpulsiveGamblerEffect] Reset GamblerUI slider to 0");
         }
-        Debug.Log($"[ImpulsiveGamblerEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}");
+
+        Debug.Log($"[ImpulsiveGamblerEffect] Room reset complete - currentBetAmount: {currentBetAmount}, hasBetThisRound: {hasBetThisRound}, consecutiveHighBets: {consecutiveHighBets}, damageReductionActive: {damageReductionActive}");
     }
 
     public override void Cleanup()

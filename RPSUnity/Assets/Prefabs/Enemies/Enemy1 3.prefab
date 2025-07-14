@@ -558,7 +558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseMaxHealth: 15
-  baseDamage: 1
+  baseDamage: 4
   health: 15
   maxHealth: 15
   playerHitAnimation: {fileID: 6542035435138104612}
