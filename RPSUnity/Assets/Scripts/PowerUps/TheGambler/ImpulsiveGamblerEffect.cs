@@ -251,14 +251,6 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
                     Debug.Log("[ImpulsiveGamblerEffect] Target reached! Damage reduction next round!");
                     // Keep counter at max - don't reset
                 }
-
-                if (consecutiveHighBets >= requiredHighBets)
-                {
-                    hasDamageReductionNextRound = true;
-                    Debug.Log("[ImpulsiveGamblerEffect] Target reached! Damage reduction next round!");
-                    // Update UI immediately to show the DR visual
-                    UpdateUIProgress();
-                }
             }
             else // ANY non-high bet (including 0) breaks the streak
             {
@@ -351,15 +343,14 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
     {
         if (gamblerUI != null)
         {
-            // Show DR visual if it's either pending OR active
-            bool showDRVisual = hasDamageReductionNextRound || damageReductionActive;
-            gamblerUI.UpdateImpulsiveProgress(consecutiveHighBets, requiredHighBets, showDRVisual, damageReduction);
+            // This will call the new method we'll add to GamblerUI
+            gamblerUI.UpdateImpulsiveProgress(consecutiveHighBets, requiredHighBets, damageReductionActive);
         }
     }
 
     public void CheckAndUpdateHighBetProgress()
     {
-        // Check if we're about to get damage reduction OR already have it pending/active
+        // Only update if damage reduction is not active or pending
         if (!damageReductionActive && !hasDamageReductionNextRound)
         {
             float highBetMinimum = player.maxHealth * highBetThreshold;
@@ -375,16 +366,9 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
                 // Update UI to show projected progress
                 if (gamblerUI != null)
                 {
-                    // Check if this would complete the requirement
-                    bool wouldCompleteDR = (tempCount >= requiredHighBets);
-                    gamblerUI.UpdateImpulsiveProgress(tempCount, requiredHighBets, wouldCompleteDR, damageReduction);
+                    gamblerUI.UpdateImpulsiveProgress(tempCount, requiredHighBets, damageReductionActive);
                 }
             }
-        }
-        else
-        {
-            // If DR is already pending or active, just update with current state
-            UpdateUIProgress();
         }
     }
 }
