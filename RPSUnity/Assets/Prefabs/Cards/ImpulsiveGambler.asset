@@ -15,7 +15,7 @@ MonoBehaviour:
   powerUpName: Impulsive Gambler
   description: Betting over 20% of your HP 2 times in a row, gives you -20% damage
     taken NEXT ROUND
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b7235820c74fef04cb8fbdb2780ded6c, type: 3}
   favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 245403546880206159, guid: aa84753ea200e1d4fbe1e5d6fcfcbf06, type: 3}
