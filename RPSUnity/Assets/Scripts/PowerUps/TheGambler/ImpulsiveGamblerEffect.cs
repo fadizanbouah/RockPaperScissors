@@ -344,7 +344,7 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
         if (gamblerUI != null)
         {
             // This will call the new method we'll add to GamblerUI
-            gamblerUI.UpdateImpulsiveProgress(consecutiveHighBets, requiredHighBets, damageReductionActive);
+            gamblerUI.UpdateImpulsiveProgress(consecutiveHighBets, requiredHighBets);
         }
     }
 
@@ -366,7 +366,7 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
                 // Update UI to show projected progress
                 if (gamblerUI != null)
                 {
-                    gamblerUI.UpdateImpulsiveProgress(tempCount, requiredHighBets, damageReductionActive);
+                    gamblerUI.UpdateImpulsiveProgress(tempCount, requiredHighBets);
                 }
             }
         }

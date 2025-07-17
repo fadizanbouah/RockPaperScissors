@@ -221,7 +221,7 @@ public class GamblerUI : MonoBehaviour
         }
     }
 
-    public void UpdateImpulsiveProgress(int current, int required, bool hasReduction)
+    public void UpdateImpulsiveProgress(int current, int required)
     {
         if (progressText != null)
         {
