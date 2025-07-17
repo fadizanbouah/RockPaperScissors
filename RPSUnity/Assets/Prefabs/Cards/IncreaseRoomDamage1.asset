@@ -12,10 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: IncreaseRoomDamage1
   m_EditorClassIdentifier: 
-  powerUpName: DigBick 1
+  powerUpName: Dig Bick 1
   description: +50% dmg until room ends
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d35f504537d573b4199e415a7e7acf0b, type: 3}
   favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 4387357542805192869, guid: fc6bbea20e183954b954c97a305eecfe, type: 3}
   value: 50
+  isUnique: 0
+  isUpgradeable: 0
+  prerequisitePowerUps: []
+  blocksThesePowerUps: []
+  upgradeLevels: []
+  descriptionTemplate: 
