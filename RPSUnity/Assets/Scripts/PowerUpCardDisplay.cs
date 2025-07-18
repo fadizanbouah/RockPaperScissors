@@ -284,7 +284,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
             if (soldOutAnimator != null)
             {
-                soldOutAnimator.SetTrigger("PlaySoldOut");
+                soldOutAnimator.SetTrigger("SoldOut");
             }
         }
         else
