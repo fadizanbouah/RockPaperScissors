@@ -114,6 +114,7 @@ public class PowerUpCardSpawner : MonoBehaviour
         }
     }
 
+    // In PowerUpCardSpawner.cs, modify the SpawnCardToSlot method:
     private void SpawnCardToSlot(Transform slot, PowerUpData data, int currentFavor, bool isPassive)
     {
         if (slot == null || data == null) return;
@@ -126,9 +127,17 @@ public class PowerUpCardSpawner : MonoBehaviour
         {
             display.SetData(data, currentFavor, panelManager);
 
-            if (isPassive && panelManager != null)
+            if (panelManager != null)
             {
-                panelManager.RegisterPassiveCard(cardInstance);
+                if (isPassive)
+                {
+                    panelManager.RegisterPassiveCard(cardInstance);
+                }
+                else
+                {
+                    // Register active cards too
+                    panelManager.RegisterActiveCard(cardInstance);
+                }
             }
         }
         else

@@ -11,6 +11,10 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private bool isPassiveCard = false;
 
+    [Header("Sold Out Animation")]
+    [SerializeField] private GameObject soldOutObject; // The "SOLD OUT" GameObject with animation
+    [SerializeField] private Animator soldOutAnimator; // Optional: if you need direct animator control
+
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
     private bool isGameplayCard = false;
@@ -117,23 +121,17 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             Debug.Log("[PowerUpCardDisplay] Card is in gameplay, ignoring click.");
             return;
         }
-
         if (data == null) return;
-
         int currentFavor = RunProgressManager.Instance.currentFavor;
-
         if (isPassiveCard || currentFavor >= data.favorCost)
         {
             if (!isPassiveCard)
                 RunProgressManager.Instance.favor -= data.favorCost;
-
             Debug.Log($"[PowerUpCardDisplay] Purchased {data.powerUpName} for {data.favorCost} Favor!");
-
             if (data.isPassive)
             {
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
-
                 if (panelManager != null)
                 {
                     panelManager.LockOutOtherPassiveChoices(this);
@@ -142,12 +140,13 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else
             {
+                // Active power-up logic
                 RunProgressManager.Instance.AddAcquiredPowerUp(data);
 
-                // Hide the card immediately after purchasing an active power-up
-                gameObject.SetActive(false);
+                // Instead of hiding the card, play the sold out animation
+                PlaySoldOutAnimation();
+                Debug.Log($"[PowerUpCardDisplay] Active power-up purchased, showing SOLD OUT: {data.powerUpName}");
             }
-
             if (panelManager != null)
             {
                 panelManager.RefreshFavorDisplay();
@@ -252,5 +251,35 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public Vector3 GetStoredFanPosition()
     {
         return originalLocalPosition;
+    }
+
+    public void PlaySoldOutAnimation()
+    {
+        if (soldOutObject != null)
+        {
+            soldOutObject.SetActive(true);
+
+            // If you have an animator and want to trigger a specific animation
+            if (soldOutAnimator == null && soldOutObject != null)
+            {
+                soldOutAnimator = soldOutObject.GetComponent<Animator>();
+            }
+
+            if (soldOutAnimator != null)
+            {
+                soldOutAnimator.SetTrigger("Play"); // Or whatever your trigger is named
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[PowerUpCardDisplay] SoldOut object not assigned!");
+        }
+
+        // Disable the button to prevent further clicks
+        Button button = GetComponent<Button>();
+        if (button != null)
+        {
+            button.interactable = false; // This will apply the disabled color
+        }
     }
 }

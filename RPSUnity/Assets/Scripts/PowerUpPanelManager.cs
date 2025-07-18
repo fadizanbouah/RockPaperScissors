@@ -10,6 +10,7 @@ public class PowerUpPanelManager : MonoBehaviour
 
     // Added: Keeps track of passive card instances
     private List<GameObject> passiveCards = new List<GameObject>();
+    private List<GameObject> activeCards = new List<GameObject>();
 
     private void OnEnable()
     {
@@ -99,6 +100,15 @@ public class PowerUpPanelManager : MonoBehaviour
         if (!passiveCards.Contains(card))
         {
             passiveCards.Add(card);
+        }
+    }
+
+    // Add this method to register active cards (similar to RegisterPassiveCard):
+    public void RegisterActiveCard(GameObject card)
+    {
+        if (!activeCards.Contains(card))
+        {
+            activeCards.Add(card);
         }
     }
 }
