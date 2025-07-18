@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections;
 
 public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -15,6 +16,11 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [Header("Sold Out Animation")]
     [SerializeField] private GameObject soldOutObject; // The "SOLD OUT" GameObject with animation
     [SerializeField] private Animator soldOutAnimator; // Optional: if you need direct animator control
+
+    [Header("Price Tag Dimming")]
+    [SerializeField] private Image priceTagImage; // The Image component on the price tag
+    [SerializeField] private float priceTagFadeDuration = 0.2f; // Match button's fade duration
+    private Color priceTagOriginalColor;
 
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
@@ -58,18 +64,21 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (!isPassiveCard)
         {
             UpdateAffordability(currentFavor);
-
             // Hide price tag during gameplay
             if (priceTagObject != null)
             {
                 priceTagObject.SetActive(!isGameplayCard);
+            }
+            // Store original price tag color
+            if (priceTagImage != null && priceTagOriginalColor == default(Color))
+            {
+                priceTagOriginalColor = priceTagImage.color;
             }
         }
         else if (costText != null)
         {
             costText.text = "";
             costText.gameObject.SetActive(false);
-
             // Also hide price tag for passive cards
             if (priceTagObject != null)
             {
@@ -268,7 +277,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             soldOutObject.SetActive(true);
 
-            // If you have an animator and want to trigger a specific animation
             if (soldOutAnimator == null && soldOutObject != null)
             {
                 soldOutAnimator = soldOutObject.GetComponent<Animator>();
@@ -276,7 +284,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
             if (soldOutAnimator != null)
             {
-                soldOutAnimator.SetTrigger("SoldOut"); // Or whatever your trigger is named
+                soldOutAnimator.SetTrigger("PlaySoldOut");
             }
         }
         else
@@ -284,11 +292,35 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             Debug.LogWarning("[PowerUpCardDisplay] SoldOut object not assigned!");
         }
 
-        // Disable the button to prevent further clicks
+        // Disable the button to apply disabled color
         Button button = GetComponent<Button>();
         if (button != null)
         {
-            button.interactable = false; // This will apply the disabled color
+            button.interactable = false;
+
+            // Fade the price tag to match button's disabled color
+            if (priceTagImage != null)
+            {
+                ColorBlock colors = button.colors;
+                Color targetColor = priceTagOriginalColor * colors.disabledColor;
+                StartCoroutine(FadePriceTag(targetColor));
+            }
         }
+    }
+
+    private IEnumerator FadePriceTag(Color targetColor)
+    {
+        Color startColor = priceTagImage.color;
+        float elapsed = 0f;
+
+        while (elapsed < priceTagFadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / priceTagFadeDuration;
+            priceTagImage.color = Color.Lerp(startColor, targetColor, t);
+            yield return null;
+        }
+
+        priceTagImage.color = targetColor;
     }
 }

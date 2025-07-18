@@ -688,6 +688,8 @@ MonoBehaviour:
   isPassiveCard: 0
   soldOutObject: {fileID: 4494386126034291806}
   soldOutAnimator: {fileID: 4326228238651086314}
+  priceTagImage: {fileID: 8100595059631365114}
+  priceTagFadeDuration: 0.2
 --- !u!114 &3528959825341640282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -715,7 +717,7 @@ MonoBehaviour:
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.41568628, g: 0.41568628, b: 0.41568628, a: 1}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.2
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
