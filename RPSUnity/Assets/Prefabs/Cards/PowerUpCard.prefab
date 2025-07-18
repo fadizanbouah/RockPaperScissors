@@ -684,6 +684,7 @@ MonoBehaviour:
   nameText: {fileID: 547511275785748820}
   descriptionText: {fileID: 5116884728576305902}
   costText: {fileID: 6450014006151700455}
+  priceTagObject: {fileID: 4596498922006468286}
   isPassiveCard: 0
   soldOutObject: {fileID: 4494386126034291806}
   soldOutAnimator: {fileID: 4326228238651086314}

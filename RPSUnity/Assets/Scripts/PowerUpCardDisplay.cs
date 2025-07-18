@@ -9,6 +9,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private GameObject priceTagObject; // The price tag icon GameObject
     [SerializeField] private bool isPassiveCard = false;
 
     [Header("Sold Out Animation")]
@@ -28,7 +29,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         data = newData;
         panelManager = manager;
         isGameplayCard = isGameplay;
-
         // Determine display level for upgradeable power-ups
         displayLevel = 0;
         if (data.isUpgradeable && RunProgressManager.Instance != null)
@@ -36,7 +36,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (RunProgressManager.Instance.HasPowerUp(data))
             {
                 displayLevel = RunProgressManager.Instance.GetPowerUpLevel(data) + 1;
-
                 // Check if already at max level
                 if (data.IsMaxLevel(displayLevel - 1))
                 {
@@ -46,26 +45,36 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
                 }
             }
         }
-
         if (backgroundImage != null && data.icon != null)
             backgroundImage.sprite = data.icon;
-
         if (nameText != null)
         {
             nameText.text = data.powerUpName + data.GetLevelSuffix(displayLevel);
         }
-
         if (descriptionText != null)
         {
             descriptionText.text = data.GetDescriptionForLevel(displayLevel);
         }
-
         if (!isPassiveCard)
+        {
             UpdateAffordability(currentFavor);
+
+            // Hide price tag during gameplay
+            if (priceTagObject != null)
+            {
+                priceTagObject.SetActive(!isGameplayCard);
+            }
+        }
         else if (costText != null)
         {
             costText.text = "";
             costText.gameObject.SetActive(false);
+
+            // Also hide price tag for passive cards
+            if (priceTagObject != null)
+            {
+                priceTagObject.SetActive(false);
+            }
         }
     }
 
@@ -267,7 +276,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
             if (soldOutAnimator != null)
             {
-                soldOutAnimator.SetTrigger("Play"); // Or whatever your trigger is named
+                soldOutAnimator.SetTrigger("SoldOut"); // Or whatever your trigger is named
             }
         }
         else

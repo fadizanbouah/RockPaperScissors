@@ -51,7 +51,7 @@ Animator:
   m_GameObject: {fileID: 449499298924069271}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a0f691e4d2805a54d85fc75cb9f31669, type: 2}
+  m_Controller: {fileID: 9100000, guid: d854efaced4dd63418ce0db2f4e394a0, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -398,6 +398,8 @@ MonoBehaviour:
   descriptionText: {fileID: 5116884728576305902}
   costText: {fileID: 0}
   isPassiveCard: 1
+  soldOutObject: {fileID: 0}
+  soldOutAnimator: {fileID: 0}
 --- !u!114 &3528959825341640282
 MonoBehaviour:
   m_ObjectHideFlags: 0
