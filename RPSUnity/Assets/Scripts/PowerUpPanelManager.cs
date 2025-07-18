@@ -61,16 +61,28 @@ public class PowerUpPanelManager : MonoBehaviour
     {
         foreach (var card in passiveCards)
         {
-            if (card != null && card != selectedCard)
+            if (card != null)
             {
                 Button button = card.GetComponent<Button>();
-                CanvasGroup group = card.GetComponent<CanvasGroup>();
 
-                if (button != null)
-                    button.interactable = false;
-
-                if (group != null)
-                    group.alpha = 0.7f; // Visually gray it out
+                if (card == selectedCard.gameObject)
+                {
+                    // Keep the selected card interactable so it maintains normal appearance
+                    if (button != null)
+                    {
+                        button.interactable = true;
+                        // But remove its click listener to prevent further clicks
+                        button.onClick.RemoveAllListeners();
+                    }
+                }
+                else
+                {
+                    // Disable other cards - they will use the Button's Disabled Color
+                    if (button != null)
+                    {
+                        button.interactable = false;
+                    }
+                }
             }
         }
 

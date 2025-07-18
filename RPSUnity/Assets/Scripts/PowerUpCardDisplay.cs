@@ -80,7 +80,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
                 if (data.favorCost > 0)
                 {
-                    costText.text = $"Cost: {data.favorCost}";
+                    costText.text = $"{data.favorCost}";
                     costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
                 }
                 else
