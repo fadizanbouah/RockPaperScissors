@@ -347,4 +347,27 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             floatingAnimator.Play("PowerUpCard_Floating", 0, randomOffset);
         }
     }
+
+    private void OnEnable()
+    {
+        // Only restart animation if we're already set up and in panel mode
+        // The isGameplayCard check alone isn't enough because OnEnable might be called
+        // before SetData, so we also check if data is already assigned
+        if (data != null && !isGameplayCard && floatingAnimator != null)
+        {
+            // Small delay to ensure everything is set up
+            StartCoroutine(RestartFloatingAnimationDelayed());
+        }
+    }
+
+    private IEnumerator RestartFloatingAnimationDelayed()
+    {
+        // Wait one frame to ensure the GameObject is fully active
+        yield return null;
+
+        // Restart the floating animation with a new random offset
+        float randomOffset = Random.Range(0f, 1f);
+        floatingAnimator.Play("PowerUpCard_Floating", 0, randomOffset);
+        floatingAnimator.speed = Random.Range(0.9f, 1.1f);
+    }
 }
