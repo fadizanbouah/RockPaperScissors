@@ -12,10 +12,14 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private GameObject priceTagObject; // The price tag icon GameObject
     [SerializeField] private bool isPassiveCard = false;
+    [SerializeField] private Animator floatingAnimator;
 
     [Header("Sold Out Animation")]
     [SerializeField] private GameObject soldOutObject; // The "SOLD OUT" GameObject with animation
     [SerializeField] private Animator soldOutAnimator; // Optional: if you need direct animator control
+
+    [Header("Panel Floating Animation")]
+    [SerializeField] private float floatingStartDelay = 1f; // Optional delay before starting
 
     [Header("Price Tag Dimming")]
     [SerializeField] private Image priceTagImage; // The Image component on the price tag
@@ -84,6 +88,12 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 priceTagObject.SetActive(false);
             }
+        }
+
+        // Start floating animation when in panel (not gameplay)
+        if (!isGameplay)
+        {
+            StartFloatingAnimation();
         }
     }
 
@@ -322,5 +332,19 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
 
         priceTagImage.color = targetColor;
+    }
+
+    // Add this method to trigger the floating animation:
+    private void StartFloatingAnimation()
+    {
+        // Only float in the power-up panel, not during gameplay
+        if (isGameplayCard) return;
+
+        if (floatingAnimator != null)
+        {
+            // Start the floating animation at a random offset
+            float randomOffset = Random.Range(0f, floatingStartDelay); // 0-100% through the animation cycle
+            floatingAnimator.Play("PowerUpCard_Floating", 0, randomOffset);
+        }
     }
 }

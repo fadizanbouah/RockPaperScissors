@@ -686,8 +686,10 @@ MonoBehaviour:
   costText: {fileID: 6450014006151700455}
   priceTagObject: {fileID: 4596498922006468286}
   isPassiveCard: 0
+  floatingAnimator: {fileID: 4326228238651086314}
   soldOutObject: {fileID: 4494386126034291806}
   soldOutAnimator: {fileID: 4326228238651086314}
+  floatingStartDelay: 1
   priceTagImage: {fileID: 8100595059631365114}
   priceTagFadeDuration: 0.2
 --- !u!114 &3528959825341640282

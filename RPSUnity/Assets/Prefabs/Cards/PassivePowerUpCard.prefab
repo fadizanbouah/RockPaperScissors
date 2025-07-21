@@ -397,9 +397,14 @@ MonoBehaviour:
   nameText: {fileID: 547511275785748820}
   descriptionText: {fileID: 5116884728576305902}
   costText: {fileID: 0}
+  priceTagObject: {fileID: 0}
   isPassiveCard: 1
+  floatingAnimator: {fileID: 4326228238651086314}
   soldOutObject: {fileID: 0}
   soldOutAnimator: {fileID: 0}
+  floatingStartDelay: 1
+  priceTagImage: {fileID: 0}
+  priceTagFadeDuration: 0.2
 --- !u!114 &3528959825341640282
 MonoBehaviour:
   m_ObjectHideFlags: 0
