@@ -13,6 +13,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private GameObject priceTagObject; // The price tag icon GameObject
     [SerializeField] private bool isPassiveCard = false;
     [SerializeField] private Animator floatingAnimator;
+    [SerializeField] private GameObject shadowObject; // The shadow GameObject
 
     [Header("Sold Out Animation")]
     [SerializeField] private GameObject soldOutObject; // The "SOLD OUT" GameObject with animation
@@ -73,6 +74,11 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 priceTagObject.SetActive(!isGameplayCard);
             }
+            // Hide shadow during gameplay
+            if (shadowObject != null)
+            {
+                shadowObject.SetActive(!isGameplayCard);
+            }
             // Store original price tag color
             if (priceTagImage != null && priceTagOriginalColor == default(Color))
             {
@@ -88,8 +94,12 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 priceTagObject.SetActive(false);
             }
+            // Hide shadow for passive cards during gameplay
+            if (shadowObject != null)
+            {
+                shadowObject.SetActive(!isGameplayCard);
+            }
         }
-
         // Start floating animation when in panel (not gameplay)
         if (!isGameplay)
         {
