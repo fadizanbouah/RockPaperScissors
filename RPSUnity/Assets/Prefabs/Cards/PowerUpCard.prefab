@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 3464897107702385109}
   - component: {fileID: 277209712070369754}
   - component: {fileID: 3384982764781163592}
+  - component: {fileID: 1460126723918638969}
   m_Layer: 5
   m_Name: SOLD_OUT
   m_TagString: Untagged
@@ -235,7 +236,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4494386126034291806}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
@@ -285,6 +286,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &1460126723918638969
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4494386126034291806}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7084065ddbc8eea4197f5ec1b9b2d0a7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4596498922006468286
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,7 +710,7 @@ MonoBehaviour:
   isPassiveCard: 0
   floatingAnimator: {fileID: 4326228238651086314}
   soldOutObject: {fileID: 4494386126034291806}
-  soldOutAnimator: {fileID: 4326228238651086314}
+  soldOutAnimator: {fileID: 1460126723918638969}
   floatingStartDelay: 1
   priceTagImage: {fileID: 8100595059631365114}
   priceTagFadeDuration: 0.2
