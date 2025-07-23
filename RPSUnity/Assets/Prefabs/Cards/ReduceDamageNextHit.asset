@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Thick-Skinned
   description: -50% damage from next hit
-  icon: {fileID: 21300000, guid: 051fa0b8747a84449a70d039485c8159, type: 3}
+  icon: {fileID: 21300000, guid: 1a5da24b61d77014eae5d075a065b79f, type: 3}
   favorCost: 2
   isPassive: 0
   effectPrefab: {fileID: 6717762807998786352, guid: 0db178bd83431bf4d827febe3ff81d1f, type: 3}

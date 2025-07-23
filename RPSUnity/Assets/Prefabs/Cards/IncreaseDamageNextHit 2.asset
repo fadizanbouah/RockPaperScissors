@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Heavy Handed 2
   description: +20% dmg on next hit
-  icon: {fileID: 21300000, guid: c011d17db00f6234c846e270da2d98e8, type: 3}
+  icon: {fileID: 21300000, guid: 3e7da68f989d84a4aa04e97dc57a02c6, type: 3}
   favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 6717762807998786352, guid: a1e76275b835a5640bc9636b7b9e003c, type: 3}

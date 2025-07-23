@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Double Trouble
   description: Allows the use of 2 power ups this turn
-  icon: {fileID: 21300000, guid: 3ca45bd509eed8546af7479b590e7aad, type: 3}
+  icon: {fileID: 21300000, guid: b20c0317ad8b85941b582e17f52b8f9c, type: 3}
   favorCost: 1
   isPassive: 0
   effectPrefab: {fileID: 6717762807998786352, guid: cc4b0a75b210dc0418d41255b78df435, type: 3}
