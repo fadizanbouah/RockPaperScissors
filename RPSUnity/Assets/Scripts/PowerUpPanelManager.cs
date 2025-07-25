@@ -64,33 +64,25 @@ public class PowerUpPanelManager : MonoBehaviour
         {
             if (card != null)
             {
-                Button button = card.GetComponent<Button>();
+                PowerUpCardDisplay cardDisplay = card.GetComponent<PowerUpCardDisplay>();
 
                 if (card == selectedCard.gameObject)
                 {
-                    // Keep the selected card interactable so it maintains normal appearance
-                    if (button != null)
-                    {
-                        button.interactable = true;
-                        // But remove its click listener to prevent further clicks
-                        button.onClick.RemoveAllListeners();
-                    }
+                    // For the selected card: play checkmark and disable interactions
+                    // but DON'T set button.interactable = false to keep normal appearance
+                    selectedCard.PlayCheckmarkAnimation();
+                    selectedCard.DisableAllInteractions();
                 }
                 else
                 {
-                    // Disable other cards - they will use the Button's Disabled Color
+                    // For other cards: make them dim by setting interactable = false
+                    Button button = card.GetComponent<Button>();
                     if (button != null)
                     {
-                        button.interactable = false;
+                        button.interactable = false; // This causes the dimming
                     }
                 }
             }
-        }
-
-        // Play checkmark animation on the selected passive card
-        if (selectedCard != null)
-        {
-            selectedCard.PlayCheckmarkAnimation();
         }
     }
 

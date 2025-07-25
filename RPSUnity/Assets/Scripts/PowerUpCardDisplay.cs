@@ -135,6 +135,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        Button button = GetComponent<Button>();
+        if (button != null && !button.interactable) return; // Don't hover if not interactable
+
         if (isGameplayCard)
         {
             if (Mathf.Approximately(originalLocalPosition.y, 0f))
@@ -379,5 +382,36 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         float randomOffset = Random.Range(0f, 1f);
         floatingAnimator.Play("PowerUpCard_Floating", 0, randomOffset);
         floatingAnimator.speed = Random.Range(0.9f, 1.1f);
+    }
+
+    public void DisableAllInteractions()
+    {
+        // DON'T disable button.interactable to preserve visual appearance
+        // Just prevent the button from receiving clicks
+        Button button = GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners(); // Remove click functionality
+        }
+
+        // Disable EventTrigger to prevent hover effects
+        EventTrigger eventTrigger = GetComponent<EventTrigger>();
+        if (eventTrigger != null)
+        {
+            eventTrigger.enabled = false;
+        }
+
+        // Disable raycast blocking to prevent any interaction
+        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        // Ensure we're not in hover state
+        if (isGameplayCard && originalLocalPosition != Vector3.zero)
+        {
+            transform.localPosition = originalLocalPosition;
+        }
     }
 }
