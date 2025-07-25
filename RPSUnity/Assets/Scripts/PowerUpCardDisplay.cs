@@ -378,7 +378,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         // Wait one frame to ensure the GameObject is fully active
         yield return null;
 
-        // Restart the floating animation with a new random offset
+        /// Restart the floating animation with a new random offset
         float randomOffset = Random.Range(0f, 1f);
         floatingAnimator.Play("PowerUpCard_Floating", 0, randomOffset);
         floatingAnimator.speed = Random.Range(0.9f, 1.1f);

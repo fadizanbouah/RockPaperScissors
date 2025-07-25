@@ -26,7 +26,6 @@ public class PredictionUI : MonoBehaviour
     private int lastKnownIndex = 0;
     private List<bool> usedSlots = new List<bool>();
     private int lastProcessedIndex = -1;
-    private Coroutine refreshCoroutine = null;
 
     private void Awake()
     {
@@ -186,8 +185,6 @@ public class PredictionUI : MonoBehaviour
             // Now refresh the UI with the new sequence
             SetupPrediction(currentEnemy);
         }
-
-        refreshCoroutine = null;
     }
 
     public void UpdateAfterSignRevealed()
