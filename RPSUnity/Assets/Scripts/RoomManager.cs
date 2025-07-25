@@ -210,17 +210,18 @@ public class RoomManager : MonoBehaviour
             Debug.Log("[RoomManager] Setting roomClearedTextObject to inactive: " + roomClearedTextObject.name);
             roomClearedTextObject.SetActive(false);
         }
-
         if (powerUpPanelObject != null)
         {
             Debug.Log("[RoomManager] Activating powerUpPanelObject: " + powerUpPanelObject.name);
             powerUpPanelObject.SetActive(true);
 
-            // Populate random power-up cards
+            // Populate power-up cards for both tabs
             PowerUpCardSpawner spawner = powerUpPanelObject.GetComponent<PowerUpCardSpawner>();
             if (spawner != null)
             {
-                spawner.PopulatePowerUpPanel();
+                spawner.PopulatePowerUpPanel(); // Populates passive tab
+                spawner.PopulateActiveTab();    // Populates active tab
+                Debug.Log("[RoomManager] Populated both passive and active power-up tabs");
             }
             else
             {

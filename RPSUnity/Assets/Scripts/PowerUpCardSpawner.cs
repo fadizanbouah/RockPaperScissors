@@ -36,11 +36,20 @@ public class PowerUpCardSpawner : MonoBehaviour
 
         int currentFavor = RunProgressManager.Instance.currentFavor;
 
-        // Spawn active power-ups
-        SpawnCardsToFixedSlots(availablePowerUps, new[] { cardSlot1, cardSlot2, cardSlot3 }, currentFavor, false);
-
-        // Spawn passive power-ups
+        // Keep passive power-ups in first tab (index 0)
         SpawnCardsToFixedSlots(passivePowerUps, new[] { passiveSlot1, passiveSlot2, passiveSlot3 }, currentFavor, true);
+
+        // Active power-ups are now spawned when the active tab is shown
+        // Remove the active spawning from here
+    }
+
+    // Add this new method to spawn active power-ups:
+    public void PopulateActiveTab()
+    {
+        int currentFavor = RunProgressManager.Instance.currentFavor;
+
+        // Spawn active power-ups to the active tab slots
+        SpawnCardsToFixedSlots(availablePowerUps, new[] { cardSlot1, cardSlot2, cardSlot3 }, currentFavor, false);
     }
 
     private void SpawnCardsToFixedSlots(PowerUpData[] pool, Transform[] slots, int favor, bool isPassive)

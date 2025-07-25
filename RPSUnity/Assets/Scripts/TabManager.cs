@@ -94,18 +94,23 @@ public class TabManager : MonoBehaviour
 
     private void OnTabActivated(int tabIndex)
     {
-        // Override this or use events to handle tab-specific initialization
         switch (tabIndex)
         {
-            case 0: // Power-Up Selection Tab
-                Debug.Log("[TabManager] Power-up selection tab activated");
-                // The existing power-up spawning logic will handle this
+            case 0: // Passive Power-Ups Tab
+                Debug.Log("[TabManager] Passive power-ups tab activated");
+                // Passive cards are already spawned when panel opens
+                RestartFloatingAnimations();
                 break;
 
-            case 1: // Sell Cards Tab
-                Debug.Log("[TabManager] Sell cards tab activated");
-                // TODO: Populate the sell interface with player's cards
-                PopulateSellTab();
+            case 1: // Active Power-Ups Tab
+                Debug.Log("[TabManager] Active power-ups tab activated");
+                // Spawn active power-ups when this tab is shown
+                PowerUpCardSpawner spawner = FindObjectOfType<PowerUpCardSpawner>();
+                if (spawner != null)
+                {
+                    spawner.PopulateActiveTab();
+                }
+                RestartFloatingAnimations();
                 break;
         }
     }
@@ -127,6 +132,34 @@ public class TabManager : MonoBehaviour
         if (tabIndex >= 0 && tabIndex < tabs.Count && tabs[tabIndex].tabButton != null)
         {
             tabs[tabIndex].tabButton.interactable = interactable;
+        }
+    }
+
+    // Add this method to your TabManager class:
+
+    private void RestartFloatingAnimations()
+    {
+        // Find all PowerUpCardDisplay components in the current tab
+        if (currentTabIndex >= 0 && currentTabIndex < tabs.Count && tabs[currentTabIndex].contentPanel != null)
+        {
+            PowerUpCardDisplay[] cards = tabs[currentTabIndex].contentPanel.GetComponentsInChildren<PowerUpCardDisplay>();
+
+            foreach (PowerUpCardDisplay card in cards)
+            {
+                // Get the animator and restart the floating animation
+                Animator animator = card.GetComponent<Animator>();
+                if (animator != null && animator.enabled)
+                {
+                    // Generate a new random offset for variety
+                    float randomOffset = Random.Range(0f, 1f);
+                    animator.Play("PowerUpCard_Floating", 0, randomOffset);
+
+                    // Optional: Vary the speed again
+                    animator.speed = Random.Range(0.9f, 1.1f);
+
+                    Debug.Log($"[TabManager] Restarted floating animation for {card.name}");
+                }
+            }
         }
     }
 }
