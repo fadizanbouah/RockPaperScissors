@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI; // Add this line
 
 public class SellTabManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class SellTabManager : MonoBehaviour
     [SerializeField] private Transform sellCardsContainer;
     [SerializeField] private GameObject powerUpCardPrefab; // Same PowerUpCard prefab
     [SerializeField] private GameObject emptyStateMessage; // "No cards to sell"
+    [SerializeField] private ScrollRect scrollRect; // Reference to the ScrollView's ScrollRect
 
     [Header("References")]
     [SerializeField] private PowerUpPanelManager panelManager;
@@ -41,6 +43,15 @@ public class SellTabManager : MonoBehaviour
         foreach (PowerUpData powerUp in sellablePowerUps)
         {
             SpawnSellCard(powerUp);
+        }
+
+        if (scrollRect != null)
+        {
+            // Force immediate layout rebuild
+            Canvas.ForceUpdateCanvases();
+
+            // Set scroll to top (1 = top, 0 = bottom)
+            scrollRect.verticalNormalizedPosition = 1f;
         }
     }
 

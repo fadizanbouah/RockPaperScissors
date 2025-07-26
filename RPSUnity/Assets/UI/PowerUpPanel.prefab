@@ -2969,6 +2969,7 @@ MonoBehaviour:
   sellCardsContainer: {fileID: 9056031195412013526}
   powerUpCardPrefab: {fileID: 7261569195890138904, guid: b3b4de9ff20cb0744970ace2b4b21fd6, type: 3}
   emptyStateMessage: {fileID: 5187338328872619264}
+  scrollRect: {fileID: 481823802121359162}
   panelManager: {fileID: 1388229315023535621}
 --- !u!1 &9199006914211746622
 GameObject:
