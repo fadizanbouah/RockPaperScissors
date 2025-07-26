@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -30,6 +31,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private Image priceTagImage; // The Image component on the price tag
     [SerializeField] private float priceTagFadeDuration = 0.2f; // Match button's fade duration
     private Color priceTagOriginalColor;
+
+    [Header("Affordability Display")]
+    [SerializeField] private GameObject getMoreFavorObject; // "Get more favor" text object
 
     private PowerUpData data;
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
@@ -127,7 +131,12 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
                 if (data.favorCost > 0)
                 {
                     costText.text = $"{data.favorCost}";
-                    costText.color = currentFavor >= data.favorCost ? Color.white : Color.red;
+                    // Remove the color change - keep it white always
+                    costText.color = Color.white;
+
+                    // Handle affordability visuals
+                    bool canAfford = currentFavor >= data.favorCost;
+                    SetAffordableState(canAfford);
                 }
                 else
                 {
@@ -454,6 +463,15 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (soldOutObject != null)
         {
             soldOutObject.SetActive(false);
+        }
+    }
+
+    private void SetAffordableState(bool canAfford)
+    {
+        // Show/hide "Get more favor" text
+        if (getMoreFavorObject != null)
+        {
+            getMoreFavorObject.SetActive(!canAfford);
         }
     }
 }
