@@ -32,6 +32,10 @@ public class PowerUpData : ScriptableObject
     [Tooltip("Power-ups that should be blocked after acquiring this one")]
     public List<PowerUpData> blocksThesePowerUps = new List<PowerUpData>();
 
+    [Header("Economy")]
+    [Tooltip("How much favor the player gets when selling this power-up")]
+    public int sellValue = 1;
+
     [System.Serializable]
     public class UpgradeLevel
     {

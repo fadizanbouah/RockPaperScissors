@@ -15,6 +15,10 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private Animator floatingAnimator;
     [SerializeField] private GameObject shadowObject; // The shadow GameObject
 
+    [Header("Sell Mode")]
+    private bool isSellMode = false;
+    private SellTabManager sellTabManager;
+
     [Header("Sold Out Animation")]
     [SerializeField] private GameObject soldOutObject; // The "SOLD OUT" GameObject with animation
     [SerializeField] private Animator soldOutAnimator; // Optional: if you need direct animator control
@@ -160,6 +164,15 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (isGameplayCard)
         {
             Debug.Log("[PowerUpCardDisplay] Card is in gameplay, ignoring click.");
+            return;
+        }
+        if (isSellMode)
+        {
+            // Sell immediately on click
+            if (sellTabManager != null && data != null)
+            {
+                sellTabManager.SellCard(data);
+            }
             return;
         }
         if (data == null) return;
@@ -412,6 +425,35 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (isGameplayCard && originalLocalPosition != Vector3.zero)
         {
             transform.localPosition = originalLocalPosition;
+        }
+    }
+
+    public void SetDataForSellMode(PowerUpData powerUpData, SellTabManager sellManager)
+    {
+        // Use regular SetData
+        SetData(powerUpData, 0, null, false);
+
+        isSellMode = true;
+        sellTabManager = sellManager;
+
+        // Show sell value instead of buy cost
+        if (costText != null)
+        {
+            costText.gameObject.SetActive(true);
+            costText.text = powerUpData.sellValue.ToString();
+            costText.color = Color.green; // Green for sell value
+        }
+
+        // Show price tag
+        if (priceTagObject != null)
+        {
+            priceTagObject.SetActive(true);
+        }
+
+        // Hide SOLD OUT if present
+        if (soldOutObject != null)
+        {
+            soldOutObject.SetActive(false);
         }
     }
 }

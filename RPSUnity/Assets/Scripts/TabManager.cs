@@ -98,17 +98,25 @@ public class TabManager : MonoBehaviour
         {
             case 0: // Passive Power-Ups Tab
                 Debug.Log("[TabManager] Passive power-ups tab activated");
-                // Passive cards are already spawned when panel opens
                 RestartFloatingAnimations();
                 break;
 
             case 1: // Active Power-Ups Tab
                 Debug.Log("[TabManager] Active power-ups tab activated");
-                // Spawn active power-ups when this tab is shown
                 PowerUpCardSpawner spawner = FindObjectOfType<PowerUpCardSpawner>();
                 if (spawner != null)
                 {
                     spawner.PopulateActiveTab();
+                }
+                RestartFloatingAnimations();
+                break;
+
+            case 2: // Sell Tab
+                Debug.Log("[TabManager] Sell tab activated");
+                SellTabManager sellManager = tabs[2].contentPanel.GetComponent<SellTabManager>();
+                if (sellManager != null)
+                {
+                    sellManager.PopulateSellTab();
                 }
                 RestartFloatingAnimations();
                 break;
