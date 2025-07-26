@@ -162,4 +162,16 @@ public class TabManager : MonoBehaviour
             }
         }
     }
+
+    private void OnEnable()
+    {
+        // Always start with the default tab when panel opens
+        SwitchToTab(defaultTabIndex);
+    }
+
+    // Add this method to reset to default tab when panel opens:
+    public void ResetToDefaultTab()
+    {
+        SwitchToTab(defaultTabIndex);
+    }
 }
