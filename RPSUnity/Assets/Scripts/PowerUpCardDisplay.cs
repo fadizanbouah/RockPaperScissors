@@ -12,6 +12,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private GameObject priceTagObject; // The price tag icon GameObject
+    [SerializeField] private GameObject favorChipObject; // The new favor chip for selling
     [SerializeField] private bool isPassiveCard = false;
     [SerializeField] private Animator floatingAnimator;
     [SerializeField] private GameObject shadowObject; // The shadow GameObject
@@ -77,11 +78,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (!isPassiveCard)
         {
             UpdateAffordability(currentFavor);
-            // Hide price tag during gameplay
-            if (priceTagObject != null)
-            {
-                priceTagObject.SetActive(!isGameplayCard);
-            }
             // Hide shadow during gameplay
             if (shadowObject != null)
             {
@@ -97,11 +93,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             costText.text = "";
             costText.gameObject.SetActive(false);
-            // Also hide price tag for passive cards
-            if (priceTagObject != null)
-            {
-                priceTagObject.SetActive(false);
-            }
             // Hide shadow for passive cards during gameplay
             if (shadowObject != null)
             {
@@ -112,6 +103,16 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (!isGameplay)
         {
             StartFloatingAnimation();
+        }
+        // Show price tag for buying mode (only if not gameplay and not passive)
+        if (priceTagObject != null)
+        {
+            priceTagObject.SetActive(!isGameplayCard && !isPassiveCard);
+        }
+        // Hide favor chip for buying mode
+        if (favorChipObject != null)
+        {
+            favorChipObject.SetActive(false);
         }
     }
 
@@ -501,24 +502,33 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void SetDataForSellMode(PowerUpData powerUpData, SellTabManager sellManager)
     {
-        // Use regular SetData
-        SetData(powerUpData, 0, null, false);
-
         isSellMode = true;
-        sellTabManager = sellManager;
+        data = powerUpData;
+        this.sellTabManager = sellManager;
 
-        // Show sell value instead of buy cost
+        // Set up the display
+        if (nameText != null)
+            nameText.text = powerUpData.powerUpName;
+
+        if (descriptionText != null)
+            descriptionText.text = powerUpData.description;
+
+        if (backgroundImage != null && powerUpData.icon != null)  // Use 'backgroundImage' like in SetData
+            backgroundImage.sprite = powerUpData.icon;
+
+        // Hide the price tag (buying indicator)
+        if (priceTagObject != null)
+            priceTagObject.SetActive(false);
+
+        // Show the favor chip (selling indicator)
+        if (favorChipObject != null)
+            favorChipObject.SetActive(true);
+
+        // Update cost text to show sell value
         if (costText != null)
         {
-            costText.gameObject.SetActive(true);
-            costText.text = powerUpData.sellValue.ToString();
-            //costText.color = Color.green; // Green for sell value
-        }
-
-        // Show price tag
-        if (priceTagObject != null)
-        {
-            priceTagObject.SetActive(true);
+            costText.text = $"+{powerUpData.sellValue}";
+            costText.color = Color.green; // Optional: make it green to indicate gaining favor
         }
 
         // Make sure "not enough favor" is hidden for sell cards
@@ -527,11 +537,25 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             getMoreFavorObject.SetActive(false);
         }
 
-        // Hide SOLD OUT if present
+        // Hide sold out overlay for sell mode
         if (soldOutObject != null)
-        {
             soldOutObject.SetActive(false);
+
+        // Set up the button
+        Button btn = GetComponent<Button>();
+        if (btn != null)
+        {
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => {
+                if (sellTabManager != null)
+                {
+                    sellTabManager.SellCard(powerUpData);
+                }
+            });
+            btn.interactable = true;
         }
+        // Start floating animation for sell cards
+        StartFloatingAnimation();
     }
 
     private void SetAffordableState(bool canAfford)

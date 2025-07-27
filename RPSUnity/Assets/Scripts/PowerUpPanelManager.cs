@@ -22,7 +22,7 @@ public class PowerUpPanelManager : MonoBehaviour
     {
         if (favorText != null)
         {
-            favorText.text = "Favor: " + RunProgressManager.Instance.currentFavor;
+            favorText.text = "" + RunProgressManager.Instance.currentFavor;
         }
     }
 
