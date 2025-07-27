@@ -103,11 +103,8 @@ public class TabManager : MonoBehaviour
 
             case 1: // Active Power-Ups Tab
                 Debug.Log("[TabManager] Active power-ups tab activated");
-                PowerUpCardSpawner spawner = FindObjectOfType<PowerUpCardSpawner>();
-                if (spawner != null)
-                {
-                    spawner.PopulateActiveTab();
-                }
+                // Remove the PopulateActiveTab() call from here
+                // It should only be called once when the panel opens
                 RestartFloatingAnimations();
                 break;
 
