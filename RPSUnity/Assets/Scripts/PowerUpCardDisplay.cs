@@ -241,10 +241,10 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (isSellMode)
         {
             // Sell immediately on click
-            if (sellTabManager != null && data != null)
-            {
-                sellTabManager.SellCard(data);
-            }
+            //if (sellTabManager != null && data != null)
+            //{
+                //sellTabManager.SellCard(data);
+            //}
             return;
         }
         if (data == null) return;
