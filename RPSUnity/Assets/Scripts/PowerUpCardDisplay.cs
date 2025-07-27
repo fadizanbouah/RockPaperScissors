@@ -117,30 +117,92 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void UpdateAffordability(int currentFavor)
     {
+        // ALWAYS hide "not enough favor" for sell mode cards
+        if (isSellMode)
+        {
+            if (getMoreFavorObject != null)
+            {
+                getMoreFavorObject.SetActive(false);
+            }
+            return;
+        }
+
+        // Check if the sold out overlay is currently active
+        bool isSoldOut = (soldOutObject != null && soldOutObject.activeSelf);
+
+        // If card is sold out, NEVER show "not enough favor"
+        if (isSoldOut)
+        {
+            if (getMoreFavorObject != null)
+            {
+                getMoreFavorObject.SetActive(false);
+            }
+            return;
+        }
+
         if (costText != null && data != null)
         {
             if (isGameplayCard)
             {
                 costText.text = "";
                 costText.gameObject.SetActive(false);
+                // Also hide "not enough favor" for gameplay cards
+                if (getMoreFavorObject != null)
+                {
+                    getMoreFavorObject.SetActive(false);
+                }
             }
             else
             {
                 costText.gameObject.SetActive(true);
-
                 if (data.favorCost > 0)
                 {
                     costText.text = $"{data.favorCost}";
-                    // Remove the color change - keep it white always
                     costText.color = Color.white;
 
-                    // Handle affordability visuals
-                    bool canAfford = currentFavor >= data.favorCost;
-                    SetAffordableState(canAfford);
+                    // Check if this card shows "Sold Out" (already purchased unique/maxed card)
+                    bool isMaxedOrSoldOut = false;
+                    if (data.isUnique && RunProgressManager.Instance != null)
+                    {
+                        bool hasIt = RunProgressManager.Instance.HasPowerUp(data);
+                        if (hasIt)
+                        {
+                            if (data.isUpgradeable)
+                            {
+                                int currentLevel = RunProgressManager.Instance.GetPowerUpLevel(data);
+                                isMaxedOrSoldOut = data.IsMaxLevel(currentLevel);
+                            }
+                            else
+                            {
+                                isMaxedOrSoldOut = true;
+                            }
+                        }
+                    }
+
+                    // Handle "not enough favor" visibility
+                    if (isMaxedOrSoldOut)
+                    {
+                        // Hide "not enough favor" for sold out cards
+                        if (getMoreFavorObject != null)
+                        {
+                            getMoreFavorObject.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        // Only show "not enough favor" if player can't afford
+                        bool canAfford = currentFavor >= data.favorCost;
+                        SetAffordableState(canAfford);
+                    }
                 }
                 else
                 {
                     costText.text = "";
+                    // Hide "not enough favor" for free cards
+                    if (getMoreFavorObject != null)
+                    {
+                        getMoreFavorObject.SetActive(false);
+                    }
                 }
             }
         }
@@ -450,13 +512,19 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             costText.gameObject.SetActive(true);
             costText.text = powerUpData.sellValue.ToString();
-            costText.color = Color.green; // Green for sell value
+            //costText.color = Color.green; // Green for sell value
         }
 
         // Show price tag
         if (priceTagObject != null)
         {
             priceTagObject.SetActive(true);
+        }
+
+        // Make sure "not enough favor" is hidden for sell cards
+        if (getMoreFavorObject != null)
+        {
+            getMoreFavorObject.SetActive(false);
         }
 
         // Hide SOLD OUT if present

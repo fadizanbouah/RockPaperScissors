@@ -65,6 +65,12 @@ public class SellTabManager : MonoBehaviour
         if (display != null)
         {
             display.SetDataForSellMode(powerUpData, this);
+
+            // Remove these lines - they were causing the errors:
+            // if (display.getMoreFavorText != null)
+            // {
+            //     display.getMoreFavorText.SetActive(false);
+            // }
         }
 
         spawnedCards.Add(cardInstance);
