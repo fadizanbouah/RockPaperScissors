@@ -23,6 +23,8 @@ MonoBehaviour:
   isUpgradeable: 1
   prerequisitePowerUps: []
   blocksThesePowerUps: []
+  sellValue: 1
+  passiveTrackerIcon: {fileID: 21300000, guid: a9458a8f7a842364fb17addeb0ea268d, type: 3}
   upgradeLevels:
   - levelSuffix: I
     value: 3

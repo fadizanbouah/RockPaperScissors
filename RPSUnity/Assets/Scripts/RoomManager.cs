@@ -249,5 +249,12 @@ public class RoomManager : MonoBehaviour
     private void ApplyPersistentPowerUps()
     {
         PassivePowerUpHandler.ApplyAllPersistentPowerUps();
+
+        // Update the passive tracker UI
+        PassivePowerUpTracker tracker = FindObjectOfType<PassivePowerUpTracker>();
+        if (tracker != null)
+        {
+            tracker.RefreshDisplay();
+        }
     }
 }

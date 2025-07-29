@@ -36,6 +36,9 @@ public class PowerUpData : ScriptableObject
     [Tooltip("How much favor the player gets when selling this power-up")]
     public int sellValue = 1;
 
+    [Header("UI Display")]
+    public Sprite passiveTrackerIcon; // Optional: specific icon for the tracker, falls back to regular icon
+
     [System.Serializable]
     public class UpgradeLevel
     {

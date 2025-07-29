@@ -26,5 +26,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9eb0c561ab0e71b47bbfbb71f2b104b2, type: 2}
   blocksThesePowerUps:
   - {fileID: 11400000, guid: 3c63916aef40dd645a67f2f58857daa4, type: 2}
+  sellValue: 1
+  passiveTrackerIcon: {fileID: 21300000, guid: 5fdf4735d2b63424a86f950c94b341c0, type: 3}
   upgradeLevels: []
   descriptionTemplate: 
