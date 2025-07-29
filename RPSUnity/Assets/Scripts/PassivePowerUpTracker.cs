@@ -9,7 +9,8 @@ public class PassivePowerUpTracker : MonoBehaviour
     [SerializeField] private Transform iconContainer; // HorizontalLayoutGroup container
 
     [Header("Icon Settings")]
-    [SerializeField] private float iconSize = 50f; // Size of each icon
+    [SerializeField] private float iconWidth = 50f; // Width of each icon
+    [SerializeField] private float iconHeight = 50f; // Height of each icon
     [SerializeField] private float spacing = 10f; // Space between icons
     [SerializeField] private bool autoHide = true; // Hide when no passives
 
@@ -79,7 +80,7 @@ public class PassivePowerUpTracker : MonoBehaviour
             RectTransform rect = iconGO.GetComponent<RectTransform>();
             if (rect != null)
             {
-                rect.sizeDelta = new Vector2(iconSize, iconSize);
+                rect.sizeDelta = new Vector2(iconWidth, iconHeight);
             }
 
             // Optional: Add tooltip or hover info

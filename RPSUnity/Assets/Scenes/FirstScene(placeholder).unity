@@ -1935,8 +1935,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconPrefab: {fileID: 250410146037692802, guid: 7eb724eb2b0c7c841ad9d7f7ee13cebe, type: 3}
   iconContainer: {fileID: 383190848}
-  iconSize: 50
-  spacing: 10
+  iconWidth: 110
+  iconHeight: 90
+  spacing: 0
   autoHide: 1
 --- !u!1 &759550485
 GameObject:
