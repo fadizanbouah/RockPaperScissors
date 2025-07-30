@@ -1918,7 +1918,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -80}
+  m_AnchoredPosition: {x: 70, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &744931883
@@ -1935,9 +1935,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconPrefab: {fileID: 250410146037692802, guid: 7eb724eb2b0c7c841ad9d7f7ee13cebe, type: 3}
   iconContainer: {fileID: 383190848}
-  iconWidth: 110
-  iconHeight: 90
-  spacing: 0
+  iconWidth: 77
+  iconHeight: 63
+  spacing: 10
   autoHide: 1
 --- !u!1 &759550485
 GameObject:
@@ -4971,9 +4971,9 @@ RectTransform:
   - {fileID: 1411638170}
   - {fileID: 2111471118}
   - {fileID: 243219728}
+  - {fileID: 744931882}
   - {fileID: 2039003311}
   - {fileID: 1024770168}
-  - {fileID: 744931882}
   - {fileID: 343573890}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
