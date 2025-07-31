@@ -86,9 +86,11 @@ public class TooltipUI : MonoBehaviour
             out Vector2 localPoint
         );
 
-        // Position below the icon
-        // Adjust the Y offset to position it below (negative Y goes down)
-        localPoint.y -= offset.y + 30f; // 30f is additional spacing below icon
+        // Apply offset
+        // X offset: positive = right, negative = left
+        // Y offset: positive = up, negative = down
+        localPoint.x += offset.x;
+        localPoint.y -= offset.y; // Negative to go below the icon
 
         // Set position
         rectTransform.localPosition = localPoint;

@@ -6688,7 +6688,7 @@ MonoBehaviour:
   descriptionText: {fileID: 1285801657}
   backgroundRect: {fileID: 1348053719}
   padding: {x: 0, y: 0}
-  offset: {x: 0, y: 0}
+  offset: {x: 0, y: 90}
 --- !u!1001 &2111471117
 PrefabInstance:
   m_ObjectHideFlags: 0
