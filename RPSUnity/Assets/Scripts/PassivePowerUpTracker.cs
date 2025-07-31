@@ -21,18 +21,28 @@ public class PassivePowerUpTracker : MonoBehaviour
 
     private void Start()
     {
-        // Set up the layout group if needed
-        HorizontalLayoutGroup layoutGroup = iconContainer.GetComponent<HorizontalLayoutGroup>();
-        if (layoutGroup == null)
+        // Check for GridLayoutGroup first
+        GridLayoutGroup gridLayout = iconContainer.GetComponent<GridLayoutGroup>();
+        if (gridLayout != null)
         {
-            layoutGroup = iconContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
+            // GridLayoutGroup is already configured in Inspector
+            // No need to set properties programmatically
         }
-        layoutGroup.spacing = spacing;
-        layoutGroup.childAlignment = TextAnchor.MiddleLeft;
-        layoutGroup.childControlWidth = false;
-        layoutGroup.childControlHeight = false;
-        layoutGroup.childForceExpandWidth = false;
-        layoutGroup.childForceExpandHeight = false;
+        else
+        {
+            // Fallback to HorizontalLayoutGroup if no GridLayoutGroup
+            HorizontalLayoutGroup layoutGroup = iconContainer.GetComponent<HorizontalLayoutGroup>();
+            if (layoutGroup == null)
+            {
+                layoutGroup = iconContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
+            }
+            layoutGroup.spacing = spacing;
+            layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+            layoutGroup.childControlWidth = false;
+            layoutGroup.childControlHeight = false;
+            layoutGroup.childForceExpandWidth = false;
+            layoutGroup.childForceExpandHeight = false;
+        }
 
         RefreshDisplay();
     }
