@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 
 public class PassivePowerUpTracker : MonoBehaviour
@@ -102,13 +105,26 @@ public class PassivePowerUpTracker : MonoBehaviour
 
     private void AddTooltip(GameObject iconGO, PowerUpData powerUpData)
     {
-        // Simple tooltip implementation - you can expand this
-        // For now, just store the power-up name in the GameObject name
+        // Simple tooltip implementation
         iconGO.name = $"PassiveIcon_{powerUpData.powerUpName}";
 
-        // Optional: Add a simple hover tooltip component
+        // Add tooltip component
         SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
-        tooltip.tooltipText = $"{powerUpData.powerUpName}\n{powerUpData.description}";
+        tooltip.tooltipTitle = powerUpData.powerUpName;
+
+        // Get the appropriate description based on level
+        if (powerUpData.isUpgradeable && RunProgressManager.Instance != null)
+        {
+            int level = RunProgressManager.Instance.GetPowerUpLevel(powerUpData);
+            tooltip.tooltipDescription = powerUpData.GetDescriptionForLevel(level);
+
+            // Add level suffix to title if upgradeable
+            tooltip.tooltipTitle += powerUpData.GetLevelSuffix(level);
+        }
+        else
+        {
+            tooltip.tooltipDescription = powerUpData.description;
+        }
     }
 
     private void ClearIcons()
@@ -131,13 +147,13 @@ public class PassivePowerUpTracker : MonoBehaviour
 // Simple tooltip component
 public class SimpleTooltip : MonoBehaviour, UnityEngine.EventSystems.IPointerEnterHandler, UnityEngine.EventSystems.IPointerExitHandler
 {
-    public string tooltipText;
-    private static GameObject tooltipPanel; // Shared tooltip panel
+    public string tooltipTitle;
+    public string tooltipDescription;
 
     public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
     {
-        // Show tooltip - implement your tooltip UI here
-        Debug.Log($"Tooltip: {tooltipText}");
+        // Show tooltip using the tooltip UI
+        TooltipUI.Show(tooltipTitle, tooltipDescription, transform.position);
     }
 
     public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
