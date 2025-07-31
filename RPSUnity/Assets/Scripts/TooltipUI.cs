@@ -94,6 +94,7 @@ public class TooltipUI : MonoBehaviour
 
         // Set position
         rectTransform.localPosition = localPoint;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(backgroundRect);
 
         // Keep tooltip on screen
         KeepOnScreen();
