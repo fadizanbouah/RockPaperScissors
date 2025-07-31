@@ -57,17 +57,26 @@ public class TooltipUI : MonoBehaviour
 
         gameObject.SetActive(true);
 
+        // Make the tooltip non-interactable so it doesn't block raycasts
+        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
         // Force layout rebuild to get correct size
         Canvas.ForceUpdateCanvases();
 
-        // Position tooltip near cursor/icon
-        UpdatePosition(worldPosition);
+        // Position tooltip below the icon
+        PositionTooltipBelowIcon(worldPosition);
     }
 
-    private void UpdatePosition(Vector3 worldPosition)
+    private void PositionTooltipBelowIcon(Vector3 iconWorldPosition)
     {
-        // Convert world position to screen position
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPosition);
+        // Convert icon world position to screen position
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, iconWorldPosition);
 
         // Convert screen position to canvas position
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -77,8 +86,9 @@ public class TooltipUI : MonoBehaviour
             out Vector2 localPoint
         );
 
-        // Apply offset
-        localPoint += offset;
+        // Position below the icon
+        // Adjust the Y offset to position it below (negative Y goes down)
+        localPoint.y -= offset.y + 30f; // 30f is additional spacing below icon
 
         // Set position
         rectTransform.localPosition = localPoint;
@@ -107,14 +117,5 @@ public class TooltipUI : MonoBehaviour
         position.y = Mathf.Clamp(position.y, minY, maxY);
 
         rectTransform.localPosition = position;
-    }
-
-    private void Update()
-    {
-        // Optional: Update position to follow cursor while visible
-        if (gameObject.activeSelf)
-        {
-            UpdatePosition(Input.mousePosition);
-        }
     }
 }

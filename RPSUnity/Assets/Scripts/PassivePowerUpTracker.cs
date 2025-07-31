@@ -149,15 +149,40 @@ public class SimpleTooltip : MonoBehaviour, UnityEngine.EventSystems.IPointerEnt
 {
     public string tooltipTitle;
     public string tooltipDescription;
+    private bool isHovering = false;
 
     public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
     {
         // Show tooltip using the tooltip UI
+        Debug.Log($"[Tooltip] OnPointerEnter - {tooltipTitle}");
+        isHovering = true;
         TooltipUI.Show(tooltipTitle, tooltipDescription, transform.position);
     }
 
     public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
     {
         // Hide tooltip
+        Debug.Log($"[Tooltip] OnPointerExit - {tooltipTitle}");
+        isHovering = false;
+        TooltipUI.Hide();
+    }
+
+    private void OnDisable()
+    {
+        // Ensure tooltip is hidden if this object is disabled
+        if (isHovering)
+        {
+            TooltipUI.Hide();
+            isHovering = false;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Ensure tooltip is hidden if this object is destroyed
+        if (isHovering)
+        {
+            TooltipUI.Hide();
+        }
     }
 }
