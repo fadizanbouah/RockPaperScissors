@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: GamblerEffect
   m_EditorClassIdentifier: 
   powerUpName: The Gambler
-  description: Bet HP for bonus damage
+  description: Bet HP for bonus damage. Up to 60% of total HP can be staked at a
+    1:1 ratio.
   icon: {fileID: 21300000, guid: 947b6608fb8a72b40aa8172448b1050f, type: 3}
   favorCost: 0
   isPassive: 1

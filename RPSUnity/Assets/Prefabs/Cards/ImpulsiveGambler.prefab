@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c014388b4fb9f7c42979363ec9a926a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betPercentageLimit: 0.2
-  hpCost: 3
-  damageGained: 3
-  highBetThreshold: 0.1
+  betPercentageLimit: 0.6
+  hpCost: 5
+  damageGained: 5
+  highBetThreshold: 0.2
   requiredHighBets: 2
-  damageReduction: 0.2
+  damageReduction: 0.3

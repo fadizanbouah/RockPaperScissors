@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NitEffect
   m_EditorClassIdentifier: 
   powerUpName: Nit
-  description: Bet up to only 25% HP at 1HP:1DMG ratio
+  description: Stake up to 20% of total HP at a 1:2 ratio
   icon: {fileID: 21300000, guid: 8d2b43d0f9147824cac1d8a300fc2e08, type: 3}
   favorCost: 0
   isPassive: 1
