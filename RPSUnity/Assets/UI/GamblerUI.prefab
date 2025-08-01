@@ -354,6 +354,8 @@ GameObject:
   - component: {fileID: 5068672644906442901}
   - component: {fileID: 7939542294538010703}
   - component: {fileID: 4276733389266270829}
+  - component: {fileID: 42157710719856516}
+  - component: {fileID: 5522367846860635998}
   m_Layer: 5
   m_Name: GamblerUI
   m_TagString: Untagged
@@ -415,6 +417,46 @@ MonoBehaviour:
   impulsiveTrackerPanel: {fileID: 8878129112908298947}
   progressText: {fileID: 5710809276526380480}
   damageReductionIcon: {fileID: 0}
+--- !u!223 &42157710719856516
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3185187025420345259}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: -1
+  m_TargetDisplay: 0
+--- !u!114 &5522367846860635998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3185187025420345259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &4731288264712358152
 GameObject:
   m_ObjectHideFlags: 0
