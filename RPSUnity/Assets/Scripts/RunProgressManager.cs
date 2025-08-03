@@ -115,6 +115,56 @@ public class RunProgressManager : MonoBehaviour
     {
         if (data == null) return;
 
+        // NEW: Handle power-up replacement
+        if (data.replacesPowerUp != null)
+        {
+            // Remove the old power-up from persistent list
+            if (persistentPowerUps.Contains(data.replacesPowerUp))
+            {
+                persistentPowerUps.Remove(data.replacesPowerUp);
+                Debug.Log($"[RunProgressManager] Removed {data.replacesPowerUp.powerUpName} (replaced by {data.powerUpName})");
+            }
+
+            // Also remove from acquired unique list if present
+            if (acquiredUniquePowerUps.Contains(data.replacesPowerUp))
+            {
+                acquiredUniquePowerUps.Remove(data.replacesPowerUp);
+            }
+
+            // Clean up any active effects from the replaced power-up
+            var effectsToRemove = new List<PowerUpEffectBase>();
+            foreach (var effect in activeEffects)
+            {
+                if (effect != null && effect.SourceData == data.replacesPowerUp)
+                {
+                    effectsToRemove.Add(effect);
+                }
+            }
+
+            foreach (var effect in effectsToRemove)
+            {
+                activeEffects.Remove(effect);
+                if (PowerUpEffectManager.Instance != null)
+                {
+                    PowerUpEffectManager.Instance.RemoveEffect(effect);
+                }
+                Destroy(effect.gameObject);
+            }
+
+            // Also clean up GamblerUI if replacing The Gambler
+            if (data.replacesPowerUp.powerUpName == "The Gambler")
+            {
+                GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
+                foreach (var gamblerUI in allGamblerUIs)
+                {
+                    if (gamblerUI.gameObject.scene.IsValid())
+                    {
+                        gamblerUI.FullReset();
+                    }
+                }
+            }
+        }
+
         // Track unique power-ups
         if (data.isUnique && !acquiredUniquePowerUps.Contains(data))
         {
@@ -162,6 +212,13 @@ public class RunProgressManager : MonoBehaviour
         {
             persistentPowerUps.Add(data);
             Debug.Log($"[RunProgressManager] Stored persistent power-up: {data.powerUpName}");
+
+            // Update the passive tracker UI immediately
+            PassivePowerUpTracker tracker = FindObjectOfType<PassivePowerUpTracker>();
+            if (tracker != null)
+            {
+                tracker.RefreshDisplay();
+            }
         }
         else
         {

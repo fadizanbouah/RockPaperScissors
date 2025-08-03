@@ -24,6 +24,10 @@ public class PowerUpData : ScriptableObject
     [Tooltip("Can this power-up be upgraded to higher levels?")]
     public bool isUpgradeable = false;
 
+    [Header("Replacement Settings")]
+    [Tooltip("If this power-up replaces another one, reference it here")]
+    public PowerUpData replacesPowerUp = null;
+
     [Header("Prerequisite Settings")]
     [Tooltip("Power-ups required before this can appear")]
     public List<PowerUpData> prerequisitePowerUps = new List<PowerUpData>();
