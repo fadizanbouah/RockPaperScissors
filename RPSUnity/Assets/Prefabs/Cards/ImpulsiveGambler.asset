@@ -22,6 +22,7 @@ MonoBehaviour:
   value: 0
   isUnique: 1
   isUpgradeable: 0
+  replacesPowerUp: {fileID: 11400000, guid: 9eb0c561ab0e71b47bbfbb71f2b104b2, type: 2}
   prerequisitePowerUps:
   - {fileID: 11400000, guid: 9eb0c561ab0e71b47bbfbb71f2b104b2, type: 2}
   blocksThesePowerUps:
