@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 213409705889735114}
   - component: {fileID: 6870030229212172703}
   m_Layer: 5
-  m_Name: PassivePowerUp_IconTracker
+  m_Name: IconTracker_PassivePowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
