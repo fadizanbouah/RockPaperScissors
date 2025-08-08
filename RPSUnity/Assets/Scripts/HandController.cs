@@ -134,38 +134,38 @@ public class HandController : MonoBehaviour
 
     public int GetEffectiveDamage(string signUsed)
     {
-        Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
-        Debug.Log($"[START] baseDamage: {baseDamage}, signUsed: {signUsed}, isPlayer: {isPlayer}");
+        //Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
+        //Debug.Log($"[START] baseDamage: {baseDamage}, signUsed: {signUsed}, isPlayer: {isPlayer}");
 
         int baseFinalDamage = baseDamage;
 
         if (isPlayer)
         {
-            Debug.Log($"[BEFORE BONUSES] baseFinalDamage: {baseFinalDamage}");
+            //Debug.Log($"[BEFORE BONUSES] baseFinalDamage: {baseFinalDamage}");
 
             // Add persistent passive flat boosts
             int bonusBaseDamage = PlayerProgressData.Instance.bonusBaseDamage;
             baseFinalDamage += bonusBaseDamage;
-            Debug.Log($"[BONUS BASE] Added bonusBaseDamage: {bonusBaseDamage}, new total: {baseFinalDamage}");
+            //Debug.Log($"[BONUS BASE] Added bonusBaseDamage: {bonusBaseDamage}, new total: {baseFinalDamage}");
 
             int signSpecificBonus = 0;
             if (signUsed == "Rock")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusRockDamage;
                 baseFinalDamage += signSpecificBonus;
-                Debug.Log($"[BONUS ROCK] Added bonusRockDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+                //Debug.Log($"[BONUS ROCK] Added bonusRockDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
             else if (signUsed == "Paper")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusPaperDamage;
                 baseFinalDamage += signSpecificBonus;
-                Debug.Log($"[BONUS PAPER] Added bonusPaperDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+                //Debug.Log($"[BONUS PAPER] Added bonusPaperDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
             else if (signUsed == "Scissors")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusScissorsDamage;
                 baseFinalDamage += signSpecificBonus;
-                Debug.Log($"[BONUS SCISSORS] Added bonusScissorsDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
+                //Debug.Log($"[BONUS SCISSORS] Added bonusScissorsDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
 
             // NEW: Add flat damage bonuses from active power-ups (like The Gambler)
@@ -179,40 +179,40 @@ public class HandController : MonoBehaviour
                     if (bonus > 0)
                     {
                         flatPowerUpBonus += bonus;
-                        Debug.Log($"[FLAT POWERUP] {effect.GetType().Name} added {bonus} flat damage");
+                        //Debug.Log($"[FLAT POWERUP] {effect.GetType().Name} added {bonus} flat damage");
                     }
                 }
             }
             baseFinalDamage += flatPowerUpBonus;
-            Debug.Log($"[TOTAL FLAT BONUSES] Added {flatPowerUpBonus} from power-ups, new total: {baseFinalDamage}");
+            //Debug.Log($"[TOTAL FLAT BONUSES] Added {flatPowerUpBonus} from power-ups, new total: {baseFinalDamage}");
 
             // Start with 1.0f (100%) multiplier
             float multiplier = 1f;
-            Debug.Log($"[MULTIPLIER START] multiplier: {multiplier}");
+            //Debug.Log($"[MULTIPLIER START] multiplier: {multiplier}");
 
             // Let power-ups modify the multiplier (percentage-based effects only)
             ActivePowerUpHandler.GetModifiedMultiplier(ref multiplier, signUsed);
-            Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
+            //Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
 
             // Calculate modified damage from base * multiplier
             int finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
-            Debug.Log($"[AFTER MULTIPLIER] baseFinalDamage: {baseFinalDamage} * multiplier: {multiplier} = finalDamage: {finalDamage}");
+            //Debug.Log($"[AFTER MULTIPLIER] baseFinalDamage: {baseFinalDamage} * multiplier: {multiplier} = finalDamage: {finalDamage}");
 
             // Apply and clear one-time temporary bonus
             finalDamage += temporaryBonusDamage;
             if (temporaryBonusDamage > 0)
             {
-                Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
+                //Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
             }
             temporaryBonusDamage = 0;
 
-            Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
-            Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
+            //Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
+            //Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
 
             return finalDamage;
         }
 
-        Debug.Log($"[ENEMY DAMAGE] returning baseFinalDamage: {baseFinalDamage}");
+        //Debug.Log($"[ENEMY DAMAGE] returning baseFinalDamage: {baseFinalDamage}");
         return baseFinalDamage;
     }
 

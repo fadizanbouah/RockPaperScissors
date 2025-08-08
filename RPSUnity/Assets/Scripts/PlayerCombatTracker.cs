@@ -66,18 +66,28 @@ public class PlayerCombatTracker : MonoBehaviour
             }
         }
 
-        // Set up the layout group
-        HorizontalLayoutGroup layoutGroup = iconContainer.GetComponent<HorizontalLayoutGroup>();
-        if (layoutGroup == null)
+        // Check for GridLayoutGroup first (like PassivePowerUpTracker)
+        GridLayoutGroup gridLayout = iconContainer.GetComponent<GridLayoutGroup>();
+        if (gridLayout != null)
         {
-            layoutGroup = iconContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
+            // GridLayoutGroup is already configured in Inspector
+            Debug.Log("[PlayerCombatTracker] Using existing GridLayoutGroup");
         }
-        layoutGroup.spacing = spacing;
-        layoutGroup.childAlignment = TextAnchor.MiddleLeft;
-        layoutGroup.childControlWidth = false;
-        layoutGroup.childControlHeight = false;
-        layoutGroup.childForceExpandWidth = false;
-        layoutGroup.childForceExpandHeight = false;
+        else
+        {
+            // No grid layout, set up horizontal layout
+            HorizontalLayoutGroup layoutGroup = iconContainer.GetComponent<HorizontalLayoutGroup>();
+            if (layoutGroup == null)
+            {
+                layoutGroup = iconContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
+            }
+            layoutGroup.spacing = spacing;
+            layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+            layoutGroup.childControlWidth = false;
+            layoutGroup.childControlHeight = false;
+            layoutGroup.childForceExpandWidth = false;
+            layoutGroup.childForceExpandHeight = false;
+        }
 
         // Find the player
         GameObject playerGO = GameObject.FindWithTag("Player");
