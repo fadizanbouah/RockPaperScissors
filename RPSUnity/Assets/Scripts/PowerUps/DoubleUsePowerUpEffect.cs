@@ -30,6 +30,16 @@ public class DoubleUsePowerUpEffect : PowerUpEffectBase
             PowerUpUsageTracker.Instance.AddBonusUses(extraUsesToGrant);
             effectApplied = true;
             Debug.Log($"[DoubleUsePowerUpEffect] Granted {extraUsesToGrant} bonus power-up uses!");
+
+            // Remove icon immediately since effect is consumed
+            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.RemoveActiveEffect(this);
+            }
+
+            // Remove from manager
+            PowerUpEffectManager.Instance?.RemoveEffect(this);
         }
         else
         {

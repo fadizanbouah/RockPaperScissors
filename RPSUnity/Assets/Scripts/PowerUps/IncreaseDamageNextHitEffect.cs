@@ -8,27 +8,50 @@ public class IncreaseDamageNextHitEffect : PowerUpEffectBase
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        bonusPercentage = data.value / 100f; // Convert to decimal percentage, e.g., 20 -> 0.2 (20%)
-        Debug.Log($"[IncreaseDamageNextHitEffect] Initialized with {data.value}% bonus damage for next hit.");
+        bonusPercentage = data.value / 100f;
+        used = false; // Ensure it starts as unused
+        //Debug.Log($"[IncreaseDamageNextHitEffect] Initialized with {data.value}% bonus damage. Used = {used}");
     }
 
     public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
     {
-        if (used) return;
+        //Debug.Log($"[IncreaseDamageNextHitEffect] ModifyDamageMultiplier called. Used = {used}, Multiplier before = {multiplier}");
 
+        if (used)
+        {
+            //Debug.Log("[IncreaseDamageNextHitEffect] Effect already used, skipping");
+            return;
+        }
+
+        float oldMultiplier = multiplier;
         multiplier += bonusPercentage;
-        Debug.Log($"[IncreaseDamageNextHitEffect] Added {bonusPercentage * 100}% to multiplier. Total multiplier now: {multiplier}");
-
-        used = true;
+        //Debug.Log($"[IncreaseDamageNextHitEffect] Applied bonus. Old multiplier: {oldMultiplier}, New multiplier: {multiplier}");
     }
 
     public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
-        if (used || result != RoundResult.Win)
-            return;
+        //Debug.Log($"[IncreaseDamageNextHitEffect] OnRoundEnd called. Result = {result}, Used = {used}");
 
-        // This effect is now fully handled via ModifyDamageMultiplier
-        used = true;
-        Debug.Log($"[IncreaseDamageNextHitEffect] Marked as used after round win ({sourceData.powerUpName})");
+        if (used)
+        {
+            //Debug.Log("[IncreaseDamageNextHitEffect] Already used, skipping");
+            return;
+        }
+
+        if (result == RoundResult.Win)
+        {
+            used = true;
+            //Debug.Log($"[IncreaseDamageNextHitEffect] Marking as used after win");
+
+            // Remove icon from tracker
+            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.RemoveActiveEffect(this);
+            }
+
+            // Remove this effect from manager
+            PowerUpEffectManager.Instance?.RemoveEffect(this);
+        }
     }
 }

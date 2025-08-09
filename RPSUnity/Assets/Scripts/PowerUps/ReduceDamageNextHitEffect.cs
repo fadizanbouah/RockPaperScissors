@@ -44,6 +44,9 @@ public class ReduceDamageNextHitEffect : PowerUpEffectBase
             {
                 tracker.RemoveActiveEffect(this);
             }
+
+            // Remove from manager
+            PowerUpEffectManager.Instance?.RemoveEffect(this);
         }
     }
 

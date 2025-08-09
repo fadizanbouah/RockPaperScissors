@@ -55,18 +55,22 @@ public class RoomManager : MonoBehaviour
         Debug.Log($"Loading Room: {room.roomName}");
         currentRoom = room;
         currentEnemyIndex = 0;
-
         if (roomBackground != null)
         {
             roomBackground.sprite = room.backgroundImage;
         }
-
         ApplyPersistentPowerUps();
         PowerUpEffectManager.Instance?.TriggerRoomStart();
 
+        // Clear combat tracker effects for new room
+        PlayerCombatTracker tracker = FindObjectOfType<PlayerCombatTracker>();
+        if (tracker != null)
+        {
+            tracker.OnRoomStart();
+        }
+
         FadeInAfterRoomLoad();
         SpawnNextEnemy();
-
         FindObjectOfType<PowerUpCardSpawnerGameplay>()?.SpawnActivePowerUps();
     }
 

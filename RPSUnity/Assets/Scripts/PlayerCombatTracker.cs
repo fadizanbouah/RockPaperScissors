@@ -300,4 +300,10 @@ public class PlayerCombatTracker : MonoBehaviour
         }
         activeEffectIcons.Clear();
     }
+
+    public void OnRoomStart()
+    {
+        ClearActiveEffects(); // This already clears all effect icons
+        UpdatePlayerReference(); // Make sure we have the current player
+    }
 }

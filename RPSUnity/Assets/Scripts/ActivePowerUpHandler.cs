@@ -9,7 +9,7 @@ public static class ActivePowerUpHandler
 
         foreach (var effect in effects)
         {
-            Debug.Log($"[DEBUG] Modifying multiplier with effect: {effect.GetType().Name}");
+            //Debug.Log($"[DEBUG] Modifying multiplier with effect: {effect.GetType().Name}");
             effect.ModifyDamageMultiplier(ref multiplier, signUsed);
         }
     }

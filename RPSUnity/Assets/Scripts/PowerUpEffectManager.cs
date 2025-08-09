@@ -47,17 +47,29 @@ public class PowerUpEffectManager : MonoBehaviour
 
     public void OnRoundStart()
     {
-        foreach (var effect in activeEffects)
+        // Create a copy of the list to avoid modification during iteration
+        var effectsCopy = new List<PowerUpEffectBase>(activeEffects);
+
+        foreach (var effect in effectsCopy)
         {
-            effect.OnRoundStart();
+            if (effect != null)
+            {
+                effect.OnRoundStart();
+            }
         }
     }
 
     public void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
     {
-        foreach (var effect in activeEffects)
+        // Create a copy of the list to avoid modification during iteration
+        var effectsCopy = new List<PowerUpEffectBase>(activeEffects);
+
+        foreach (var effect in effectsCopy)
         {
-            effect.OnRoundEnd(playerChoice, enemyChoice, result);
+            if (effect != null) // Check if effect still exists
+            {
+                effect.OnRoundEnd(playerChoice, enemyChoice, result);
+            }
         }
     }
 
