@@ -7,6 +7,7 @@ public class PowerUpUsageTracker : MonoBehaviour
     private int powerUpsUsedThisRound = 0;
     private int allowedPowerUpsPerRound = 1;
     private int bonusUsesRemaining = 0;  // Extra uses from special power-ups
+    private bool bonusUsesAreTemporary = false;  // Track if bonus uses expire at round end
 
     private void Awake()
     {
@@ -57,19 +58,52 @@ public class PowerUpUsageTracker : MonoBehaviour
         }
 
         Debug.Log($"[MarkPowerUpUsed] AFTER - Normal: {powerUpsUsedThisRound}/{allowedPowerUpsPerRound}, Bonus: {bonusUsesRemaining}");
+
+        // If we just used up all temporary bonus uses, notify DoubleUse to remove its icon
+        if (bonusUsesAreTemporary && bonusUsesRemaining == 0)
+        {
+            var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
+            if (effects != null)
+            {
+                foreach (var effect in effects)
+                {
+                    if (effect is DoubleUsePowerUpEffect doubleUse)
+                    {
+                        PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+                        if (tracker != null)
+                        {
+                            tracker.RemoveActiveEffect(doubleUse);
+                        }
+                        PowerUpEffectManager.Instance?.RemoveEffect(doubleUse);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    public void AddBonusUses(int count)
+    public void AddBonusUses(int count, bool temporary = false)
     {
         bonusUsesRemaining += count;
-        Debug.Log($"[AddBonusUses] Added {count} bonus uses. Total bonus: {bonusUsesRemaining}");
-        DebugState();
+        if (temporary)
+        {
+            bonusUsesAreTemporary = true;
+        }
+        Debug.Log($"[AddBonusUses] Added {count} bonus uses. Total bonus: {bonusUsesRemaining}, Temporary: {temporary}");
     }
 
     public void ResetRoundUsage()
     {
         powerUpsUsedThisRound = 0;
-        // Note: We do NOT reset bonusUsesRemaining - they carry over between rounds
+
+        // Only clear bonus uses if they're marked as temporary (from DoubleUse)
+        if (bonusUsesAreTemporary && bonusUsesRemaining > 0)
+        {
+            Debug.Log($"[ResetRoundUsage] Clearing {bonusUsesRemaining} temporary bonus uses");
+            bonusUsesRemaining = 0;
+            bonusUsesAreTemporary = false;
+        }
+
         Debug.Log($"[ResetRoundUsage] Round reset. Bonus uses remaining: {bonusUsesRemaining}");
     }
 
@@ -83,5 +117,10 @@ public class PowerUpUsageTracker : MonoBehaviour
     {
         int normalRemaining = Mathf.Max(0, allowedPowerUpsPerRound - powerUpsUsedThisRound);
         return normalRemaining + bonusUsesRemaining;
+    }
+
+    public bool HasTemporaryBonusUses()
+    {
+        return bonusUsesAreTemporary && bonusUsesRemaining > 0;
     }
 }

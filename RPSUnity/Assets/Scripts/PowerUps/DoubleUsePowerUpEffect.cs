@@ -27,23 +27,11 @@ public class DoubleUsePowerUpEffect : PowerUpEffectBase
 
         if (PowerUpUsageTracker.Instance != null)
         {
-            PowerUpUsageTracker.Instance.AddBonusUses(extraUsesToGrant);
+            PowerUpUsageTracker.Instance.AddBonusUses(extraUsesToGrant, true);
             effectApplied = true;
             Debug.Log($"[DoubleUsePowerUpEffect] Granted {extraUsesToGrant} bonus power-up uses!");
 
-            // Remove icon immediately since effect is consumed
-            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
-            if (tracker != null)
-            {
-                tracker.RemoveActiveEffect(this);
-            }
-
-            // Remove from manager
-            PowerUpEffectManager.Instance?.RemoveEffect(this);
-        }
-        else
-        {
-            Debug.LogError("[DoubleUsePowerUpEffect] PowerUpUsageTracker not found!");
+            // DON'T remove icon here - let it persist until consumed or round starts
         }
     }
 
@@ -51,5 +39,25 @@ public class DoubleUsePowerUpEffect : PowerUpEffectBase
     {
         // Don't destroy here - let the PowerUpEffectManager handle cleanup
         Debug.Log("[DoubleUsePowerUpEffect] Cleanup called");
+    }
+
+    public override void OnRoundStart()
+    {
+        // Remove icon when round starts (bonus uses expire)
+        if (effectApplied)
+        {
+            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.RemoveActiveEffect(this);
+            }
+            PowerUpEffectManager.Instance?.RemoveEffect(this);
+        }
+    }
+
+    public override bool IsEffectActive()
+    {
+        return effectApplied && PowerUpUsageTracker.Instance != null &&
+               PowerUpUsageTracker.Instance.HasTemporaryBonusUses();
     }
 }
