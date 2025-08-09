@@ -43,6 +43,10 @@ public class PowerUpData : ScriptableObject
     [Header("UI Display")]
     public Sprite passiveTrackerIcon; // Optional: specific icon for the tracker, falls back to regular icon
 
+    [Header("Status Tracker Icon")]
+    [Tooltip("Icon shown in combat status tracker. If null, falls back to main icon")]
+    public Sprite statusIcon;
+
     [System.Serializable]
     public class UpgradeLevel
     {

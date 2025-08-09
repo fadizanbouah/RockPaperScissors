@@ -299,36 +299,44 @@ public class RockPaperScissorsGame : MonoBehaviour
     private IEnumerator HandlePowerUpActivation()
     {
         Debug.Log("[GameSubstate] HandlePowerUpActivation: Waiting for power-up animation to finish...");
-
         bool animationDone = false;
         onPowerUpAnimationDoneCallback = () => animationDone = true;
-
         yield return new WaitUntil(() => animationDone);
-
         Debug.Log("[GameSubstate] Power-up animation finished. Applying effect...");
-
         if (activePowerUpCardGO != null)
         {
             PowerUpCardDisplay cardDisplay = activePowerUpCardGO.GetComponent<PowerUpCardDisplay>();
             PowerUpData data = cardDisplay?.GetPowerUpData();
-
             if (data != null)
             {
                 // CHECK FIRST: Is this a Double Use power-up?
                 bool isDoubleUseCard = data.powerUpName == "Double Activation" ||
                                       (data.effectPrefab != null && data.effectPrefab.GetComponent<DoubleUsePowerUpEffect>() != null);
-
                 // Mark power-up as used BEFORE applying effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
                     Debug.Log($"[HandlePowerUpActivation] About to mark {data.powerUpName} as used");
                     PowerUpUsageTracker.Instance.MarkPowerUpUsed();
                 }
-
                 // Apply the power-up effect
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
+
+                // Add icon to combat tracker for active power-ups only
+                if (!data.isPassive)
+                {
+                    PlayerCombatTracker tracker = FindObjectOfType<PlayerCombatTracker>();
+                    if (tracker != null && PowerUpEffectManager.Instance != null)
+                    {
+                        var effects = PowerUpEffectManager.Instance.GetActiveEffects();
+                        var newEffect = effects.FindLast(e => e != null && e.SourceData == data);
+                        if (newEffect != null)
+                        {
+                            tracker.AddActiveEffect(newEffect);
+                        }
+                    }
+                }
 
                 PowerUpCardSpawnerGameplay gameplaySpawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
                 if (gameplaySpawner != null)
@@ -344,18 +352,15 @@ public class RockPaperScissorsGame : MonoBehaviour
                         }
                     }
                 }
-
                 // Always check if more power-ups can be used after applying ANY effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
                     PowerUpUsageTracker.Instance.DebugState();
-
                     PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
                     if (spawner != null)
                     {
                         bool canUseMore = PowerUpUsageTracker.Instance.CanUsePowerUp();
                         spawner.SetAllCardsInteractable(canUseMore);
-
                         if (canUseMore)
                         {
                             Debug.Log($"[HandlePowerUpActivation] Cards remain enabled - more uses available!");
@@ -371,15 +376,11 @@ public class RockPaperScissorsGame : MonoBehaviour
             {
                 Debug.LogWarning("[PowerUp] No PowerUpData found on activated card!");
             }
-
             activePowerUpCardGO = null;
         }
-
         Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
-
         // IMPORTANT: Don't call EnterIdleState() here, just set the state
         SetSubstate(GameSubstate.Idle);
-
         // Re-enable RPS buttons
         rockButton.interactable = true;
         paperButton.interactable = true;

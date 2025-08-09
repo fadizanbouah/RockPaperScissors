@@ -21,6 +21,7 @@ public class PlayerCombatTracker : MonoBehaviour
     private HandController playerHand;
     private List<GameObject> currentIcons = new List<GameObject>();
     private bool isInitialized = false;
+    private Dictionary<PowerUpEffectBase, GameObject> activeEffectIcons = new Dictionary<PowerUpEffectBase, GameObject>();
 
     private void OnEnable()
     {
@@ -47,11 +48,30 @@ public class PlayerCombatTracker : MonoBehaviour
         {
             UpdateTooltips();
         }
+
+        // Clean up icons for effects that have been removed
+        if (isInitialized)
+        {
+            List<PowerUpEffectBase> toRemove = new List<PowerUpEffectBase>();
+
+            foreach (var kvp in activeEffectIcons)
+            {
+                // If the effect GameObject is null (destroyed), remove its icon
+                if (kvp.Key == null)
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+
+            foreach (var effect in toRemove)
+            {
+                RemoveActiveEffect(effect);
+            }
+        }
     }
 
     private void Initialize()
     {
-        Debug.Log("[PlayerCombatTracker] Initializing...");
 
         // Auto-find IconContainer if not assigned
         if (iconContainer == null)
@@ -94,7 +114,6 @@ public class PlayerCombatTracker : MonoBehaviour
         if (playerGO != null)
         {
             playerHand = playerGO.GetComponent<HandController>();
-            Debug.Log("[PlayerCombatTracker] Found player: " + playerGO.name);
         }
 
         CreateDamageIcons();
@@ -102,7 +121,6 @@ public class PlayerCombatTracker : MonoBehaviour
 
     private void CreateDamageIcons()
     {
-        Debug.Log("[PlayerCombatTracker] CreateDamageIcons called");
 
         // Clear any existing icons
         ClearIcons();
@@ -116,53 +134,39 @@ public class PlayerCombatTracker : MonoBehaviour
         // Create Scissors icon
         CreateDamageIcon(scissorsIcon, "Scissors");
 
-        Debug.Log($"[PlayerCombatTracker] Total icons created: {currentIcons.Count}");
     }
 
     private void CreateDamageIcon(Sprite iconSprite, string damageType)
     {
-        Debug.Log($"[PlayerCombatTracker] Attempting to create {damageType} icon");
 
         if (iconPrefab == null)
         {
-            Debug.LogError("[PlayerCombatTracker] iconPrefab is null!");
             return;
         }
 
         if (iconContainer == null)
         {
-            Debug.LogError("[PlayerCombatTracker] iconContainer is null!");
             return;
         }
 
         if (iconSprite == null)
         {
-            Debug.LogError($"[PlayerCombatTracker] {damageType} sprite is null!");
             return;
         }
-
-        Debug.Log($"[PlayerCombatTracker] All checks passed, instantiating {damageType} icon");
 
         GameObject iconGO = Instantiate(iconPrefab, iconContainer);
 
         if (iconGO == null)
         {
-            Debug.LogError($"[PlayerCombatTracker] Failed to instantiate icon for {damageType}!");
             return;
         }
 
-        Debug.Log($"[PlayerCombatTracker] Successfully instantiated {damageType} icon: {iconGO.name}");
 
         Image iconImage = iconGO.GetComponent<Image>();
 
         if (iconImage != null)
         {
             iconImage.sprite = iconSprite;
-            Debug.Log($"[PlayerCombatTracker] Set sprite for {damageType}");
-        }
-        else
-        {
-            Debug.LogError($"[PlayerCombatTracker] No Image component found on instantiated icon!");
         }
 
         // Set size
@@ -176,7 +180,6 @@ public class PlayerCombatTracker : MonoBehaviour
         AddTooltip(iconGO, damageType);
 
         currentIcons.Add(iconGO);
-        Debug.Log($"[PlayerCombatTracker] Added {damageType} to currentIcons list. Count: {currentIcons.Count}");
     }
 
     private void AddTooltip(GameObject iconGO, string damageType)
@@ -238,5 +241,63 @@ public class PlayerCombatTracker : MonoBehaviour
         {
             playerHand = playerGO.GetComponent<HandController>();
         }
+    }
+
+    public void AddActiveEffect(PowerUpEffectBase effect)
+    {
+
+        if (effect == null || effect.SourceData == null)
+        {
+            return;
+        }
+
+        // Don't add if already tracking this effect
+        if (activeEffectIcons.ContainsKey(effect)) return;
+
+        PowerUpData data = effect.SourceData;
+        Sprite iconToUse = data.statusIcon != null ? data.statusIcon : data.icon;
+
+        if (iconToUse == null) return;
+
+        GameObject iconGO = Instantiate(iconPrefab, iconContainer);
+
+        // Configure the icon (same as before)
+        Image iconImage = iconGO.GetComponent<Image>();
+        if (iconImage != null)
+        {
+            iconImage.sprite = iconToUse;
+        }
+
+        RectTransform rect = iconGO.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.sizeDelta = new Vector2(iconWidth, iconHeight);
+        }
+
+        SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
+        tooltip.tooltipTitle = data.powerUpName + " (Active)";
+        tooltip.tooltipDescription = data.description;
+
+        // Map the effect to its icon
+        activeEffectIcons[effect] = iconGO;
+    }
+
+    public void RemoveActiveEffect(PowerUpEffectBase effect)
+    {
+        if (activeEffectIcons.ContainsKey(effect))
+        {
+            Destroy(activeEffectIcons[effect]);
+            activeEffectIcons.Remove(effect);
+        }
+    }
+
+    public void ClearActiveEffects()
+    {
+        foreach (var kvp in activeEffectIcons)
+        {
+            if (kvp.Value != null)
+                Destroy(kvp.Value);
+        }
+        activeEffectIcons.Clear();
     }
 }

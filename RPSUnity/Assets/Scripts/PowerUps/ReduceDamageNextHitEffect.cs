@@ -38,6 +38,12 @@ public class ReduceDamageNextHitEffect : PowerUpEffectBase
 
             // Optional: Add visual feedback here
             // You could trigger a shield effect or special animation
+            // Remove icon from tracker
+            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.RemoveActiveEffect(this);
+            }
         }
     }
 
