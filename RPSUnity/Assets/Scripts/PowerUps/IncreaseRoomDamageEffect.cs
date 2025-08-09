@@ -14,7 +14,7 @@ public class IncreaseRoomDamageEffect : PowerUpEffectBase
     public override void ModifyDamageMultiplier(ref float multiplier, string signUsed)
     {
         multiplier += bonusPercentage;
-        Debug.Log($"[IncreaseRoomDamageEffect] Added {bonusPercentage * 100}% to multiplier. Current total multiplier: {multiplier}");
+        //Debug.Log($"[IncreaseRoomDamageEffect] Added {bonusPercentage * 100}% to multiplier. Current total multiplier: {multiplier}");
     }
 
     public override void OnRoomStart()

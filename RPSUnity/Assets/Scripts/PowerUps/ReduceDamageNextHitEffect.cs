@@ -64,4 +64,9 @@ public class ReduceDamageNextHitEffect : PowerUpEffectBase
     {
         Debug.Log("[ReduceDamageNextHitEffect] Cleanup called");
     }
+
+    public override bool IsEffectActive()
+    {
+        return !effectUsed;
+    }
 }

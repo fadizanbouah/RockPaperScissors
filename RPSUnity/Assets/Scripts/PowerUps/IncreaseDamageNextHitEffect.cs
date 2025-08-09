@@ -54,4 +54,9 @@ public class IncreaseDamageNextHitEffect : PowerUpEffectBase
             PowerUpEffectManager.Instance?.RemoveEffect(this);
         }
     }
+
+    public override bool IsEffectActive()
+    {
+        return !used;
+    }
 }

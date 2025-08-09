@@ -303,7 +303,21 @@ public class PlayerCombatTracker : MonoBehaviour
 
     public void OnRoomStart()
     {
-        ClearActiveEffects(); // This already clears all effect icons
-        UpdatePlayerReference(); // Make sure we have the current player
+        ClearActiveEffects();
+        UpdatePlayerReference();
+
+        // Rebuild icons for active effects
+        if (PowerUpEffectManager.Instance != null)
+        {
+            var activeEffects = PowerUpEffectManager.Instance.GetActiveEffects();
+            foreach (var effect in activeEffects)
+            {
+                if (effect != null && effect.SourceData != null &&
+                    !effect.SourceData.isPassive && effect.IsEffectActive())
+                {
+                    AddActiveEffect(effect);
+                }
+            }
+        }
     }
 }

@@ -37,4 +37,10 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
         this.enemy = newEnemy;
         Debug.Log($"[PowerUpEffectBase] Updated references for {GetType().Name}");
     }
+
+    // In PowerUpEffectBase.cs
+    public virtual bool IsEffectActive()
+    {
+        return true; // Default: effect is active
+    }
 }
