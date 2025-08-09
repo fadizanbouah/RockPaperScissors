@@ -26,6 +26,6 @@ MonoBehaviour:
   blocksThesePowerUps: []
   sellValue: 1
   passiveTrackerIcon: {fileID: 0}
-  statusIcon: {fileID: 21300000, guid: b4a7f18863b764b41a0331de7dc45d73, type: 3}
+  statusIcon: {fileID: 21300000, guid: bbbf9b505265e674791ef0f0e0ccb373, type: 3}
   upgradeLevels: []
   descriptionTemplate: 
