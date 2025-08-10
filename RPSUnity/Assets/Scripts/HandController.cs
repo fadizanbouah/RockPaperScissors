@@ -6,7 +6,14 @@ public class HandController : MonoBehaviour
 {
     [Header("Base Stats")]
     public int baseMaxHealth = 30;
+    // Keep baseDamage for backward compatibility, but hide it
+    [HideInInspector]
     public int baseDamage = 10;
+
+    [Header("Sign-Specific Damage")]
+    public int rockDamage = 10;
+    public int paperDamage = 10;
+    public int scissorsDamage = 10;
 
     [Header("Runtime Stats")]
     public int health;
@@ -82,7 +89,7 @@ public class HandController : MonoBehaviour
         if (isPlayer)
         {
             Debug.Log($"=== DAMAGE CALCULATION DEBUG ===");
-            Debug.Log($"[START] baseDamage: {baseDamage}");
+            Debug.Log($"[START] rockDamage: {rockDamage}, paperDamage: {paperDamage}, scissorsDamage: {scissorsDamage}");
             Debug.Log($"[START] baseMaxHealth: {baseMaxHealth}");
 
             Debug.Log($"UpgradeManager.Instance exists: {UpgradeManager.Instance != null}");
@@ -99,22 +106,29 @@ public class HandController : MonoBehaviour
             Debug.Log($"PlayerProgressData.bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}");
             Debug.Log($"PlayerProgressData.bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
 
-            // Try to use the new upgrade system first
+            // Apply upgrades to health
             if (UpgradeManager.Instance != null)
             {
                 maxHealth = baseMaxHealth + UpgradeManager.Instance.GetMaxHealthBonus();
-                baseDamage = baseDamage + UpgradeManager.Instance.GetBaseDamageBonus();
+                // Apply base damage upgrade to all sign types
+                int damageUpgrade = UpgradeManager.Instance.GetBaseDamageBonus();
+                rockDamage += damageUpgrade;
+                paperDamage += damageUpgrade;
+                scissorsDamage += damageUpgrade;
                 Debug.Log($"[USING UPGRADE MANAGER] Applied UpgradeManager bonuses");
             }
             else
             {
                 // Fallback to old hardcoded system
                 maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
-                baseDamage += PlayerProgressData.Instance.baseDamageLevel * 2;
-                Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (baseDamageLevel * 2 = {PlayerProgressData.Instance.baseDamageLevel * 2})");
+                int damageUpgrade = PlayerProgressData.Instance.baseDamageLevel * 2;
+                rockDamage += damageUpgrade;
+                paperDamage += damageUpgrade;
+                scissorsDamage += damageUpgrade;
+                Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (baseDamageLevel * 2 = {damageUpgrade})");
             }
 
-            Debug.Log($"[FINAL] baseDamage: {baseDamage}");
+            Debug.Log($"[FINAL] rockDamage: {rockDamage}, paperDamage: {paperDamage}, scissorsDamage: {scissorsDamage}");
             Debug.Log($"[FINAL] maxHealth: {maxHealth}");
             Debug.Log($"=== END DAMAGE DEBUG ===");
         }
@@ -135,9 +149,20 @@ public class HandController : MonoBehaviour
     public int GetEffectiveDamage(string signUsed)
     {
         //Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
-        //Debug.Log($"[START] baseDamage: {baseDamage}, signUsed: {signUsed}, isPlayer: {isPlayer}");
+        //Debug.Log($"[START] signUsed: {signUsed}, isPlayer: {isPlayer}");
 
-        int baseFinalDamage = baseDamage;
+        // Get base damage for the specific sign
+        int baseDamageForSign = signUsed switch
+        {
+            "Rock" => rockDamage,
+            "Paper" => paperDamage,
+            "Scissors" => scissorsDamage,
+            _ => rockDamage // fallback
+        };
+
+        //Debug.Log($"[BASE DAMAGE FOR SIGN] {signUsed}: {baseDamageForSign}");
+
+        int baseFinalDamage = baseDamageForSign;
 
         if (isPlayer)
         {

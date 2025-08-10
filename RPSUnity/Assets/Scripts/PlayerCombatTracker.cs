@@ -202,10 +202,19 @@ public class PlayerCombatTracker : MonoBehaviour
                 if (!string.IsNullOrEmpty(damageType))
                 {
                     int damage = playerHand.GetEffectiveDamage(damageType);
-                    int baseDamage = playerHand.baseDamage;
-                    int bonus = damage - baseDamage;
 
-                    tooltip.tooltipDescription = $"Total Damage: {damage}\nBase: {baseDamage}";
+                    // Get the base damage for this specific sign
+                    int baseForSign = damageType switch
+                    {
+                        "Rock" => playerHand.rockDamage,
+                        "Paper" => playerHand.paperDamage,
+                        "Scissors" => playerHand.scissorsDamage,
+                        _ => 10
+                    };
+
+                    int bonus = damage - baseForSign;
+
+                    tooltip.tooltipDescription = $"Total Damage: {damage}\nBase: {baseForSign}";
                     if (bonus > 0)
                     {
                         tooltip.tooltipDescription += $"\nBonuses: +{bonus}";
