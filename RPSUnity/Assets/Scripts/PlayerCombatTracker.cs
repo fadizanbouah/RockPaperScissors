@@ -201,9 +201,7 @@ public class PlayerCombatTracker : MonoBehaviour
                 string damageType = GetDamageTypeFromTooltip(tooltip.tooltipTitle);
                 if (!string.IsNullOrEmpty(damageType))
                 {
-                    int damage = playerHand.GetEffectiveDamage(damageType);
-
-                    // Get the base damage for this specific sign
+                    // Get the base damage for this specific sign (WITHOUT active power-up effects)
                     int baseForSign = damageType switch
                     {
                         "Rock" => playerHand.rockDamage,
@@ -212,13 +210,32 @@ public class PlayerCombatTracker : MonoBehaviour
                         _ => 10
                     };
 
-                    int bonus = damage - baseForSign;
-
-                    tooltip.tooltipDescription = $"Total Damage: {damage}\nBase: {baseForSign}";
-                    if (bonus > 0)
+                    // Add only the persistent passive bonuses (from PlayerProgressData)
+                    int passiveBonus = 0;
+                    if (playerHand.isPlayer)
                     {
-                        tooltip.tooltipDescription += $"\nBonuses: +{bonus}";
+                        passiveBonus += PlayerProgressData.Instance.bonusBaseDamage;
+
+                        if (damageType == "Rock")
+                            passiveBonus += PlayerProgressData.Instance.bonusRockDamage;
+                        else if (damageType == "Paper")
+                            passiveBonus += PlayerProgressData.Instance.bonusPaperDamage;
+                        else if (damageType == "Scissors")
+                            passiveBonus += PlayerProgressData.Instance.bonusScissorsDamage;
                     }
+
+                    int totalBaseDamage = baseForSign + passiveBonus;
+
+                    // Update tooltip to show base damage
+                    tooltip.tooltipDescription = $"{totalBaseDamage}";
+
+                    // Optionally show breakdown if there are bonuses
+                    //if (passiveBonus > 0)
+                    //{
+                        //tooltip.tooltipDescription = $"Base Damage: {totalBaseDamage}\n";
+                        //tooltip.tooltipDescription += $"Weapon: {baseForSign}\n";
+                        //tooltip.tooltipDescription += $"Passive Bonuses: +{passiveBonus}";
+                    //}
                 }
             }
         }
@@ -284,7 +301,7 @@ public class PlayerCombatTracker : MonoBehaviour
         }
 
         SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
-        tooltip.tooltipTitle = data.powerUpName + " (Active)";
+        tooltip.tooltipTitle = data.powerUpName;
         tooltip.tooltipDescription = data.description;
 
         // Map the effect to its icon
