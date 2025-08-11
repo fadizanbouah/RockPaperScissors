@@ -95,31 +95,33 @@ public class RoomManager : MonoBehaviour
             GameStateManager.Instance.BeginRoomTransition();
             return;
         }
-
         if (currentEnemy != null)
         {
             Destroy(currentEnemy.gameObject);
             currentEnemy = null;
         }
-
         GameObject enemyInstance = Instantiate(currentRoom.enemyPrefabs[currentEnemyIndex], enemySpawnPoint.position, enemySpawnPoint.rotation);
         currentEnemy = enemyInstance.GetComponent<HandController>();
-
         if (currentEnemy != null)
         {
             currentEnemy.OnDeath += HandleEnemyDefeat;
             currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
-
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
-
 
             // Set up prediction UI for the new enemy
             PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
             if (predictionUI != null)
             {
                 predictionUI.SetupPrediction(currentEnemy);
+            }
+
+            // Update the enemy combat tracker
+            EnemyCombatTracker enemyTracker = FindObjectOfType<EnemyCombatTracker>();
+            if (enemyTracker != null)
+            {
+                enemyTracker.UpdateEnemyReference(currentEnemy);
             }
 
             // Notify that the enemy has been fully spawned
@@ -129,7 +131,6 @@ public class RoomManager : MonoBehaviour
         {
             Debug.LogError("Spawned enemy does not have a HandController script!");
         }
-
         currentEnemyIndex++;
     }
 
