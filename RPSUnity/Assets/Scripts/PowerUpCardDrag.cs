@@ -121,6 +121,20 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 return;
             }
 
+            // NEW: Check if this is a Double Use card and if one is already active
+            PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
+            PowerUpData powerUpData = display?.GetPowerUpData();
+
+            if (powerUpData != null && IsDoubleUsePowerUp(powerUpData))
+            {
+                if (IsDoubleUseEffectActive())
+                {
+                    Debug.Log("[PowerUpCardDrag] Cannot activate - Double Use effect already active!");
+                    StartCoroutine(SmoothReturnToOriginalPosition());
+                    return;
+                }
+            }
+
             if (RectTransformUtility.RectangleContainsScreenPoint(zone.GetComponent<RectTransform>(), Input.mousePosition, eventData.enterEventCamera))
             {
                 Debug.Log("[PowerUpCardDrag] Mouse released over CardActivationZone.");
@@ -239,5 +253,34 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Re-enable interactions after animation completes
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
+    }
+
+    private bool IsDoubleUsePowerUp(PowerUpData data)
+    {
+        // Check if this is a Double Use power-up
+        if (data.powerUpName == "Double Activation" ||
+            data.powerUpName == "Double Use" ||
+            (data.effectPrefab != null && data.effectPrefab.GetComponent<DoubleUsePowerUpEffect>() != null))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsDoubleUseEffectActive()
+    {
+        // Check if a Double Use effect is currently active
+        if (PowerUpEffectManager.Instance != null)
+        {
+            var effects = PowerUpEffectManager.Instance.GetActiveEffects();
+            foreach (var effect in effects)
+            {
+                if (effect is DoubleUsePowerUpEffect doubleUse && doubleUse.IsEffectActive())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
