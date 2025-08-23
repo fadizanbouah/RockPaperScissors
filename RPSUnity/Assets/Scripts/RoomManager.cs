@@ -124,6 +124,13 @@ public class RoomManager : MonoBehaviour
                 enemyTracker.UpdateEnemyReference(currentEnemy);
             }
 
+            // Update the sign shuffle UI
+            SignShuffleUI shuffleUI = FindObjectOfType<SignShuffleUI>();
+            if (shuffleUI != null)
+            {
+                shuffleUI.UpdateEnemyReference(currentEnemy);
+            }
+
             // Notify that the enemy has been fully spawned
             OnEnemySpawned?.Invoke();
         }

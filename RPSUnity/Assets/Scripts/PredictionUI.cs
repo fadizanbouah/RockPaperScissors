@@ -222,4 +222,13 @@ public class PredictionUI : MonoBehaviour
             SetupPrediction(currentEnemy);
         }
     }
+
+    public void ForceRefresh()
+    {
+        if (currentEnemy != null && currentEnemy.UsesPredictionSystem())
+        {
+            Debug.Log("[PredictionUI] Forcing refresh due to sign shuffle");
+            SetupPrediction(currentEnemy);
+        }
+    }
 }

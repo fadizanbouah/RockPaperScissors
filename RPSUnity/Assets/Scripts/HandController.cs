@@ -48,9 +48,22 @@ public class HandController : MonoBehaviour
     [SerializeField] private bool hardMode = false;
     [SerializeField] private int sequenceLength = 3;
     [SerializeField] private List<string> predeterminedSequence = new List<string>();
+
+    [Header("Sign Shuffle System")]
+    [SerializeField] private bool useSignShuffle = false;
+    [SerializeField] private bool shuffleAfter1 = false;
+    [SerializeField] private bool shuffleAfter2 = false;
+    [SerializeField] private bool shuffleAfter3 = false;
+    [SerializeField] private bool shuffleAfter4 = false;
+    [SerializeField] private bool shuffleAfter5 = false;
+
     private int currentSequenceIndex = 0;
     private List<string> currentSequence = new List<string>();
     private string[] choices = { "Rock", "Paper", "Scissors" };
+
+    private int roundsUntilShuffle = 0;
+    private int roundsSinceLastShuffle = 0;
+    private List<int> possibleShufflePoints = new List<int>();
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
@@ -73,6 +86,7 @@ public class HandController : MonoBehaviour
         if (!isPlayer && usesPredictionSystem)
         {
             GenerateNewSequence();
+            InitializeSignShuffle();
         }
     }
 
@@ -482,21 +496,47 @@ public class HandController : MonoBehaviour
     {
         if (!usesPredictionSystem || isPlayer)
         {
-            // Player or non-prediction enemies use random
             return choices[Random.Range(0, choices.Length)];
         }
 
         if (hardMode)
         {
-            // Hard mode is truly random
             return choices[Random.Range(0, choices.Length)];
         }
 
-        // Use predetermined sequence
+        // Check if we need to shuffle due to Sign Shuffle system
+        if (UsesSignShuffle())
+        {
+            roundsSinceLastShuffle++;
+
+            // Check if it's time to shuffle
+            if (roundsSinceLastShuffle >= roundsUntilShuffle)
+            {
+                Debug.Log($"[SignShuffle] Triggering shuffle after {roundsSinceLastShuffle} rounds");
+                GenerateNewSequence();
+                SelectNextShufflePoint();
+                roundsSinceLastShuffle = 0;
+                currentSequenceIndex = 0; // Reset to start of new sequence
+
+                // Notify UI to refresh
+                PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
+                if (predictionUI != null)
+                {
+                    predictionUI.SetupPrediction(this);
+                }
+            }
+        }
+
+        // Continue with normal sequence logic
         if (currentSequence.Count == 0 || currentSequenceIndex >= currentSequence.Count)
         {
-            Debug.Log($"[HandController] Sequence exhausted for {gameObject.name}. Generating new sequence...");
-            GenerateNewSequence();
+            // Only generate new sequence if NOT using sign shuffle
+            // (sign shuffle handles its own sequence generation)
+            if (!UsesSignShuffle())
+            {
+                Debug.Log($"[HandController] Sequence exhausted for {gameObject.name}. Generating new sequence...");
+                GenerateNewSequence();
+            }
         }
 
         string choice = currentSequence[currentSequenceIndex];
@@ -537,6 +577,54 @@ public class HandController : MonoBehaviour
             Debug.Log($"[HandController] Forcing new sequence for {gameObject.name} (used {currentSequenceIndex}/{currentSequence.Count})");
             GenerateNewSequence();
         }
+    }
+
+    private void InitializeSignShuffle()
+    {
+        if (!useSignShuffle || isPlayer) return;
+
+        // Build list of possible shuffle points
+        possibleShufflePoints.Clear();
+        if (shuffleAfter1) possibleShufflePoints.Add(1);
+        if (shuffleAfter2) possibleShufflePoints.Add(2);
+        if (shuffleAfter3) possibleShufflePoints.Add(3);
+        if (shuffleAfter4) possibleShufflePoints.Add(4);
+        if (shuffleAfter5) possibleShufflePoints.Add(5);
+
+        // If no options selected, default to playing all signs
+        if (possibleShufflePoints.Count == 0)
+        {
+            useSignShuffle = false;
+            Debug.LogWarning($"[SignShuffle] No shuffle points selected for {gameObject.name}, disabling shuffle");
+            return;
+        }
+
+        // Pick initial shuffle point
+        SelectNextShufflePoint();
+        roundsSinceLastShuffle = 0;
+
+        Debug.Log($"[SignShuffle] Initialized for {gameObject.name} with shuffle points: {string.Join(", ", possibleShufflePoints)}");
+    }
+
+    private void SelectNextShufflePoint()
+    {
+        if (possibleShufflePoints.Count == 0) return;
+
+        int randomIndex = Random.Range(0, possibleShufflePoints.Count);
+        roundsUntilShuffle = possibleShufflePoints[randomIndex];
+
+        Debug.Log($"[SignShuffle] Next shuffle in {roundsUntilShuffle} rounds");
+    }
+
+    public bool UsesSignShuffle()
+    {
+        return useSignShuffle && !isPlayer && possibleShufflePoints.Count > 0;
+    }
+
+    public int GetRoundsUntilShuffle()
+    {
+        if (!UsesSignShuffle()) return -1;
+        return roundsUntilShuffle - roundsSinceLastShuffle;
     }
 }
 
