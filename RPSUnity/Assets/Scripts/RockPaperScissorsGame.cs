@@ -206,6 +206,11 @@ public class RockPaperScissorsGame : MonoBehaviour
             PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
             Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for Draw result");
 
+            if (enemyHandController != null)
+            {
+                enemyHandController.OnRoundComplete();
+            }
+
             EnterIdleState();
             yield break;
         }
@@ -217,6 +222,11 @@ public class RockPaperScissorsGame : MonoBehaviour
         PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
         Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for {result} result");
 
+        // NEW: Notify enemy that round is complete for sign shuffle
+        if (enemyHandController != null)
+        {
+            enemyHandController.OnRoundComplete();
+        }
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
             SetSubstate(GameSubstate.Dying);

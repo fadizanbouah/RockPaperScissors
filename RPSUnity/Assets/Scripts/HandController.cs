@@ -64,6 +64,7 @@ public class HandController : MonoBehaviour
     private int roundsUntilShuffle = 0;
     private int roundsSinceLastShuffle = 0;
     private List<int> possibleShufflePoints = new List<int>();
+    private bool shufflePendingAfterRound = false;
 
     public delegate void OnDeathHandler(HandController hand);
     public event OnDeathHandler OnDeath;
@@ -504,26 +505,16 @@ public class HandController : MonoBehaviour
             return choices[Random.Range(0, choices.Length)];
         }
 
-        // Check if we need to shuffle due to Sign Shuffle system
+        // Check if we need to shuffle AFTER this round (not immediately)
         if (UsesSignShuffle())
         {
             roundsSinceLastShuffle++;
 
-            // Check if it's time to shuffle
+            // Mark for shuffle after round completes (not now!)
             if (roundsSinceLastShuffle >= roundsUntilShuffle)
             {
-                Debug.Log($"[SignShuffle] Triggering shuffle after {roundsSinceLastShuffle} rounds");
-                GenerateNewSequence();
-                SelectNextShufflePoint();
-                roundsSinceLastShuffle = 0;
-                currentSequenceIndex = 0; // Reset to start of new sequence
-
-                // Notify UI to refresh
-                PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
-                if (predictionUI != null)
-                {
-                    predictionUI.SetupPrediction(this);
-                }
+                Debug.Log($"[SignShuffle] Shuffle pending after this round (round {roundsSinceLastShuffle}/{roundsUntilShuffle})");
+                shufflePendingAfterRound = true;
             }
         }
 
@@ -625,6 +616,33 @@ public class HandController : MonoBehaviour
     {
         if (!UsesSignShuffle()) return -1;
         return roundsUntilShuffle - roundsSinceLastShuffle;
+    }
+
+    public void OnRoundComplete()
+    {
+        if (!UsesSignShuffle()) return;
+
+        // Check if shuffle was pending
+        if (shufflePendingAfterRound)
+        {
+            Debug.Log($"[SignShuffle] Executing pending shuffle after round complete");
+
+            // Generate new sequence
+            GenerateNewSequence();
+            SelectNextShufflePoint();
+            roundsSinceLastShuffle = 0;
+            currentSequenceIndex = 0; // Reset to start of new sequence
+            shufflePendingAfterRound = false;
+
+            // Notify UI to refresh
+            PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
+            if (predictionUI != null)
+            {
+                predictionUI.SetupPrediction(this);
+            }
+
+            Debug.Log($"[SignShuffle] Shuffle complete. New sequence ready for next round.");
+        }
     }
 }
 

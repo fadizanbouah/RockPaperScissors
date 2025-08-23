@@ -161,7 +161,7 @@ public class EnemyCombatTracker : MonoBehaviour
                         _ => 10
                     };
 
-                    tooltip.tooltipDescription = $"Base Damage: {damage}";
+                    tooltip.tooltipDescription = $"{damage}";
                 }
             }
         }
