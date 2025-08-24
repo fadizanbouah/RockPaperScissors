@@ -82,32 +82,8 @@ public class SignShuffleUI : MonoBehaviour
         // Update text
         if (counterText != null)
         {
-            if (roundsLeft == 0)
-            {
-                counterText.text = "Shuffling...";
-            }
-            else if (roundsLeft == 1)
-            {
-                counterText.text = "Shuffle in: 1 round";
-            }
-            else
-            {
-                counterText.text = $"Shuffle in: {roundsLeft} rounds";
-            }
+            counterText.text = roundsLeft.ToString();
         }
-
-        // Update color based on rounds left
-        Color targetColor = normalColor;
-        if (roundsLeft == 0)
-            targetColor = imminentColor;
-        else if (roundsLeft == 1)
-            targetColor = warningColor;
-
-        if (counterText != null)
-            counterText.color = targetColor;
-
-        if (shuffleIcon != null)
-            shuffleIcon.color = targetColor;
     }
 
     private void ShowCounter()
