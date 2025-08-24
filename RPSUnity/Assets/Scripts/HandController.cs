@@ -622,6 +622,13 @@ public class HandController : MonoBehaviour
     {
         if (!UsesSignShuffle()) return;
 
+        // Don't shuffle if enemy is dying or dead
+        if (isDying || health <= 0)
+        {
+            Debug.Log($"[SignShuffle] Skipping shuffle - enemy is dying/dead");
+            return;
+        }
+
         // Check if shuffle was pending
         if (shufflePendingAfterRound)
         {

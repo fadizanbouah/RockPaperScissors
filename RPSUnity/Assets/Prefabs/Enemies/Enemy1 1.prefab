@@ -581,8 +581,8 @@ MonoBehaviour:
   predeterminedSequence: []
   useSignShuffle: 1
   shuffleAfter1: 1
-  shuffleAfter2: 1
-  shuffleAfter3: 1
+  shuffleAfter2: 0
+  shuffleAfter3: 0
   shuffleAfter4: 0
   shuffleAfter5: 0
 --- !u!1 &8532900606797542106
