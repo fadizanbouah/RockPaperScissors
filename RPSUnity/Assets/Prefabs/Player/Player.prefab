@@ -167,9 +167,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 100
   baseDamage: 15
-  rockDamage: 20
-  paperDamage: 30
-  scissorsDamage: 40
+  rockDamage: 5
+  paperDamage: 5
+  scissorsDamage: 5
   health: 100
   maxHealth: 100
   playerHitAnimation: {fileID: 4025989370840745165}
