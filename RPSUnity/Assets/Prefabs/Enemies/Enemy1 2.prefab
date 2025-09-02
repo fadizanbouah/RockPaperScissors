@@ -557,13 +557,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 15
+  baseMaxHealth: 20
   baseDamage: 4
   rockDamage: 6
   paperDamage: 19
   scissorsDamage: 4
-  health: 15
-  maxHealth: 15
+  health: 20
+  maxHealth: 20
   playerHitAnimation: {fileID: 6542035435138104612}
   handAnimator: {fileID: 2991300258156510983}
   handSpriteRenderer: {fileID: 7813983361860719102}
@@ -580,10 +580,10 @@ MonoBehaviour:
   sequenceLength: 5
   predeterminedSequence: []
   useSignShuffle: 1
-  shuffleAfter1: 1
-  shuffleAfter2: 0
-  shuffleAfter3: 0
-  shuffleAfter4: 0
+  shuffleAfter1: 0
+  shuffleAfter2: 1
+  shuffleAfter3: 1
+  shuffleAfter4: 1
   shuffleAfter5: 0
 --- !u!1 &8532900606797542106
 GameObject:

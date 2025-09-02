@@ -559,9 +559,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 15
   baseDamage: 4
-  rockDamage: 10
-  paperDamage: 10
-  scissorsDamage: 10
+  rockDamage: 8
+  paperDamage: 8
+  scissorsDamage: 7
   health: 15
   maxHealth: 15
   playerHitAnimation: {fileID: 6542035435138104612}
@@ -581,8 +581,8 @@ MonoBehaviour:
   predeterminedSequence: []
   useSignShuffle: 1
   shuffleAfter1: 1
-  shuffleAfter2: 0
-  shuffleAfter3: 0
+  shuffleAfter2: 1
+  shuffleAfter3: 1
   shuffleAfter4: 0
   shuffleAfter5: 0
 --- !u!1 &8532900606797542106

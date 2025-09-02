@@ -165,13 +165,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae76efbc969c2eb43a0ba95cda07b3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 100
+  baseMaxHealth: 500
   baseDamage: 15
-  rockDamage: 5
-  paperDamage: 5
-  scissorsDamage: 5
-  health: 100
-  maxHealth: 100
+  rockDamage: 80
+  paperDamage: 80
+  scissorsDamage: 80
+  health: 500
+  maxHealth: 500
   playerHitAnimation: {fileID: 4025989370840745165}
   handAnimator: {fileID: 4962887340843718462}
   handSpriteRenderer: {fileID: 7448360978216978555}
