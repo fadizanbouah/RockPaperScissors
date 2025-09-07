@@ -20,12 +20,19 @@ public class PredictionUI : MonoBehaviour
     [SerializeField] private Color activeColor = Color.white;
     [SerializeField] private Color usedColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
+    [Header("Animation Settings")]
+    [SerializeField] private bool useAnimations = true;
+    [SerializeField] private float flipOutDuration = 0.3f;
+    [SerializeField] private float flipInDuration = 0.3f;
+    [SerializeField] private float delayBetweenFlips = 0.1f;
+
     private List<GameObject> currentSlots = new List<GameObject>();
     private List<string> displayedSequence = new List<string>();
     private HandController currentEnemy;
     private int lastKnownIndex = 0;
     private List<bool> usedSlots = new List<bool>();
     private int lastProcessedIndex = -1;
+    private bool isAnimating = false;
 
     private void Awake()
     {
@@ -37,11 +44,13 @@ public class PredictionUI : MonoBehaviour
     {
         Debug.Log($"[PredictionUI] SetupPrediction called with enemy: {(enemy != null ? enemy.name : "null")}");
 
-        ClearSlots();
+        // Check if we should animate (only if signs are already showing)
+        bool shouldAnimate = useAnimations && currentSlots.Count > 0 && predictionPanel.activeSelf && !isAnimating;
 
         if (enemy == null || !enemy.UsesPredictionSystem())
         {
             Debug.Log($"[PredictionUI] Enemy null or doesn't use prediction system. UsesPrediction: {enemy?.UsesPredictionSystem()}");
+            ClearSlots();
             predictionPanel.SetActive(false);
             currentEnemy = null;
             return;
@@ -55,6 +64,7 @@ public class PredictionUI : MonoBehaviour
         if (sequence == null || sequence.Count == 0)
         {
             Debug.Log("[PredictionUI] Sequence is null or empty");
+            ClearSlots();
             predictionPanel.SetActive(false);
             return;
         }
@@ -63,13 +73,128 @@ public class PredictionUI : MonoBehaviour
         displayedSequence = sequence.ToList();
         ShuffleList(displayedSequence);
 
-        // Create slots and populate them
-        CreateSlots(displayedSequence);
-        predictionPanel.SetActive(true);
+        // Animate the refresh if signs are already showing
+        if (shouldAnimate)
+        {
+            StartCoroutine(AnimateRefresh(displayedSequence));
+        }
+        else
+        {
+            // First time setup - no animation
+            ClearSlots(); // This clears the lists but we'll repopulate displayedSequence
+
+            // IMPORTANT: Restore displayedSequence after ClearSlots cleared it
+            displayedSequence = sequence.ToList();
+            ShuffleList(displayedSequence);
+
+            CreateSlots(displayedSequence);
+            predictionPanel.SetActive(true);
+
+            // IMPORTANT: Ensure slots start in Idle state
+            foreach (GameObject slot in currentSlots)
+            {
+                if (slot != null)
+                {
+                    Animator anim = slot.GetComponent<Animator>();
+                    if (anim != null)
+                    {
+                        anim.Play("Idle", 0, 0f);
+                    }
+                }
+            }
+        }
+
         lastKnownIndex = 0;
-        lastProcessedIndex = -1;  // Make sure this is reset
+        lastProcessedIndex = -1;
 
         Debug.Log($"[PredictionUI] Set up prediction for {enemy.name} with {displayedSequence.Count} signs");
+    }
+
+    private IEnumerator AnimateRefresh(List<string> newSequence)
+    {
+        isAnimating = true;
+
+        Debug.Log($"[AnimateRefresh] Starting with {newSequence.Count} signs: {string.Join(", ", newSequence)}");
+
+        // Step 1: Animate all current slots out
+        foreach (GameObject slot in currentSlots)
+        {
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play("SignSlotFlipOut");
+                }
+            }
+        }
+
+        // Wait for flip out animation to complete
+        yield return new WaitForSeconds(flipOutDuration);
+
+        // Step 2: Clear old slots BUT NOT displayedSequence yet
+        foreach (GameObject slot in currentSlots)
+        {
+            Destroy(slot);
+        }
+        currentSlots.Clear();
+        usedSlots.Clear();
+        // DON'T clear displayedSequence here
+
+        // Now set the new sequence
+        displayedSequence = new List<string>(newSequence);
+        Debug.Log($"[AnimateRefresh] After clear, displayedSequence has {displayedSequence.Count} signs");
+
+        CreateSlots(displayedSequence);
+        Debug.Log($"[AnimateRefresh] Created {currentSlots.Count} slots");
+
+        // Start new slots in flipped state (scale Y = 0)
+        foreach (GameObject slot in currentSlots)
+        {
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    // Start at the end of flip out animation
+                    anim.Play("SignSlotFlipOut", 0, 1f);
+                }
+            }
+        }
+
+        // Step 3: Small delay between animations
+        yield return new WaitForSeconds(delayBetweenFlips);
+
+        // Step 4: Animate new slots in
+        foreach (GameObject slot in currentSlots)
+        {
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play("SignSlotFlipIn");
+                }
+            }
+        }
+
+        // Wait for flip in animation to complete
+        yield return new WaitForSeconds(flipInDuration);
+
+        // Ensure all slots end in Idle state
+        foreach (GameObject slot in currentSlots)
+        {
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play("Idle");
+                }
+            }
+        }
+
+        isAnimating = false;
     }
 
     private void Update()
@@ -80,7 +205,7 @@ public class PredictionUI : MonoBehaviour
 
     private void CreateSlots(List<string> sequence)
     {
-        usedSlots.Clear();  // ADD THIS LINE
+        usedSlots.Clear();
 
         foreach (string sign in sequence)
         {
@@ -94,7 +219,7 @@ public class PredictionUI : MonoBehaviour
             }
 
             currentSlots.Add(slot);
-            usedSlots.Add(false);  // ADD THIS LINE
+            usedSlots.Add(false);
         }
     }
 
