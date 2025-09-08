@@ -25,6 +25,7 @@ public class PredictionUI : MonoBehaviour
     [SerializeField] private float flipOutDuration = 0.3f;
     [SerializeField] private float flipInDuration = 0.3f;
     [SerializeField] private float delayBetweenFlips = 0.1f;
+    [SerializeField] private float initialAnimationDelay = 0.2f; // Delay before first animation
 
     private List<GameObject> currentSlots = new List<GameObject>();
     private List<string> displayedSequence = new List<string>();
@@ -33,11 +34,14 @@ public class PredictionUI : MonoBehaviour
     private List<bool> usedSlots = new List<bool>();
     private int lastProcessedIndex = -1;
     private bool isAnimating = false;
+    private bool isFirstSetup = true; // Track if this is the first time setting up
+    private HandController lastTrackedEnemy = null; // Track enemy changes
 
     private void Awake()
     {
         if (predictionPanel != null)
             predictionPanel.SetActive(false);
+        isFirstSetup = true;
     }
 
     public void SetupPrediction(HandController enemy)
@@ -74,40 +78,106 @@ public class PredictionUI : MonoBehaviour
         ShuffleList(displayedSequence);
 
         // Animate the refresh if signs are already showing
-        if (shouldAnimate)
+        if (shouldAnimate && !isFirstSetup)
         {
             StartCoroutine(AnimateRefresh(displayedSequence));
         }
         else
         {
-            // First time setup - no animation
-            ClearSlots(); // This clears the lists but we'll repopulate displayedSequence
-
-            // IMPORTANT: Restore displayedSequence after ClearSlots cleared it
-            displayedSequence = sequence.ToList();
-            ShuffleList(displayedSequence);
-
-            CreateSlots(displayedSequence);
-            predictionPanel.SetActive(true);
-
-            // IMPORTANT: Ensure slots start in Idle state
-            foreach (GameObject slot in currentSlots)
+            // First time setup OR no animation needed
+            if (isFirstSetup && useAnimations)
             {
-                if (slot != null)
+                // Special handling for very first setup - start hidden and animate in
+                StartCoroutine(InitialSetupWithAnimation(displayedSequence));
+            }
+            else
+            {
+                // No animation setup (fallback)
+                ClearSlots();
+                displayedSequence = sequence.ToList();
+                ShuffleList(displayedSequence);
+                CreateSlots(displayedSequence, false); // false = start visible
+                predictionPanel.SetActive(true);
+
+                // Ensure slots start in Idle state
+                foreach (GameObject slot in currentSlots)
                 {
-                    Animator anim = slot.GetComponent<Animator>();
-                    if (anim != null)
+                    if (slot != null)
                     {
-                        anim.Play("Idle", 0, 0f);
+                        Animator anim = slot.GetComponent<Animator>();
+                        if (anim != null)
+                        {
+                            anim.Play("Idle", 0, 0f);
+                        }
                     }
                 }
             }
+
+            isFirstSetup = false;
         }
 
         lastKnownIndex = 0;
         lastProcessedIndex = -1;
 
         Debug.Log($"[PredictionUI] Set up prediction for {enemy.name} with {displayedSequence.Count} signs");
+    }
+
+    private IEnumerator InitialSetupWithAnimation(List<string> sequence)
+    {
+        isAnimating = true;
+
+        // Clear any existing slots
+        ClearSlots();
+
+        // Set the sequence
+        displayedSequence = new List<string>(sequence);
+
+        // Create slots but start them hidden (flipped out)
+        CreateSlots(displayedSequence, true); // true = start hidden
+
+        // Activate the panel (but slots are still flipped out)
+        predictionPanel.SetActive(true);
+
+        // Small delay before animating in
+        yield return new WaitForSeconds(initialAnimationDelay);
+
+        // Animate all slots in with a staggered effect
+        for (int i = 0; i < currentSlots.Count; i++)
+        {
+            GameObject slot = currentSlots[i];
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play("SignSlotFlipIn");
+                }
+
+                // Small delay between each slot for a cascade effect
+                if (i < currentSlots.Count - 1)
+                {
+                    yield return new WaitForSeconds(0.05f);
+                }
+            }
+        }
+
+        // Wait for the last animation to complete
+        yield return new WaitForSeconds(flipInDuration);
+
+        // Ensure all slots end in Idle state
+        foreach (GameObject slot in currentSlots)
+        {
+            if (slot != null)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play("Idle");
+                }
+            }
+        }
+
+        isAnimating = false;
     }
 
     private IEnumerator AnimateRefresh(List<string> newSequence)
@@ -132,35 +202,20 @@ public class PredictionUI : MonoBehaviour
         // Wait for flip out animation to complete
         yield return new WaitForSeconds(flipOutDuration);
 
-        // Step 2: Clear old slots BUT NOT displayedSequence yet
+        // Step 2: Clear old slots
         foreach (GameObject slot in currentSlots)
         {
             Destroy(slot);
         }
         currentSlots.Clear();
         usedSlots.Clear();
-        // DON'T clear displayedSequence here
 
         // Now set the new sequence
         displayedSequence = new List<string>(newSequence);
         Debug.Log($"[AnimateRefresh] After clear, displayedSequence has {displayedSequence.Count} signs");
 
-        CreateSlots(displayedSequence);
+        CreateSlots(displayedSequence, true); // true = start hidden
         Debug.Log($"[AnimateRefresh] Created {currentSlots.Count} slots");
-
-        // Start new slots in flipped state (scale Y = 0)
-        foreach (GameObject slot in currentSlots)
-        {
-            if (slot != null)
-            {
-                Animator anim = slot.GetComponent<Animator>();
-                if (anim != null)
-                {
-                    // Start at the end of flip out animation
-                    anim.Play("SignSlotFlipOut", 0, 1f);
-                }
-            }
-        }
 
         // Step 3: Small delay between animations
         yield return new WaitForSeconds(delayBetweenFlips);
@@ -197,13 +252,7 @@ public class PredictionUI : MonoBehaviour
         isAnimating = false;
     }
 
-    private void Update()
-    {
-        // Empty - all updates now happen through UpdateAfterSignRevealed()
-        // which is called after the enemy's sign animation finishes
-    }
-
-    private void CreateSlots(List<string> sequence)
+    private void CreateSlots(List<string> sequence, bool startHidden = false)
     {
         usedSlots.Clear();
 
@@ -216,6 +265,17 @@ public class PredictionUI : MonoBehaviour
             {
                 slotImage.sprite = GetSpriteForSign(sign);
                 slotImage.color = activeColor;
+            }
+
+            // If starting hidden, set the slot to flipped out state
+            if (startHidden)
+            {
+                Animator anim = slot.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    // Start at the end of flip out animation (fully flipped)
+                    anim.Play("SignSlotFlipOut", 0, 1f);
+                }
             }
 
             currentSlots.Add(slot);
@@ -294,22 +354,8 @@ public class PredictionUI : MonoBehaviour
         ClearSlots();
         predictionPanel.SetActive(false);
         currentEnemy = null;
-    }
-
-    private IEnumerator DelayedRefresh()
-    {
-        // Wait for the current round to fully complete
-        yield return new WaitForSeconds(0.5f);
-
-        // Force the enemy to generate a new sequence if needed
-        if (currentEnemy != null && currentEnemy.UsesPredictionSystem())
-        {
-            // Tell the enemy to generate a new sequence
-            currentEnemy.ForceNewSequenceIfNeeded();
-
-            // Now refresh the UI with the new sequence
-            SetupPrediction(currentEnemy);
-        }
+        lastTrackedEnemy = null; // Also reset the tracked enemy
+        isFirstSetup = true; // Reset for next run
     }
 
     public void UpdateAfterSignRevealed()

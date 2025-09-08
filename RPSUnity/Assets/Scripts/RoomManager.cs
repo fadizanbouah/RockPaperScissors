@@ -110,12 +110,15 @@ public class RoomManager : MonoBehaviour
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
 
-            // Set up prediction UI for the new enemy
-            PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
-            if (predictionUI != null)
-            {
-                predictionUI.SetupPrediction(currentEnemy);
-            }
+            // REMOVED: This redundant call to SetupPrediction
+            // The prediction UI is already set up in RockPaperScissorsGame.InitializeGame()
+            // which is called by GameStateManager.UpdateEnemy() above
+
+            // PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
+            // if (predictionUI != null)
+            // {
+            //     predictionUI.SetupPrediction(currentEnemy);
+            // }
 
             // Update the enemy combat tracker
             EnemyCombatTracker enemyTracker = FindObjectOfType<EnemyCombatTracker>();
