@@ -3469,7 +3469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rockPaperScissorsGame: {fileID: 218203640}
-  playerPrefab: {fileID: 8489421513858283839, guid: badedfb97d457dc4e8c6f7cb3c1a3746, type: 3}
+  playerPrefab: {fileID: 3243512226835981995, guid: a54c92365b569d04987372f45bdea5b5, type: 3}
   playerSpawnPoint: {fileID: 2056081960}
   gameplayCanvas: {fileID: 1472082757}
   mainMenuCanvas: {fileID: 644869416}
