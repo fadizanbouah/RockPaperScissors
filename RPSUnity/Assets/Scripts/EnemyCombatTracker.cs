@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class EnemyCombatTracker : MonoBehaviour
 {
@@ -18,8 +19,14 @@ public class EnemyCombatTracker : MonoBehaviour
     [SerializeField] private Sprite paperIcon;
     [SerializeField] private Sprite scissorsIcon;
 
+    [Header("Damage Text Settings")]
+    [SerializeField] private Color damageTextColor = Color.white;
+    [SerializeField] private int damageTextFontSize = 14;
+    [SerializeField] private bool showDamageText = true;
+
     private HandController enemyHand;
     private List<GameObject> currentIcons = new List<GameObject>();
+    private Dictionary<string, TextMeshProUGUI> damageTexts = new Dictionary<string, TextMeshProUGUI>();
     private bool isInitialized = false;
 
     private void OnEnable()
@@ -46,10 +53,11 @@ public class EnemyCombatTracker : MonoBehaviour
             }
         }
 
-        // Update tooltips with current damage values
+        // Update tooltips and damage text with current damage values
         if (isInitialized && enemyHand != null)
         {
             UpdateTooltips();
+            UpdateDamageTexts();
         }
     }
 
@@ -125,10 +133,48 @@ public class EnemyCombatTracker : MonoBehaviour
             rect.sizeDelta = new Vector2(iconWidth, iconHeight);
         }
 
+        // Create damage text overlay
+        if (showDamageText)
+        {
+            CreateDamageTextOverlay(iconGO, damageType);
+        }
+
         // Add tooltip
         AddTooltip(iconGO, damageType);
 
         currentIcons.Add(iconGO);
+    }
+
+    private void CreateDamageTextOverlay(GameObject iconGO, string damageType)
+    {
+        // Create a new GameObject for the text
+        GameObject textGO = new GameObject($"DamageText_{damageType}");
+        textGO.transform.SetParent(iconGO.transform, false);
+
+        // Add TextMeshProUGUI component
+        TextMeshProUGUI damageText = textGO.AddComponent<TextMeshProUGUI>();
+
+        // Configure text properties
+        damageText.text = "0";
+        damageText.fontSize = damageTextFontSize;
+        damageText.color = damageTextColor;
+        damageText.alignment = TextAlignmentOptions.Center;
+        damageText.fontStyle = FontStyles.Bold;
+
+        // Add outline for better visibility
+        damageText.outlineWidth = 0.2f;
+        damageText.outlineColor = Color.black;
+
+        // Position the text (bottom-right corner of icon)
+        RectTransform textRect = textGO.GetComponent<RectTransform>();
+        textRect.anchorMin = new Vector2(0.5f, 0f);
+        textRect.anchorMax = new Vector2(1f, 0.5f);
+        textRect.offsetMin = new Vector2(0, 0);
+        textRect.offsetMax = new Vector2(0, 0);
+        textRect.anchoredPosition = new Vector2(5, -5); // Slight offset from corner
+
+        // Store reference for updates
+        damageTexts[damageType] = damageText;
     }
 
     private void AddTooltip(GameObject iconGO, string damageType)
@@ -153,18 +199,41 @@ public class EnemyCombatTracker : MonoBehaviour
                 if (!string.IsNullOrEmpty(damageType))
                 {
                     // Get the base damage for this specific sign (no power-ups for enemies currently)
-                    int damage = damageType switch
-                    {
-                        "Rock" => enemyHand.rockDamage,
-                        "Paper" => enemyHand.paperDamage,
-                        "Scissors" => enemyHand.scissorsDamage,
-                        _ => 10
-                    };
-
+                    int damage = GetDamageForType(damageType);
                     tooltip.tooltipDescription = $"{damage}";
                 }
             }
         }
+    }
+
+    private void UpdateDamageTexts()
+    {
+        if (enemyHand == null || !showDamageText) return;
+
+        foreach (var kvp in damageTexts)
+        {
+            string damageType = kvp.Key;
+            TextMeshProUGUI text = kvp.Value;
+
+            if (text != null)
+            {
+                int damage = GetDamageForType(damageType);
+                text.text = damage.ToString();
+            }
+        }
+    }
+
+    private int GetDamageForType(string damageType)
+    {
+        if (enemyHand == null) return 0;
+
+        return damageType switch
+        {
+            "Rock" => enemyHand.rockDamage,
+            "Paper" => enemyHand.paperDamage,
+            "Scissors" => enemyHand.scissorsDamage,
+            _ => 10
+        };
     }
 
     private string GetDamageTypeFromTooltip(string tooltipTitle)
@@ -183,6 +252,7 @@ public class EnemyCombatTracker : MonoBehaviour
                 Destroy(icon);
         }
         currentIcons.Clear();
+        damageTexts.Clear();
     }
 
     // Call this to manually set the enemy reference if needed
@@ -199,8 +269,9 @@ public class EnemyCombatTracker : MonoBehaviour
             }
             else
             {
-                // Just refresh the tooltips for the new enemy
+                // Just refresh the tooltips and damage texts for the new enemy
                 UpdateTooltips();
+                UpdateDamageTexts();
             }
 
             Debug.Log($"[EnemyCombatTracker] Updated enemy reference to: {enemy.name}");

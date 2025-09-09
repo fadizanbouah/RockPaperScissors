@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class PlayerCombatTracker : MonoBehaviour
 {
@@ -18,8 +19,14 @@ public class PlayerCombatTracker : MonoBehaviour
     [SerializeField] private Sprite paperIcon;
     [SerializeField] private Sprite scissorsIcon;
 
+    [Header("Damage Text Settings")]
+    [SerializeField] private Color damageTextColor = Color.white;
+    [SerializeField] private int damageTextFontSize = 14;
+    [SerializeField] private bool showDamageText = true;
+
     private HandController playerHand;
     private List<GameObject> currentIcons = new List<GameObject>();
+    private Dictionary<string, TextMeshProUGUI> damageTexts = new Dictionary<string, TextMeshProUGUI>();
     private bool isInitialized = false;
     private Dictionary<PowerUpEffectBase, GameObject> activeEffectIcons = new Dictionary<PowerUpEffectBase, GameObject>();
 
@@ -43,10 +50,11 @@ public class PlayerCombatTracker : MonoBehaviour
             }
         }
 
-        // Update tooltips with current damage values
+        // Update tooltips and damage text with current damage values
         if (isInitialized && playerHand != null)
         {
             UpdateTooltips();
+            UpdateDamageTexts();
         }
 
         // Clean up icons for effects that have been removed
@@ -176,10 +184,48 @@ public class PlayerCombatTracker : MonoBehaviour
             rect.sizeDelta = new Vector2(iconWidth, iconHeight);
         }
 
+        // Create damage text overlay
+        if (showDamageText)
+        {
+            CreateDamageTextOverlay(iconGO, damageType);
+        }
+
         // Add tooltip
         AddTooltip(iconGO, damageType);
 
         currentIcons.Add(iconGO);
+    }
+
+    private void CreateDamageTextOverlay(GameObject iconGO, string damageType)
+    {
+        // Create a new GameObject for the text
+        GameObject textGO = new GameObject($"DamageText_{damageType}");
+        textGO.transform.SetParent(iconGO.transform, false);
+
+        // Add TextMeshProUGUI component
+        TextMeshProUGUI damageText = textGO.AddComponent<TextMeshProUGUI>();
+
+        // Configure text properties
+        damageText.text = "0";
+        damageText.fontSize = damageTextFontSize;
+        damageText.color = damageTextColor;
+        damageText.alignment = TextAlignmentOptions.Center;
+        damageText.fontStyle = FontStyles.Bold;
+
+        // Add outline for better visibility
+        damageText.outlineWidth = 0.2f;
+        damageText.outlineColor = Color.black;
+
+        // Position the text (bottom-right corner of icon)
+        RectTransform textRect = textGO.GetComponent<RectTransform>();
+        textRect.anchorMin = new Vector2(0.5f, 0f);
+        textRect.anchorMax = new Vector2(1f, 0.5f);
+        textRect.offsetMin = new Vector2(0, 0);
+        textRect.offsetMax = new Vector2(0, 0);
+        textRect.anchoredPosition = new Vector2(5, -5); // Slight offset from corner
+
+        // Store reference for updates
+        damageTexts[damageType] = damageText;
     }
 
     private void AddTooltip(GameObject iconGO, string damageType)
@@ -201,44 +247,60 @@ public class PlayerCombatTracker : MonoBehaviour
                 string damageType = GetDamageTypeFromTooltip(tooltip.tooltipTitle);
                 if (!string.IsNullOrEmpty(damageType))
                 {
-                    // Get the base damage for this specific sign (WITHOUT active power-up effects)
-                    int baseForSign = damageType switch
-                    {
-                        "Rock" => playerHand.rockDamage,
-                        "Paper" => playerHand.paperDamage,
-                        "Scissors" => playerHand.scissorsDamage,
-                        _ => 10
-                    };
-
-                    // Add only the persistent passive bonuses (from PlayerProgressData)
-                    int passiveBonus = 0;
-                    if (playerHand.isPlayer)
-                    {
-                        passiveBonus += PlayerProgressData.Instance.bonusBaseDamage;
-
-                        if (damageType == "Rock")
-                            passiveBonus += PlayerProgressData.Instance.bonusRockDamage;
-                        else if (damageType == "Paper")
-                            passiveBonus += PlayerProgressData.Instance.bonusPaperDamage;
-                        else if (damageType == "Scissors")
-                            passiveBonus += PlayerProgressData.Instance.bonusScissorsDamage;
-                    }
-
-                    int totalBaseDamage = baseForSign + passiveBonus;
-
-                    // Update tooltip to show base damage
-                    tooltip.tooltipDescription = $"{totalBaseDamage}";
-
-                    // Optionally show breakdown if there are bonuses
-                    //if (passiveBonus > 0)
-                    //{
-                        //tooltip.tooltipDescription = $"Base Damage: {totalBaseDamage}\n";
-                        //tooltip.tooltipDescription += $"Weapon: {baseForSign}\n";
-                        //tooltip.tooltipDescription += $"Passive Bonuses: +{passiveBonus}";
-                    //}
+                    // Get the total damage including all bonuses
+                    int totalDamage = GetTotalDamageForType(damageType);
+                    tooltip.tooltipDescription = $"{totalDamage}";
                 }
             }
         }
+    }
+
+    private void UpdateDamageTexts()
+    {
+        if (playerHand == null || !showDamageText) return;
+
+        foreach (var kvp in damageTexts)
+        {
+            string damageType = kvp.Key;
+            TextMeshProUGUI text = kvp.Value;
+
+            if (text != null)
+            {
+                int damage = GetTotalDamageForType(damageType);
+                text.text = damage.ToString();
+            }
+        }
+    }
+
+    private int GetTotalDamageForType(string damageType)
+    {
+        if (playerHand == null) return 0;
+
+        // Get the base damage for this specific sign (WITHOUT active power-up effects)
+        int baseForSign = damageType switch
+        {
+            "Rock" => playerHand.rockDamage,
+            "Paper" => playerHand.paperDamage,
+            "Scissors" => playerHand.scissorsDamage,
+            _ => 10
+        };
+
+        // Add only the persistent passive bonuses (from PlayerProgressData)
+        int passiveBonus = 0;
+        if (playerHand.isPlayer)
+        {
+            passiveBonus += PlayerProgressData.Instance.bonusBaseDamage;
+
+            if (damageType == "Rock")
+                passiveBonus += PlayerProgressData.Instance.bonusRockDamage;
+            else if (damageType == "Paper")
+                passiveBonus += PlayerProgressData.Instance.bonusPaperDamage;
+            else if (damageType == "Scissors")
+                passiveBonus += PlayerProgressData.Instance.bonusScissorsDamage;
+        }
+
+        int totalBaseDamage = baseForSign + passiveBonus;
+        return totalBaseDamage;
     }
 
     private string GetDamageTypeFromTooltip(string tooltipTitle)
@@ -257,6 +319,7 @@ public class PlayerCombatTracker : MonoBehaviour
                 Destroy(icon);
         }
         currentIcons.Clear();
+        damageTexts.Clear();
     }
 
     // Call this when player reference changes (e.g., new room)
