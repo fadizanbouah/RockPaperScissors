@@ -344,10 +344,16 @@ public class PlayerCombatTracker : MonoBehaviour
         if (activeEffectIcons.ContainsKey(effect)) return;
 
         PowerUpData data = effect.SourceData;
-        Sprite iconToUse = data.statusIcon != null ? data.statusIcon : data.icon;
 
-        if (iconToUse == null) return;
+        // MODIFIED: Only use statusIcon, no fallback to main icon
+        // If statusIcon is null, we don't show this effect in the tracker
+        if (data.statusIcon == null)
+        {
+            Debug.Log($"[PlayerCombatTracker] {data.powerUpName} has no status icon - not adding to tracker");
+            return;
+        }
 
+        Sprite iconToUse = data.statusIcon;
         GameObject iconGO = Instantiate(iconPrefab, iconContainer);
 
         // Configure the icon (same as before)

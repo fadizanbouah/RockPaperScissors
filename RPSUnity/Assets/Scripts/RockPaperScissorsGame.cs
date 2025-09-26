@@ -313,6 +313,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         onPowerUpAnimationDoneCallback = () => animationDone = true;
         yield return new WaitUntil(() => animationDone);
         Debug.Log("[GameSubstate] Power-up animation finished. Applying effect...");
+
         if (activePowerUpCardGO != null)
         {
             PowerUpCardDisplay cardDisplay = activePowerUpCardGO.GetComponent<PowerUpCardDisplay>();
@@ -322,19 +323,22 @@ public class RockPaperScissorsGame : MonoBehaviour
                 // CHECK FIRST: Is this a Double Use power-up?
                 bool isDoubleUseCard = data.powerUpName == "Double Activation" ||
                                       (data.effectPrefab != null && data.effectPrefab.GetComponent<DoubleUsePowerUpEffect>() != null);
+
                 // Mark power-up as used BEFORE applying effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
                     Debug.Log($"[HandlePowerUpActivation] About to mark {data.powerUpName} as used");
                     PowerUpUsageTracker.Instance.MarkPowerUpUsed();
                 }
+
                 // Apply the power-up effect
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
 
-                // Add icon to combat tracker for active power-ups only
-                if (!data.isPassive)
+                // MODIFIED: Only add icon to combat tracker if statusIcon is not null
+                // If statusIcon is null, we intentionally don't show it in the tracker
+                if (!data.isPassive && data.statusIcon != null)
                 {
                     PlayerCombatTracker tracker = FindObjectOfType<PlayerCombatTracker>();
                     if (tracker != null && PowerUpEffectManager.Instance != null)
@@ -344,8 +348,13 @@ public class RockPaperScissorsGame : MonoBehaviour
                         if (newEffect != null)
                         {
                             tracker.AddActiveEffect(newEffect);
+                            Debug.Log($"[PowerUp] Added {data.powerUpName} icon to combat tracker");
                         }
                     }
+                }
+                else if (!data.isPassive && data.statusIcon == null)
+                {
+                    Debug.Log($"[PowerUp] {data.powerUpName} has no status icon - not adding to combat tracker");
                 }
 
                 PowerUpCardSpawnerGameplay gameplaySpawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
@@ -362,6 +371,7 @@ public class RockPaperScissorsGame : MonoBehaviour
                         }
                     }
                 }
+
                 // Always check if more power-ups can be used after applying ANY effect
                 if (PowerUpUsageTracker.Instance != null)
                 {
@@ -388,6 +398,7 @@ public class RockPaperScissorsGame : MonoBehaviour
             }
             activePowerUpCardGO = null;
         }
+
         Debug.Log("[GameSubstate] Power-up handling complete. Returning to Idle.");
         // IMPORTANT: Don't call EnterIdleState() here, just set the state
         SetSubstate(GameSubstate.Idle);
