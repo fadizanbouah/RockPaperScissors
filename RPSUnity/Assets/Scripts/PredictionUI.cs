@@ -35,7 +35,7 @@ public class PredictionUI : MonoBehaviour
     private int lastProcessedIndex = -1;
     private bool isAnimating = false;
     private bool isFirstSetup = true; // Track if this is the first time setting up
-    private HandController lastTrackedEnemy = null; // Track enemy changes
+    //private HandController lastTrackedEnemy = null; // Track enemy changes
 
     private void Awake()
     {
@@ -354,7 +354,7 @@ public class PredictionUI : MonoBehaviour
         ClearSlots();
         predictionPanel.SetActive(false);
         currentEnemy = null;
-        lastTrackedEnemy = null; // Also reset the tracked enemy
+        //lastTrackedEnemy = null; // Also reset the tracked enemy
         isFirstSetup = true; // Reset for next run
     }
 

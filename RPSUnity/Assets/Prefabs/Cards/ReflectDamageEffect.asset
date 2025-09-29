@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
+  m_Name: ReflectDamageEffect
+  m_EditorClassIdentifier: 
+  powerUpName: Thorns
+  description: The enemy also takes 30% of the damage dealt next hit
+  icon: {fileID: 21300000, guid: e5135746b0cad294796ced2bf3b839f5, type: 3}
+  favorCost: 8
+  isPassive: 0
+  effectPrefab: {fileID: 2519982249494705228, guid: 4b446b182cb720d40b5e0050f0b99fb9, type: 3}
+  value: 50
+  isUnique: 0
+  isUpgradeable: 0
+  replacesPowerUp: {fileID: 0}
+  prerequisitePowerUps: []
+  blocksThesePowerUps: []
+  sellValue: 1
+  passiveTrackerIcon: {fileID: 0}
+  statusIcon: {fileID: 21300000, guid: 50c1f585a1e815e418d109f9bb63d8a8, type: 3}
+  upgradeLevels: []
+  descriptionTemplate: 
