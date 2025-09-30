@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
-  m_Name: RestoreHPEffect
+  m_Name: StarterPackEffect_1
   m_EditorClassIdentifier: 
-  powerUpName: Bo oh o wa er
-  description: Restores 20% HP
-  icon: {fileID: 21300000, guid: 3c15a0a2ee8dbae4493c217a8b9a96cd, type: 3}
-  favorCost: 4
-  isPassive: 0
-  effectPrefab: {fileID: 6909036205409909836, guid: 74ac2e1a370492044b67b62e67c8c0bf, type: 3}
-  value: 20
-  isUnique: 0
+  powerUpName: Starter Pack
+  description: 
+  icon: {fileID: 0}
+  favorCost: 5
+  isPassive: 1
+  effectPrefab: {fileID: 959343104595656559, guid: 0f51f73b4f9e630479ab52f56f861b4b, type: 3}
+  value: 0
+  isUnique: 1
   isUpgradeable: 0
   replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
-  sellValue: 1
+  sellValue: 0
   passiveTrackerIcon: {fileID: 0}
   statusIcon: {fileID: 0}
   upgradeLevels: []
-  descriptionTemplate: 
+  descriptionTemplate: For only 4.99(5) you get {0}% extra damage!
