@@ -50,18 +50,26 @@ public class StarterPackEffect : PowerUpEffectBase
 
     private void ApplyDamageBonus()
     {
-        if (PlayerProgressData.Instance == null) return;
+        if (PlayerProgressData.Instance == null || player == null) return;
 
-        // Calculate the damage increase based on percentage
-        int baseDamageIncrease = Mathf.RoundToInt(10 * (damagePercentage / 100f)); // Assuming base damage is 10
+        // Calculate damage increase for each sign based on their actual values
+        int rockDamageIncrease = Mathf.RoundToInt(player.rockDamage * (damagePercentage / 100f));
+        int paperDamageIncrease = Mathf.RoundToInt(player.paperDamage * (damagePercentage / 100f));
+        int scissorsDamageIncrease = Mathf.RoundToInt(player.scissorsDamage * (damagePercentage / 100f));
 
-        PlayerProgressData.Instance.bonusBaseDamage += baseDamageIncrease;
+        // Apply the increases to the appropriate bonus fields
+        PlayerProgressData.Instance.bonusRockDamage += rockDamageIncrease;
+        PlayerProgressData.Instance.bonusPaperDamage += paperDamageIncrease;
+        PlayerProgressData.Instance.bonusScissorsDamage += scissorsDamageIncrease;
 
-        Debug.Log($"[StarterPackEffect] Applied +{baseDamageIncrease} base damage ({damagePercentage}% increase)");
+        Debug.Log($"[StarterPackEffect] Applied damage bonuses ({damagePercentage}% increase):");
+        Debug.Log($"  Rock: +{rockDamageIncrease} (was {player.rockDamage})");
+        Debug.Log($"  Paper: +{paperDamageIncrease} (was {player.paperDamage})");
+        Debug.Log($"  Scissors: +{scissorsDamageIncrease} (was {player.scissorsDamage})");
 
         if (showNotifications)
         {
-            ShowNotification($"+{damagePercentage}% Damage!");
+            ShowNotification($"+{damagePercentage}% All Damage!");
         }
     }
 

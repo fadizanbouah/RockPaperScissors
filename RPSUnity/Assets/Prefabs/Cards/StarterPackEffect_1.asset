@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: StarterPackEffect_1
   m_EditorClassIdentifier: 
   powerUpName: Starter Pack
-  description: 
+  description: test
   icon: {fileID: 0}
-  favorCost: 5
+  favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 959343104595656559, guid: 0f51f73b4f9e630479ab52f56f861b4b, type: 3}
-  value: 0
+  value: 20
   isUnique: 1
   isUpgradeable: 0
   replacesPowerUp: {fileID: 0}
