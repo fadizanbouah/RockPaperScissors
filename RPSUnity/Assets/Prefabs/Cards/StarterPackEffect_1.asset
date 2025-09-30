@@ -13,19 +13,20 @@ MonoBehaviour:
   m_Name: StarterPackEffect_1
   m_EditorClassIdentifier: 
   powerUpName: Starter Pack
-  description: test
-  icon: {fileID: 0}
+  description: For only 4.99 (basically 5) you get 10% extra damage! Expires in 7
+    days
+  icon: {fileID: 21300000, guid: 0c47acbb5362cac49a9659550c90ab5c, type: 3}
   favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 959343104595656559, guid: 0f51f73b4f9e630479ab52f56f861b4b, type: 3}
-  value: 20
+  value: 0
   isUnique: 1
   isUpgradeable: 0
   replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 0
-  passiveTrackerIcon: {fileID: 0}
+  passiveTrackerIcon: {fileID: 21300000, guid: e5c1cd48b6dffa144b8047d67abf5032, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []
-  descriptionTemplate: For only 4.99(5) you get {0}% extra damage!
+  descriptionTemplate: 

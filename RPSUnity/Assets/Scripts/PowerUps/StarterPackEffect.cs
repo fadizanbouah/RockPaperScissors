@@ -25,6 +25,7 @@ public class StarterPackEffect : PowerUpEffectBase
     public override void OnRoomStart()
     {
         Debug.Log("[StarterPackEffect] Applying Starter Pack bonuses...");
+        Debug.Log($"[StarterPackEffect] Player reference: {player?.name ?? "NULL"}");
 
         // Apply damage bonus if configured
         if (grantDamageBonus)
@@ -43,19 +44,34 @@ public class StarterPackEffect : PowerUpEffectBase
         {
             GrantRandomCard();
         }
-
-        // Destroy this effect after applying (it's a one-time passive)
-        Destroy(gameObject);
     }
 
     private void ApplyDamageBonus()
     {
-        if (PlayerProgressData.Instance == null || player == null) return;
+        if (PlayerProgressData.Instance == null)
+        {
+            Debug.LogWarning("[StarterPackEffect] PlayerProgressData is null!");
+            return;
+        }
+
+        // CRITICAL FIX: Get player reference from PowerUpEffectManager if we don't have it
+        HandController activePlayer = player;
+        if (activePlayer == null && PowerUpEffectManager.Instance != null)
+        {
+            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
+            Debug.Log($"[StarterPackEffect] Retrieved player from PowerUpEffectManager: {activePlayer?.name ?? "NULL"}");
+        }
+
+        if (activePlayer == null)
+        {
+            Debug.LogWarning("[StarterPackEffect] Cannot apply damage bonus - player is null!");
+            return;
+        }
 
         // Calculate damage increase for each sign based on their actual values
-        int rockDamageIncrease = Mathf.RoundToInt(player.rockDamage * (damagePercentage / 100f));
-        int paperDamageIncrease = Mathf.RoundToInt(player.paperDamage * (damagePercentage / 100f));
-        int scissorsDamageIncrease = Mathf.RoundToInt(player.scissorsDamage * (damagePercentage / 100f));
+        int rockDamageIncrease = Mathf.RoundToInt(activePlayer.rockDamage * (damagePercentage / 100f));
+        int paperDamageIncrease = Mathf.RoundToInt(activePlayer.paperDamage * (damagePercentage / 100f));
+        int scissorsDamageIncrease = Mathf.RoundToInt(activePlayer.scissorsDamage * (damagePercentage / 100f));
 
         // Apply the increases to the appropriate bonus fields
         PlayerProgressData.Instance.bonusRockDamage += rockDamageIncrease;
@@ -63,35 +79,47 @@ public class StarterPackEffect : PowerUpEffectBase
         PlayerProgressData.Instance.bonusScissorsDamage += scissorsDamageIncrease;
 
         Debug.Log($"[StarterPackEffect] Applied damage bonuses ({damagePercentage}% increase):");
-        Debug.Log($"  Rock: +{rockDamageIncrease} (was {player.rockDamage})");
-        Debug.Log($"  Paper: +{paperDamageIncrease} (was {player.paperDamage})");
-        Debug.Log($"  Scissors: +{scissorsDamageIncrease} (was {player.scissorsDamage})");
+        Debug.Log($"  Rock: +{rockDamageIncrease} (base was {activePlayer.rockDamage})");
+        Debug.Log($"  Paper: +{paperDamageIncrease} (base was {activePlayer.paperDamage})");
+        Debug.Log($"  Scissors: +{scissorsDamageIncrease} (base was {activePlayer.scissorsDamage})");
 
         if (showNotifications)
         {
-            ShowNotification($"+{damagePercentage}% All Damage!");
+            ShowNotification($"+{damagePercentage}% All Damage!", activePlayer);
         }
     }
 
     private void ApplyHealthBonus()
     {
-        if (player == null) return;
+        // CRITICAL FIX: Get player reference from PowerUpEffectManager if we don't have it
+        HandController activePlayer = player;
+        if (activePlayer == null && PowerUpEffectManager.Instance != null)
+        {
+            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
+            Debug.Log($"[StarterPackEffect] Retrieved player from PowerUpEffectManager for health: {activePlayer?.name ?? "NULL"}");
+        }
+
+        if (activePlayer == null)
+        {
+            Debug.LogWarning("[StarterPackEffect] Cannot apply health bonus - player is null!");
+            return;
+        }
 
         // Calculate health increase based on percentage of base max health
-        int healthIncrease = Mathf.RoundToInt(player.baseMaxHealth * (healthPercentage / 100f));
+        int healthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (healthPercentage / 100f));
 
         // Increase max health
-        player.maxHealth += healthIncrease;
+        activePlayer.maxHealth += healthIncrease;
 
         // Also heal the player by the same amount (so they get the benefit immediately)
-        player.health = Mathf.Min(player.health + healthIncrease, player.maxHealth);
-        player.UpdateHealthBar();
+        activePlayer.health = Mathf.Min(activePlayer.health + healthIncrease, activePlayer.maxHealth);
+        activePlayer.UpdateHealthBar();
 
-        Debug.Log($"[StarterPackEffect] Applied +{healthIncrease} max health ({healthPercentage}% increase)");
+        Debug.Log($"[StarterPackEffect] Applied +{healthIncrease} max health ({healthPercentage}% of {activePlayer.baseMaxHealth})");
 
         if (showNotifications)
         {
-            ShowNotification($"+{healthPercentage}% Max HP!");
+            ShowNotification($"+{healthPercentage}% Max HP!", activePlayer);
         }
     }
 
@@ -123,9 +151,16 @@ public class StarterPackEffect : PowerUpEffectBase
 
         Debug.Log($"[StarterPackEffect] Granted random card: {randomCard.powerUpName}");
 
+        // Get player for notification
+        HandController activePlayer = player;
+        if (activePlayer == null && PowerUpEffectManager.Instance != null)
+        {
+            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
+        }
+
         if (showNotifications)
         {
-            ShowNotification($"Received: {randomCard.powerUpName}!");
+            ShowNotification($"Received: {randomCard.powerUpName}!", activePlayer);
         }
 
         // Refresh the power-up card display if in gameplay
@@ -136,16 +171,24 @@ public class StarterPackEffect : PowerUpEffectBase
         }
     }
 
-    private void ShowNotification(string message)
+    private void ShowNotification(string message, HandController targetPlayer = null)
     {
-        // This is a placeholder for a notification system
-        // You could implement a floating text or UI notification here
         Debug.Log($"[StarterPackEffect Notification] {message}");
 
-        // Example: Spawn floating text at player position
-        if (player != null && player.combatTextPrefab != null)
+        // Use provided player or try to get it
+        if (targetPlayer == null)
         {
-            GameObject textInstance = Instantiate(player.combatTextPrefab, player.transform.position + Vector3.up, Quaternion.identity);
+            targetPlayer = player;
+        }
+        if (targetPlayer == null && PowerUpEffectManager.Instance != null)
+        {
+            targetPlayer = PowerUpEffectManager.Instance.GetPlayer();
+        }
+
+        // Spawn floating text at player position
+        if (targetPlayer != null && targetPlayer.combatTextPrefab != null)
+        {
+            GameObject textInstance = Instantiate(targetPlayer.combatTextPrefab, targetPlayer.transform.position + Vector3.up, Quaternion.identity);
             var textComponent = textInstance.GetComponentInChildren<TMPro.TMP_Text>();
             if (textComponent != null)
             {
