@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DodgeBoostEffect : PowerUpEffectBase
+public class DodgeBoostEffect : PowerUpEffectBase, IDurationEffect
 {
     [Header("Configuration")]
     [SerializeField] private float dodgeBoostAmount = 25f; // Add 25% dodge chance
@@ -55,6 +55,8 @@ public class DodgeBoostEffect : PowerUpEffectBase
         roundsRemaining--;
         Debug.Log($"[DodgeBoostEffect] {roundsRemaining} rounds remaining");
 
+        UpdateCounterDisplay();
+
         if (roundsRemaining <= 0)
         {
             RemoveEffect();
@@ -98,5 +100,19 @@ public class DodgeBoostEffect : PowerUpEffectBase
     public override bool IsEffectActive()
     {
         return isActive && (roundsRemaining > 0 || !isTemporary);
+    }
+
+    public int GetRoundsRemaining()
+    {
+        return isTemporary ? roundsRemaining : -1; // -1 = no duration
+    }
+
+    private void UpdateCounterDisplay()
+    {
+        PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+        if (tracker != null)
+        {
+            tracker.UpdateEffectCounter(this);
+        }
     }
 }

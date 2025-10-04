@@ -44,3 +44,8 @@ public abstract class PowerUpEffectBase : MonoBehaviour, IPowerUpEffect
         return true; // Default: effect is active
     }
 }
+
+public interface IDurationEffect
+{
+    int GetRoundsRemaining();
+}

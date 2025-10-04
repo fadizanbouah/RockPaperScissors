@@ -334,33 +334,24 @@ public class PlayerCombatTracker : MonoBehaviour
 
     public void AddActiveEffect(PowerUpEffectBase effect)
     {
-
-        if (effect == null || effect.SourceData == null)
-        {
-            return;
-        }
-
-        // Don't add if already tracking this effect
+        if (effect == null || effect.SourceData == null) return;
         if (activeEffectIcons.ContainsKey(effect)) return;
 
         PowerUpData data = effect.SourceData;
 
-        // MODIFIED: Only use statusIcon, no fallback to main icon
-        // If statusIcon is null, we don't show this effect in the tracker
         if (data.statusIcon == null)
         {
             Debug.Log($"[PlayerCombatTracker] {data.powerUpName} has no status icon - not adding to tracker");
             return;
         }
 
-        Sprite iconToUse = data.statusIcon;
         GameObject iconGO = Instantiate(iconPrefab, iconContainer);
 
-        // Configure the icon (same as before)
+        // Configure icon
         Image iconImage = iconGO.GetComponent<Image>();
         if (iconImage != null)
         {
-            iconImage.sprite = iconToUse;
+            iconImage.sprite = data.statusIcon;
         }
 
         RectTransform rect = iconGO.GetComponent<RectTransform>();
@@ -369,11 +360,28 @@ public class PlayerCombatTracker : MonoBehaviour
             rect.sizeDelta = new Vector2(iconWidth, iconHeight);
         }
 
+        // NEW: Set up counter text if effect has duration
+        TextMeshProUGUI counterText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+        Debug.Log($"[PlayerCombatTracker] Found counter text: {counterText != null}");
+        if (counterText != null)
+        {
+            // Check if effect has rounds remaining
+            if (effect is IDurationEffect durationEffect)
+            {
+                Debug.Log($"[PlayerCombatTracker] Effect has duration: {durationEffect.GetRoundsRemaining()}");
+                counterText.gameObject.SetActive(true);
+                counterText.text = durationEffect.GetRoundsRemaining().ToString();
+            }
+            else
+            {
+                counterText.gameObject.SetActive(false);
+            }
+        }
+
         SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
         tooltip.tooltipTitle = data.powerUpName;
         tooltip.tooltipDescription = data.description;
 
-        // Map the effect to its icon
         activeEffectIcons[effect] = iconGO;
     }
 
@@ -412,6 +420,23 @@ public class PlayerCombatTracker : MonoBehaviour
                 {
                     AddActiveEffect(effect);
                 }
+            }
+        }
+    }
+
+    public void UpdateEffectCounter(PowerUpEffectBase effect)
+    {
+        if (!activeEffectIcons.ContainsKey(effect)) return;
+
+        GameObject iconGO = activeEffectIcons[effect];
+        TextMeshProUGUI counterText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        if (counterText != null && effect is IDurationEffect durationEffect)
+        {
+            int remaining = durationEffect.GetRoundsRemaining();
+            if (remaining > 0)
+            {
+                counterText.text = remaining.ToString();
             }
         }
     }
