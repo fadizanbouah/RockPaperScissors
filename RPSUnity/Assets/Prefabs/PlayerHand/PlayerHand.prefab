@@ -57,12 +57,28 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: canDodge
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: isPlayer
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: maxHealth
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: coinReward
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: dodgeChance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: favorReward
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: paperDamage

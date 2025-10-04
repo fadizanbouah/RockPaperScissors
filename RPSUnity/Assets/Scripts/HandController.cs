@@ -19,11 +19,19 @@ public class HandController : MonoBehaviour
     public int health;
     public int maxHealth;
 
+    [Header("Dodge Stats")]
+    [Range(0f, 100f)]
+    public float dodgeChance = 0f; // Percentage chance to dodge (0-100)
+    public bool canDodge = true; // Can be disabled for certain enemies or conditions
+
     public int CurrentHealth => health;
 
     public Animation playerHitAnimation;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
+
+    public delegate void DodgeHandler(HandController hand);
+    public event DodgeHandler OnDodge;
 
     public Sprite defaultHandSprite;
     public Sprite paperHandSprite;
@@ -260,6 +268,26 @@ public class HandController : MonoBehaviour
     {
         if (isDying) return;
 
+        // Check for dodge BEFORE applying any damage
+        if (damage > 0 && canDodge && dodgeChance > 0)
+        {
+            float roll = Random.Range(0f, 100f);
+            if (roll < dodgeChance)
+            {
+                // Dodged! No damage taken
+                Debug.Log($"{gameObject.name} dodged the attack! (Roll: {roll:F1} < Dodge: {dodgeChance:F1}%)");
+
+                // Trigger dodge visuals/feedback
+                OnDodge?.Invoke(this);
+
+                // IMPORTANT: Still need to trigger hit animation finished for game flow
+                // This ensures the game doesn't wait forever
+                StartCoroutine(SimulateHitAnimationComplete());
+
+                return; // Exit without taking damage
+            }
+        }
+
         // If this is the player taking damage, check for damage reduction effects
         if (isPlayer && PowerUpEffectManager.Instance != null)
         {
@@ -274,6 +302,7 @@ public class HandController : MonoBehaviour
         if (health < 0) health = 0;
         UpdateHealthBar();
 
+        // Only play hit animation if not dodged
         if (playerHitAnimation != null && damage > 0)
             playerHitAnimation.Play();
 
@@ -650,6 +679,28 @@ public class HandController : MonoBehaviour
 
             Debug.Log($"[SignShuffle] Shuffle complete. New sequence ready for next round.");
         }
+    }
+
+    // ADD THIS NEW METHOD for dodge visual feedback:
+    private void SpawnDodgeText()
+    {
+        GameObject instance = Instantiate(combatTextPrefab, transform.position, Quaternion.identity);
+        var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
+        if (textComponent != null)
+        {
+            textComponent.text = "DODGE!";
+            textComponent.color = Color.cyan; // Or any color you prefer for dodge
+            textComponent.fontSize *= 1.2f; // Make it slightly bigger
+        }
+    }
+
+    private IEnumerator SimulateHitAnimationComplete()
+    {
+        // Small delay to make dodge feel natural
+        yield return new WaitForSeconds(0.2f);
+
+        // Trigger the hit animation finished event even though we dodged
+        OnHitAnimationFinished();
     }
 }
 
