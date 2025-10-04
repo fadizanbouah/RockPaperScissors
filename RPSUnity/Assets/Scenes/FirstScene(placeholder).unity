@@ -7652,11 +7652,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.size
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: availablePowerUps.Array.size
-      value: 10
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.data[7]
@@ -7666,6 +7666,10 @@ PrefabInstance:
       propertyPath: passivePowerUps.Array.data[8]
       value: 
       objectReference: {fileID: 11400000, guid: a6ab2ef8ace0a154280315069d5c74a4, type: 2}
+    - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
+      propertyPath: passivePowerUps.Array.data[9]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8fdd80217aee42f439550006c1fce795, type: 2}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: availablePowerUps.Array.data[6]
       value: 
@@ -7685,7 +7689,11 @@ PrefabInstance:
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: availablePowerUps.Array.data[10]
       value: 
-      objectReference: {fileID: 11400000, guid: bc21bd3d5ed9fd545ab2424d6e57e599, type: 2}
+      objectReference: {fileID: 11400000, guid: ecdb50e7944a3a7429feba84588191e2, type: 2}
+    - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
+      propertyPath: availablePowerUps.Array.data[11]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8fdd80217aee42f439550006c1fce795, type: 2}
     - target: {fileID: 7122798342182782279, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: m_Name
       value: PowerUpPanel

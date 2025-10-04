@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9032250231283513607}
   - component: {fileID: 8170400779138260732}
   m_Layer: 0
-  m_Name: StarterPackEffect_2
+  m_Name: StarterPackEffect_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   grantDamageBonus: 1
   damagePercentage: 10
   grantHealthBonus: 1
-  healthPercentage: 5
+  healthPercentage: 10
   grantRandomCard: 0
   possibleCards: []
   showNotifications: 0
