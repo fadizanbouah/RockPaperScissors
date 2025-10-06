@@ -32,4 +32,13 @@ public class AnimationEventRelay : MonoBehaviour
             handController.TriggerDeathAnimationFinished();
         }
     }
+
+    // Called by animation events at the end of the Dodge animation
+    public void TriggerDodgeAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.OnDodgeAnimationFinished();
+        }
+    }
 }

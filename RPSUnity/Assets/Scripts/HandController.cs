@@ -279,11 +279,7 @@ public class HandController : MonoBehaviour
 
                 // Trigger dodge visuals/feedback
                 OnDodge?.Invoke(this);
-
-                // IMPORTANT: Still need to trigger hit animation finished for game flow
-                // This ensures the game doesn't wait forever
-                StartCoroutine(SimulateHitAnimationComplete());
-
+                TriggerDodgeAnimation(); // Play dodge animation
                 return; // Exit without taking damage
             }
         }
@@ -701,6 +697,22 @@ public class HandController : MonoBehaviour
 
         // Trigger the hit animation finished event even though we dodged
         OnHitAnimationFinished();
+    }
+
+    public void TriggerDodgeAnimation()
+    {
+        if (handAnimator != null && handAnimator.HasParameter("Dodge"))
+        {
+            handAnimator.SetTrigger("Dodge");
+            Debug.Log($"{gameObject.name} playing dodge animation");
+        }
+    }
+
+    public void OnDodgeAnimationFinished()
+    {
+        Debug.Log($"{gameObject.name} dodge animation finished!");
+        // Trigger the hit animation finished event to continue game flow
+        HitAnimationFinished?.Invoke(this);
     }
 }
 

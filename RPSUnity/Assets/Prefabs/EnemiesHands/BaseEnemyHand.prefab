@@ -564,6 +564,8 @@ MonoBehaviour:
   scissorsDamage: 9
   health: 20
   maxHealth: 20
+  dodgeChance: 0
+  canDodge: 1
   playerHitAnimation: {fileID: 6542035435138104612}
   handAnimator: {fileID: 2991300258156510983}
   handSpriteRenderer: {fileID: 7813983361860719102}
