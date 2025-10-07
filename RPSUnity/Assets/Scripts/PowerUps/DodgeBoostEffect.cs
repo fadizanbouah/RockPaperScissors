@@ -28,14 +28,8 @@ public class DodgeBoostEffect : PowerUpEffectBase, IDurationEffect
 
     public override void OnRoomStart()
     {
-        // Only apply once, then clean up on next room
-        if (hasBeenApplied && isActive)
-        {
-            RemoveEffect();
-            return; // Don't reapply
-        }
-
-        if (!isActive && player != null)
+        // Only apply if not already active
+        if (!isActive && !hasBeenApplied && player != null)
         {
             originalDodgeChance = player.dodgeChance;
             player.dodgeChance = Mathf.Min(player.dodgeChance + dodgeBoostAmount, 100f);
@@ -45,6 +39,10 @@ public class DodgeBoostEffect : PowerUpEffectBase, IDurationEffect
             Debug.Log($"[DodgeBoostEffect] Dodge increased from {originalDodgeChance}% to {player.dodgeChance}%");
 
             player.OnDodge += OnPlayerDodged;
+        }
+        else if (isActive)
+        {
+            Debug.Log($"[DodgeBoostEffect] Already active with {roundsRemaining} rounds remaining - persisting to new room");
         }
     }
 

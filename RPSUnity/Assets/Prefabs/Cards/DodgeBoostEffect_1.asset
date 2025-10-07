@@ -19,7 +19,7 @@ MonoBehaviour:
   favorCost: 5
   isPassive: 0
   effectPrefab: {fileID: 53510028999730253, guid: 13c24f541f8d6b948aa2011648723e24, type: 3}
-  value: 25
+  value: 100
   isUnique: 0
   isUpgradeable: 0
   replacesPowerUp: {fileID: 0}

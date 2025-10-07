@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ReflectDamageEffect
   m_EditorClassIdentifier: 
   powerUpName: Thorns
-  description: The enemy also takes 30% of the damage dealt next hit
+  description: The enemy also takes 30% of the damage dealt on his next hit
   icon: {fileID: 21300000, guid: e5135746b0cad294796ced2bf3b839f5, type: 3}
   favorCost: 8
   isPassive: 0
