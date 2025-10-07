@@ -172,7 +172,8 @@ MonoBehaviour:
   scissorsDamage: 100
   health: 500
   maxHealth: 500
-  playerHitAnimation: {fileID: 4025989370840745165}
+  dodgeChance: 0
+  canDodge: 1
   handAnimator: {fileID: 4962887340843718462}
   handSpriteRenderer: {fileID: 7448360978216978555}
   defaultHandSprite: {fileID: 21300000, guid: 695d6b433ed86094d93547626a340756, type: 3}
@@ -606,8 +607,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2570252648437362385}
-  - component: {fileID: 4025989370840745165}
-  - component: {fileID: 6673495183894392540}
   m_Layer: 0
   m_Name: HandContainer
   m_TagString: Untagged
@@ -631,32 +630,3 @@ Transform:
   - {fileID: 1926665418693913949}
   m_Father: {fileID: 8474882966461745861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &4025989370840745165
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7544561723870889125}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 1bedf0fbce19d7b46a190d6342659d48, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 1bedf0fbce19d7b46a190d6342659d48, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!114 &6673495183894392540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7544561723870889125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 804fa963458e6f8418e49aaa1d82082e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handController: {fileID: 8489421513858283839}

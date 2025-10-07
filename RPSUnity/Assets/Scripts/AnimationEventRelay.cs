@@ -41,4 +41,12 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnDodgeAnimationFinished();
         }
     }
+
+    public void TriggerHitAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.OnHitAnimationFinished();
+        }
+    }
 }

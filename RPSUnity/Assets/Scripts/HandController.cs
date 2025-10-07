@@ -25,8 +25,6 @@ public class HandController : MonoBehaviour
     public bool canDodge = true; // Can be disabled for certain enemies or conditions
 
     public int CurrentHealth => health;
-
-    public Animation playerHitAnimation;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
 
@@ -280,6 +278,7 @@ public class HandController : MonoBehaviour
                 // Trigger dodge visuals/feedback
                 OnDodge?.Invoke(this);
                 TriggerDodgeAnimation(); // Play dodge animation
+
                 return; // Exit without taking damage
             }
         }
@@ -298,9 +297,11 @@ public class HandController : MonoBehaviour
         if (health < 0) health = 0;
         UpdateHealthBar();
 
-        // Only play hit animation if not dodged
-        if (playerHitAnimation != null && damage > 0)
-            playerHitAnimation.Play();
+        if (handAnimator != null && handAnimator.HasParameter("Hit") && damage > 0)
+        {
+            handAnimator.SetTrigger("Hit");
+            handAnimator.Update(0f); // Force immediate animator update
+        }
 
         if (combatTextPrefab != null && damage > 0)
             SpawnFloatingDamageText(damage);
@@ -674,19 +675,6 @@ public class HandController : MonoBehaviour
             }
 
             Debug.Log($"[SignShuffle] Shuffle complete. New sequence ready for next round.");
-        }
-    }
-
-    // ADD THIS NEW METHOD for dodge visual feedback:
-    private void SpawnDodgeText()
-    {
-        GameObject instance = Instantiate(combatTextPrefab, transform.position, Quaternion.identity);
-        var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
-        if (textComponent != null)
-        {
-            textComponent.text = "DODGE!";
-            textComponent.color = Color.cyan; // Or any color you prefer for dodge
-            textComponent.fontSize *= 1.2f; // Make it slightly bigger
         }
     }
 
