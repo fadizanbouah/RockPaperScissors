@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: critChance
-      value: 100
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: rockDamage
@@ -99,6 +99,10 @@ PrefabInstance:
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: scissorsDamage
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: critDamageMultiplier
+      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -192,6 +192,7 @@ public class HandController : MonoBehaviour
         //Debug.Log($"[BASE DAMAGE FOR SIGN] {signUsed}: {baseDamageForSign}");
 
         int baseFinalDamage = baseDamageForSign;
+        int finalDamage = baseFinalDamage;
 
         if (isPlayer)
         {
@@ -249,7 +250,7 @@ public class HandController : MonoBehaviour
             //Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
 
             // Calculate modified damage from base * multiplier
-            int finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
+            finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
             //Debug.Log($"[AFTER MULTIPLIER] baseFinalDamage: {baseFinalDamage} * multiplier: {multiplier} = finalDamage: {finalDamage}");
 
             // Apply and clear one-time temporary bonus
@@ -262,21 +263,18 @@ public class HandController : MonoBehaviour
 
             //Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
             //Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
-
-            // Check for critical hit AFTER all other calculations
-            float critRoll = Random.Range(0f, 100f);
-            if (critRoll < critChance)
-            {
-                isCriticalHit = true;
-                finalDamage = Mathf.RoundToInt(finalDamage * critDamageMultiplier);
-                Debug.Log($"[CRITICAL HIT!] {critRoll:F1} < {critChance:F1}% - Damage: {finalDamage}");
-            }
-
-            return finalDamage;
         }
 
-        //Debug.Log($"[ENEMY DAMAGE] returning baseFinalDamage: {baseFinalDamage}");
-        return baseFinalDamage;
+        // Check for critical hit AFTER all other calculations (works for both player and enemy)
+        float critRoll = Random.Range(0f, 100f);
+        if (critRoll < critChance)
+        {
+            isCriticalHit = true;
+            finalDamage = Mathf.RoundToInt(finalDamage * critDamageMultiplier);
+            Debug.Log($"[{gameObject.name} CRITICAL HIT!] {critRoll:F1} < {critChance:F1}% - Damage: {finalDamage}");
+        }
+
+        return finalDamage;
     }
 
     public void TakeDamage(int damage, HandController source = null, bool isCriticalHit = false)
@@ -341,14 +339,7 @@ public class HandController : MonoBehaviour
         var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
         if (textComponent != null)
         {
-            textComponent.text = amount.ToString();
-
-            // Optional: Additional styling for crits if your prefab doesn't handle it
-            if (isCriticalHit)
-            {
-                textComponent.fontSize *= 1.3f; // Slightly bigger
-                                                // textComponent.color = Color.yellow; // If not set in prefab
-            }
+            textComponent.text = "-" + amount.ToString();
         }
     }
 
