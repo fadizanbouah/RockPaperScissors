@@ -24,6 +24,11 @@ public class HandController : MonoBehaviour
     public float dodgeChance = 0f; // Percentage chance to dodge (0-100)
     public bool canDodge = true; // Can be disabled for certain enemies or conditions
 
+    [Header("Critical Hit Stats")]
+    [Range(0f, 100f)]
+    public float critChance = 10f; // Percentage chance to crit (0-100)
+    public float critDamageMultiplier = 2.0f; // 2x damage on crit (200%)
+
     public int CurrentHealth => health;
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
@@ -44,6 +49,7 @@ public class HandController : MonoBehaviour
 
     [Header("Combat Text")]
     public GameObject combatTextPrefab;
+    public GameObject combatTextCritPrefab;
 
     [Header("Rewards")]
     public int coinReward = 5;
@@ -167,8 +173,10 @@ public class HandController : MonoBehaviour
         temporaryBonusDamage += amount;
     }
 
-    public int GetEffectiveDamage(string signUsed)
+    public int GetEffectiveDamage(string signUsed, out bool isCriticalHit)
     {
+        isCriticalHit = false; // Initialize out parameter
+
         //Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
         //Debug.Log($"[START] signUsed: {signUsed}, isPlayer: {isPlayer}");
 
@@ -255,6 +263,15 @@ public class HandController : MonoBehaviour
             //Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
             //Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
 
+            // Check for critical hit AFTER all other calculations
+            float critRoll = Random.Range(0f, 100f);
+            if (critRoll < critChance)
+            {
+                isCriticalHit = true;
+                finalDamage = Mathf.RoundToInt(finalDamage * critDamageMultiplier);
+                Debug.Log($"[CRITICAL HIT!] {critRoll:F1} < {critChance:F1}% - Damage: {finalDamage}");
+            }
+
             return finalDamage;
         }
 
@@ -262,7 +279,7 @@ public class HandController : MonoBehaviour
         return baseFinalDamage;
     }
 
-    public void TakeDamage(int damage, HandController source = null)
+    public void TakeDamage(int damage, HandController source = null, bool isCriticalHit = false)
     {
         if (isDying) return;
 
@@ -274,11 +291,9 @@ public class HandController : MonoBehaviour
             {
                 // Dodged! No damage taken
                 Debug.Log($"{gameObject.name} dodged the attack! (Roll: {roll:F1} < Dodge: {dodgeChance:F1}%)");
-
                 // Trigger dodge visuals/feedback
                 OnDodge?.Invoke(this);
                 TriggerDodgeAnimation(); // Play dodge animation
-
                 return; // Exit without taking damage
             }
         }
@@ -304,7 +319,7 @@ public class HandController : MonoBehaviour
         }
 
         if (combatTextPrefab != null && damage > 0)
-            SpawnFloatingDamageText(damage);
+            SpawnFloatingDamageText(damage, isCriticalHit); // Pass crit flag
 
         if (health <= 0)
         {
@@ -312,13 +327,28 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void SpawnFloatingDamageText(int amount)
+    private void SpawnFloatingDamageText(int amount, bool isCriticalHit = false)
     {
-        GameObject instance = Instantiate(combatTextPrefab, transform.position, Quaternion.identity);
+        GameObject prefabToUse = isCriticalHit ? combatTextCritPrefab : combatTextPrefab;
+
+        if (prefabToUse == null)
+        {
+            Debug.LogWarning($"[SpawnFloatingDamageText] Missing prefab - Crit: {isCriticalHit}");
+            return;
+        }
+
+        GameObject instance = Instantiate(prefabToUse, transform.position, Quaternion.identity);
         var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
         if (textComponent != null)
         {
-            textComponent.text = "-" + amount.ToString();
+            textComponent.text = amount.ToString();
+
+            // Optional: Additional styling for crits if your prefab doesn't handle it
+            if (isCriticalHit)
+            {
+                textComponent.fontSize *= 1.3f; // Slightly bigger
+                                                // textComponent.color = Color.yellow; // If not set in prefab
+            }
         }
     }
 

@@ -188,16 +188,16 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         if (result == RoundResult.Win)
         {
-            int damage = playerInstance.GetEffectiveDamage(playerChoice);
+            int damage = playerInstance.GetEffectiveDamage(playerChoice, out bool isCrit);
             enemyHitDone = false;
-            enemyHandController.TakeDamage(damage, playerInstance);
+            enemyHandController.TakeDamage(damage, playerInstance, isCrit); // Pass crit flag
             Debug.Log($"Player dealt {damage} damage to {enemyHandController?.name}");
         }
         else if (result == RoundResult.Lose)
         {
-            int damage = enemyHandController.GetEffectiveDamage(enemyChoice);
+            int damage = enemyHandController.GetEffectiveDamage(enemyChoice, out bool isCrit);
             playerHitDone = false;
-            playerInstance.TakeDamage(damage, enemyHandController);
+            playerInstance.TakeDamage(damage, enemyHandController, isCrit); // Pass crit flag
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
         }
         else
