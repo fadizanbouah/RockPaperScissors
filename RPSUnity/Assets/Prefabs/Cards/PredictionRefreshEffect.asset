@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
+  m_Name: PredictionRefreshEffect
+  m_EditorClassIdentifier: 
+  powerUpName: F5
+  description: Refresh the ENEMY HAND. Pray for luck
+  icon: {fileID: 21300000, guid: 3241140aa1db65f43a578c7cfe45d8c5, type: 3}
+  favorCost: 1
+  isPassive: 0
+  effectPrefab: {fileID: 6167504074568245697, guid: 1bae598bd04199040a4f7a9332098c5c, type: 3}
+  value: 5
+  isUnique: 0
+  isUpgradeable: 0
+  replacesPowerUp: {fileID: 0}
+  prerequisitePowerUps: []
+  blocksThesePowerUps: []
+  sellValue: 1
+  passiveTrackerIcon: {fileID: 0}
+  statusIcon: {fileID: 0}
+  upgradeLevels: []
+  descriptionTemplate: 

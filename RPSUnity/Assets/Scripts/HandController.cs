@@ -723,6 +723,40 @@ public class HandController : MonoBehaviour
         // Trigger the hit animation finished event to continue game flow
         HitAnimationFinished?.Invoke(this);
     }
+
+    // Force generation of a new sequence (public version)
+    public void ForceNewSequence()
+    {
+        if (!usesPredictionSystem || isPlayer || hardMode)
+        {
+            Debug.LogWarning($"[HandController] Cannot force new sequence - conditions not met");
+            return;
+        }
+
+        Debug.Log($"[HandController] Forcing new sequence for {gameObject.name}");
+        GenerateNewSequence();
+    }
+
+    // Reset sign shuffle system
+    public void ResetSignShuffle()
+    {
+        if (!UsesSignShuffle())
+        {
+            Debug.LogWarning($"[HandController] Cannot reset sign shuffle - not using shuffle system");
+            return;
+        }
+
+        Debug.Log($"[HandController] Resetting sign shuffle for {gameObject.name}");
+
+        // Pick a new random shuffle point
+        SelectNextShufflePoint();
+
+        // Reset the counter
+        roundsSinceLastShuffle = 0;
+        shufflePendingAfterRound = false;
+
+        Debug.Log($"[HandController] Sign shuffle reset - next shuffle in {roundsUntilShuffle} rounds");
+    }
 }
 
 // Extension method to check if a parameter exists in the Animator
