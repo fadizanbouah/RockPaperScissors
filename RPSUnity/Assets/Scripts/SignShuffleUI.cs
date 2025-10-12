@@ -8,6 +8,7 @@ public class SignShuffleUI : MonoBehaviour
     [SerializeField] private GameObject counterPanel; // Parent panel with icon and text
     [SerializeField] private TextMeshProUGUI counterText;
     [SerializeField] private Image shuffleIcon; // Optional icon/asset
+    [SerializeField] private Animator shuffleAnimator;
 
     [Header("Visual Settings")]
     [SerializeField] private Color normalColor = Color.white;
@@ -83,6 +84,15 @@ public class SignShuffleUI : MonoBehaviour
         if (counterText != null)
         {
             counterText.text = roundsLeft.ToString();
+        }
+    }
+
+    public void PlayShuffleAnimation()
+    {
+        if (shuffleAnimator != null)
+        {
+            shuffleAnimator.SetTrigger("Shuffle"); // Make sure your animation has this trigger
+            Debug.Log("[SignShuffleUI] Playing shuffle animation");
         }
     }
 

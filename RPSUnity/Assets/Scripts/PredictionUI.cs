@@ -73,6 +73,13 @@ public class PredictionUI : MonoBehaviour
             return;
         }
 
+        // NEW: Play shuffle animation whenever prediction updates
+        SignShuffleUI shuffleUI = FindObjectOfType<SignShuffleUI>();
+        if (shuffleUI != null)
+        {
+            shuffleUI.PlayShuffleAnimation();
+        }
+
         // Shuffle the sequence for display
         displayedSequence = sequence.ToList();
         ShuffleList(displayedSequence);
