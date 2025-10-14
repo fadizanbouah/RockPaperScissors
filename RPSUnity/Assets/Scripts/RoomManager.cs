@@ -272,4 +272,9 @@ public class RoomManager : MonoBehaviour
             tracker.RefreshDisplay();
         }
     }
+
+    public RoomData GetCurrentRoom()
+    {
+        return currentRoom;
+    }
 }
