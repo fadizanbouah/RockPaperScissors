@@ -36,48 +36,15 @@ public class StarterPackHPEffect : PowerUpEffectBase
             return;
         }
 
-        // If we're upgrading, remove the old bonus first
+        // If we're upgrading, just apply the difference (handled in ApplyHealthBonus)
         if (hasAppliedHealthBonus && lastAppliedLevel < currentLevel)
         {
             Debug.Log($"[StarterPackHPEffect] Upgrading from level {lastAppliedLevel} to {currentLevel}");
-            RemovePreviousHealthBonus();
         }
 
         ApplyHealthBonus(currentHealthPercentage);
         hasAppliedHealthBonus = true;
         lastAppliedLevel = currentLevel;
-    }
-
-    private void RemovePreviousHealthBonus()
-    {
-        // Get player reference
-        HandController activePlayer = player;
-        if (activePlayer == null && PowerUpEffectManager.Instance != null)
-        {
-            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
-        }
-
-        if (activePlayer == null)
-        {
-            Debug.LogWarning("[StarterPackHPEffect] Cannot remove previous bonus - player is null!");
-            return;
-        }
-
-        // Get the previous level's percentage
-        float previousHealthPercentage = healthPercentage;
-        if (sourceData != null && sourceData.isUpgradeable && lastAppliedLevel >= 0)
-        {
-            previousHealthPercentage = sourceData.GetValueForLevel(lastAppliedLevel);
-        }
-
-        // Calculate and remove the previous bonus
-        int previousHealthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (previousHealthPercentage / 100f));
-
-        activePlayer.maxHealth -= previousHealthIncrease;
-        activePlayer.health = Mathf.Min(activePlayer.health, activePlayer.maxHealth); // Clamp current health
-        activePlayer.UpdateHealthBar();
-
-        Debug.Log($"[StarterPackHPEffect] Removed previous bonus: -{previousHealthIncrease} max health");
     }
 
     private void ApplyHealthBonus(float percentage)
@@ -95,17 +62,33 @@ public class StarterPackHPEffect : PowerUpEffectBase
             return;
         }
 
-        // Calculate health increase based on base max health
-        int healthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (percentage / 100f));
+        // Calculate the NEW health increase
+        int newHealthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (percentage / 100f));
 
-        // Increase max health
-        activePlayer.maxHealth += healthIncrease;
+        // Calculate the OLD health increase (if upgrading)
+        int oldHealthIncrease = 0;
+        if (hasAppliedHealthBonus && lastAppliedLevel >= 0)
+        {
+            float previousHealthPercentage = healthPercentage;
+            if (sourceData != null && sourceData.isUpgradeable)
+            {
+                previousHealthPercentage = sourceData.GetValueForLevel(lastAppliedLevel);
+            }
+            oldHealthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (previousHealthPercentage / 100f));
+        }
 
-        // Also heal the player by the same amount (so they get the benefit immediately)
-        activePlayer.health = Mathf.Min(activePlayer.health + healthIncrease, activePlayer.maxHealth);
+        // Calculate the DIFFERENCE (how much extra we're adding)
+        int healthDifference = newHealthIncrease - oldHealthIncrease;
+
+        // Increase max health by the difference
+        activePlayer.maxHealth += healthDifference;
+
+        // Heal the player ONLY by the difference
+        activePlayer.health = Mathf.Min(activePlayer.health + healthDifference, activePlayer.maxHealth);
+
         activePlayer.UpdateHealthBar();
 
-        Debug.Log($"[StarterPackHPEffect] Applied +{healthIncrease} max health ({percentage}% of {activePlayer.baseMaxHealth})");
+        Debug.Log($"[StarterPackHPEffect] Applied +{healthDifference} max health (difference from {oldHealthIncrease} to {newHealthIncrease})");
         Debug.Log($"[StarterPackHPEffect] New max health: {activePlayer.maxHealth}");
     }
 
