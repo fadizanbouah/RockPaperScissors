@@ -5,11 +5,6 @@ public class StarterPackDamageEffect : PowerUpEffectBase
     [Header("Damage Configuration")]
     [SerializeField] private float damagePercentage = 10f; // 10% damage increase
 
-    [Header("Visual Feedback")]
-    [SerializeField] private bool showNotifications = true;
-
-    private static bool hasShownNotification = false;
-
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
@@ -68,41 +63,5 @@ public class StarterPackDamageEffect : PowerUpEffectBase
         Debug.Log($"  Rock: +{rockDamageIncrease} ({percentage}% of base {activePlayer.baseRockDamage})");
         Debug.Log($"  Paper: +{paperDamageIncrease} ({percentage}% of base {activePlayer.basePaperDamage})");
         Debug.Log($"  Scissors: +{scissorsDamageIncrease} ({percentage}% of base {activePlayer.baseScissorsDamage})");
-
-        // Only show notification once per run
-        if (showNotifications && !hasShownNotification)
-        {
-            ShowNotification($"+{percentage}% All Damage!", activePlayer);
-            hasShownNotification = true;
-        }
-    }
-
-    private void ShowNotification(string message, HandController targetPlayer)
-    {
-        Debug.Log($"[StarterPackDamageEffect Notification] {message}");
-
-        if (targetPlayer != null && targetPlayer.combatTextPrefab != null)
-        {
-            GameObject textInstance = Instantiate(targetPlayer.combatTextPrefab, targetPlayer.transform.position + Vector3.up, Quaternion.identity);
-            var textComponent = textInstance.GetComponentInChildren<TMPro.TMP_Text>();
-            if (textComponent != null)
-            {
-                textComponent.text = message;
-                textComponent.color = Color.yellow;
-                textComponent.fontSize = 24;
-            }
-        }
-    }
-
-    public override void Cleanup()
-    {
-        hasShownNotification = false;
-        Debug.Log("[StarterPackDamageEffect] Cleanup - reset notification flag");
-    }
-
-    public static void ResetForNewRun()
-    {
-        hasShownNotification = false;
-        Debug.Log("[StarterPackDamageEffect] Reset for new run");
     }
 }
