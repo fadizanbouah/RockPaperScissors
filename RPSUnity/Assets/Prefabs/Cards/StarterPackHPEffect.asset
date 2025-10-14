@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: HP Starter Pack
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0c47acbb5362cac49a9659550c90ab5c, type: 3}
   favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 4147569725246101266, guid: 09153a2a495441f4988fe954f9cfeedb, type: 3}
@@ -25,7 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
-  passiveTrackerIcon: {fileID: 0}
+  passiveTrackerIcon: {fileID: 21300000, guid: e5c1cd48b6dffa144b8047d67abf5032, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels:
   - levelSuffix: I
@@ -38,4 +38,4 @@ MonoBehaviour:
     value: 30
     descriptionOverride: 
   descriptionTemplate: Incredible value for the price. Literally got you running
-    for your life. Increase HP by {0}!
+    for your life. Increase HP by {0}%!
