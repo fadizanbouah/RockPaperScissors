@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Drop The Mic
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d6534df6438cd334eb34cb40e16afee8, type: 3}
   favorCost: 2
   isPassive: 1
   effectPrefab: {fileID: 2413408387201518304, guid: db265ab721bc71247a591e836edd3623, type: 3}
@@ -25,7 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
-  passiveTrackerIcon: {fileID: 0}
+  passiveTrackerIcon: {fileID: 21300000, guid: f455cdbbe4569a94696d746b4b83a9ce, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels:
   - levelSuffix: I

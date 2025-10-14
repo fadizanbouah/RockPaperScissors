@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: StarterPackEffect_3
   m_EditorClassIdentifier: 
   powerUpName: Starter Pack III
-  description: For only 19.99 (basically 20) you get 20% extra damage and HP! Expires
-    in 7 days
+  description: For only 19.99 (basically 20) you get 20% extra damage and 15% HP!
+    Expires in 7 days
   icon: {fileID: 21300000, guid: b73c517c3e5298240a8ea64611ecc2a5, type: 3}
   favorCost: 0
   isPassive: 1
