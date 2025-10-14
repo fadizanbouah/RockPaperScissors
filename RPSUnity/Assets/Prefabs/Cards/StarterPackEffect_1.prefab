@@ -46,8 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grantDamageBonus: 1
   damagePercentage: 10
-  grantHealthBonus: 1
-  healthPercentage: 10
+  grantHealthBonus: 0
+  healthPercentage: 0
   grantRandomCard: 0
   possibleCards: []
   showNotifications: 0

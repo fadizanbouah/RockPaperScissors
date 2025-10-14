@@ -47,7 +47,7 @@ MonoBehaviour:
   grantDamageBonus: 1
   damagePercentage: 10
   grantHealthBonus: 1
-  healthPercentage: 15
+  healthPercentage: 10
   grantRandomCard: 0
   possibleCards: []
   showNotifications: 0

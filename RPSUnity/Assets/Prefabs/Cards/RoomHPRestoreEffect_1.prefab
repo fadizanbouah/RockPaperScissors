@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8139715356494535740}
   - component: {fileID: 5528527577150741175}
   m_Layer: 0
-  m_Name: RoomHPRestoreEffect
+  m_Name: RoomHPRestoreEffect_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
