@@ -1,62 +1,21 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class StarterPackEffect : PowerUpEffectBase
 {
     [Header("Starter Pack Configuration")]
-    [SerializeField] private bool grantDamageBonus = true;
-    [SerializeField] private float damagePercentage = 10f; // 10% damage increase
+    [SerializeField] private float damagePercentageIncrease = 10f;
+    [SerializeField] private float healthPercentageIncrease = 10f;
 
-    [SerializeField] private bool grantHealthBonus = true;
-    [SerializeField] private float healthPercentage = 20f; // 20% max health increase
-
-    [SerializeField] private bool grantRandomCard = true;
-    [SerializeField] private PowerUpData[] possibleCards; // Pool of cards to choose from
-
-    [Header("Visual Feedback")]
-    [SerializeField] private bool showNotifications = true;
-
-    private bool hasBeenApplied = false;
+    private PowerUpData myPowerUpData;
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
-        Debug.Log($"[StarterPackEffect] Initialized Starter Pack for {player?.name ?? "null"}");
+        myPowerUpData = data;
+        Debug.Log($"[StarterPackEffect] Initialized for {player?.name ?? "null"}");
     }
 
     public override void OnRoomStart()
-    {
-        // Only apply once per run
-        if (hasBeenApplied)
-        {
-            Debug.Log("[StarterPackEffect] Already applied this run, skipping");
-            return;
-        }
-
-        Debug.Log("[StarterPackEffect] Applying Starter Pack bonuses...");
-
-        // Apply damage bonus if configured
-        if (grantDamageBonus)
-        {
-            ApplyDamageBonus();
-        }
-
-        // Apply health bonus if configured
-        if (grantHealthBonus)
-        {
-            ApplyHealthBonus();
-        }
-
-        // Grant random card if configured
-        if (grantRandomCard && possibleCards != null && possibleCards.Length > 0)
-        {
-            GrantRandomCard();
-        }
-
-        hasBeenApplied = true;
-    }
-
-    private void ApplyDamageBonus()
     {
         if (PlayerProgressData.Instance == null)
         {
@@ -64,150 +23,45 @@ public class StarterPackEffect : PowerUpEffectBase
             return;
         }
 
-        // Get player reference
+        // Check if already applied this run
+        if (PlayerProgressData.Instance.HasAppliedOneTimeEffect(myPowerUpData.powerUpName))
+        {
+            Debug.Log($"[StarterPackEffect] {myPowerUpData.powerUpName} already applied, skipping");
+            return;
+        }
+
+        // Get player
         HandController activePlayer = player;
         if (activePlayer == null && PowerUpEffectManager.Instance != null)
         {
             activePlayer = PowerUpEffectManager.Instance.GetPlayer();
-            Debug.Log($"[StarterPackEffect] Retrieved player from PowerUpEffectManager: {activePlayer?.name ?? "NULL"}");
         }
 
         if (activePlayer == null)
         {
-            Debug.LogWarning("[StarterPackEffect] Cannot apply damage bonus - player is null!");
+            Debug.LogWarning("[StarterPackEffect] Cannot apply - player is null!");
             return;
         }
 
-        // Calculate damage increase for each sign based on their actual values
-        int rockDamageIncrease = Mathf.RoundToInt(activePlayer.rockDamage * (damagePercentage / 100f));
-        int paperDamageIncrease = Mathf.RoundToInt(activePlayer.paperDamage * (damagePercentage / 100f));
-        int scissorsDamageIncrease = Mathf.RoundToInt(activePlayer.scissorsDamage * (damagePercentage / 100f));
+        // Calculate damage bonuses based on current values
+        int rockBonus = Mathf.RoundToInt(activePlayer.rockDamage * (damagePercentageIncrease / 100f));
+        int paperBonus = Mathf.RoundToInt(activePlayer.paperDamage * (damagePercentageIncrease / 100f));
+        int scissorsBonus = Mathf.RoundToInt(activePlayer.scissorsDamage * (damagePercentageIncrease / 100f));
 
-        // Apply the increases to the appropriate bonus fields
-        PlayerProgressData.Instance.bonusRockDamage += rockDamageIncrease;
-        PlayerProgressData.Instance.bonusPaperDamage += paperDamageIncrease;
-        PlayerProgressData.Instance.bonusScissorsDamage += scissorsDamageIncrease;
+        // Apply to PlayerProgressData (just like PassiveIncreaseDamageEffect)
+        PlayerProgressData.Instance.bonusRockDamage += rockBonus;
+        PlayerProgressData.Instance.bonusPaperDamage += paperBonus;
+        PlayerProgressData.Instance.bonusScissorsDamage += scissorsBonus;
 
-        Debug.Log($"[StarterPackEffect] Applied damage bonuses ({damagePercentage}% increase):");
-        Debug.Log($"  Rock: +{rockDamageIncrease} (base was {activePlayer.rockDamage})");
-        Debug.Log($"  Paper: +{paperDamageIncrease} (base was {activePlayer.paperDamage})");
-        Debug.Log($"  Scissors: +{scissorsDamageIncrease} (base was {activePlayer.scissorsDamage})");
+        // Calculate and apply health bonus
+        int healthBonus = Mathf.RoundToInt(activePlayer.maxHealth * (healthPercentageIncrease / 100f));
+        PlayerProgressData.Instance.bonusMaxHealth += healthBonus;
 
-        if (showNotifications)
-        {
-            ShowNotification($"+{damagePercentage}% All Damage!", activePlayer);
-        }
-    }
+        Debug.Log($"[StarterPackEffect] Applied {myPowerUpData.powerUpName}:");
+        Debug.Log($"  Damage: Rock +{rockBonus}, Paper +{paperBonus}, Scissors +{scissorsBonus}");
+        Debug.Log($"  Max Health: +{healthBonus}");
 
-    private void ApplyHealthBonus()
-    {
-        // Get player reference
-        HandController activePlayer = player;
-        if (activePlayer == null && PowerUpEffectManager.Instance != null)
-        {
-            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
-            Debug.Log($"[StarterPackEffect] Retrieved player from PowerUpEffectManager for health: {activePlayer?.name ?? "NULL"}");
-        }
-
-        if (activePlayer == null)
-        {
-            Debug.LogWarning("[StarterPackEffect] Cannot apply health bonus - player is null!");
-            return;
-        }
-
-        // Calculate health increase based on percentage of CURRENT max health
-        int healthIncrease = Mathf.RoundToInt(activePlayer.maxHealth * (healthPercentage / 100f));
-
-        // Increase max health
-        activePlayer.maxHealth += healthIncrease;
-
-        // CRITICAL: Increase current health proportionally (not a heal)
-        // If player is at 50/100, and gets +10 max HP, they should be at 55/110
-        activePlayer.health += healthIncrease;
-        activePlayer.UpdateHealthBar();
-
-        Debug.Log($"[StarterPackEffect] Applied +{healthIncrease} max health ({healthPercentage}% of current max HP)");
-        Debug.Log($"[StarterPackEffect] Player health is now {activePlayer.health}/{activePlayer.maxHealth}");
-
-        if (showNotifications)
-        {
-            ShowNotification($"+{healthPercentage}% Max HP!", activePlayer);
-        }
-    }
-
-    private void GrantRandomCard()
-    {
-        if (RunProgressManager.Instance == null) return;
-
-        // Filter out cards the player already has if they're unique
-        List<PowerUpData> availableCards = new List<PowerUpData>();
-        foreach (var card in possibleCards)
-        {
-            if (card != null && (!card.isUnique || !RunProgressManager.Instance.HasPowerUp(card)))
-            {
-                availableCards.Add(card);
-            }
-        }
-
-        if (availableCards.Count == 0)
-        {
-            Debug.LogWarning("[StarterPackEffect] No available cards to grant!");
-            return;
-        }
-
-        // Pick a random card
-        PowerUpData randomCard = availableCards[Random.Range(0, availableCards.Count)];
-
-        // Add it to the player's acquired power-ups
-        RunProgressManager.Instance.AddAcquiredPowerUp(randomCard);
-
-        Debug.Log($"[StarterPackEffect] Granted random card: {randomCard.powerUpName}");
-
-        // Get player for notification
-        HandController activePlayer = player;
-        if (activePlayer == null && PowerUpEffectManager.Instance != null)
-        {
-            activePlayer = PowerUpEffectManager.Instance.GetPlayer();
-        }
-
-        if (showNotifications)
-        {
-            ShowNotification($"Received: {randomCard.powerUpName}!", activePlayer);
-        }
-
-        // Refresh the power-up card display if in gameplay
-        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
-        if (spawner != null)
-        {
-            spawner.SpawnActivePowerUps();
-        }
-    }
-
-    private void ShowNotification(string message, HandController targetPlayer = null)
-    {
-        Debug.Log($"[StarterPackEffect Notification] {message}");
-
-        // Use provided player or try to get it
-        if (targetPlayer == null)
-        {
-            targetPlayer = player;
-        }
-        if (targetPlayer == null && PowerUpEffectManager.Instance != null)
-        {
-            targetPlayer = PowerUpEffectManager.Instance.GetPlayer();
-        }
-
-        // Spawn floating text at player position
-        if (targetPlayer != null && targetPlayer.combatTextPrefab != null)
-        {
-            GameObject textInstance = Instantiate(targetPlayer.combatTextPrefab, targetPlayer.transform.position + Vector3.up, Quaternion.identity);
-            var textComponent = textInstance.GetComponentInChildren<TMPro.TMP_Text>();
-            if (textComponent != null)
-            {
-                textComponent.text = message;
-                textComponent.color = Color.yellow;
-                textComponent.fontSize = 24;
-            }
-        }
+        // Mark as applied
+        PlayerProgressData.Instance.MarkOneTimeEffectApplied(myPowerUpData.powerUpName);
     }
 }

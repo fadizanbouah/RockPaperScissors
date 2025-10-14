@@ -111,27 +111,26 @@ public class HandController : MonoBehaviour
         // Remove the sequence generation from here
     }
 
-    private void ApplyUpgrades()
+    public void ApplyUpgrades()
     {
         if (isPlayer)
         {
             Debug.Log($"=== DAMAGE CALCULATION DEBUG ===");
             Debug.Log($"[START] rockDamage: {rockDamage}, paperDamage: {paperDamage}, scissorsDamage: {scissorsDamage}");
             Debug.Log($"[START] baseMaxHealth: {baseMaxHealth}");
-
             Debug.Log($"UpgradeManager.Instance exists: {UpgradeManager.Instance != null}");
             if (UpgradeManager.Instance != null)
             {
                 Debug.Log($"UpgradeManager.GetBaseDamageBonus(): {UpgradeManager.Instance.GetBaseDamageBonus()}");
                 Debug.Log($"UpgradeManager.GetMaxHealthBonus(): {UpgradeManager.Instance.GetMaxHealthBonus()}");
             }
-
             Debug.Log($"PlayerProgressData.baseDamageLevel: {PlayerProgressData.Instance.baseDamageLevel}");
             Debug.Log($"PlayerProgressData.maxHealthLevel: {PlayerProgressData.Instance.maxHealthLevel}");
             Debug.Log($"PlayerProgressData.bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}");
             Debug.Log($"PlayerProgressData.bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}");
             Debug.Log($"PlayerProgressData.bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}");
             Debug.Log($"PlayerProgressData.bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
+            Debug.Log($"PlayerProgressData.bonusMaxHealth: {PlayerProgressData.Instance.bonusMaxHealth}");
 
             // Apply upgrades to health
             if (UpgradeManager.Instance != null)
@@ -155,6 +154,10 @@ public class HandController : MonoBehaviour
                 Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (baseDamageLevel * 2 = {damageUpgrade})");
             }
 
+            // NEW: Apply bonus max health from passive power-ups (like Starter Pack)
+            maxHealth += PlayerProgressData.Instance.bonusMaxHealth;
+            Debug.Log($"[PASSIVE BONUS] Added bonusMaxHealth: {PlayerProgressData.Instance.bonusMaxHealth}");
+
             Debug.Log($"[FINAL] rockDamage: {rockDamage}, paperDamage: {paperDamage}, scissorsDamage: {scissorsDamage}");
             Debug.Log($"[FINAL] maxHealth: {maxHealth}");
             Debug.Log($"=== END DAMAGE DEBUG ===");
@@ -164,7 +167,6 @@ public class HandController : MonoBehaviour
             maxHealth = baseMaxHealth;
             Debug.Log($"[ENEMY] maxHealth set to baseMaxHealth: {maxHealth}");
         }
-
         health = maxHealth;
     }
 

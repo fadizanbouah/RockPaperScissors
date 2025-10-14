@@ -7,15 +7,16 @@ public static class PassivePowerUpHandler
         if (RunProgressManager.Instance == null || PlayerProgressData.Instance == null) return;
 
         Debug.Log($"[PassivePowerUpHandler] ApplyAllPersistentPowerUps called");
-        Debug.Log($"[PassivePowerUpHandler] BEFORE reset - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
+        Debug.Log($"[PassivePowerUpHandler] BEFORE reset - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}, bonusMaxHealth: {PlayerProgressData.Instance.bonusMaxHealth}");
 
         // Reset passive bonuses before applying new ones
         PlayerProgressData.Instance.bonusBaseDamage = 0;
         PlayerProgressData.Instance.bonusRockDamage = 0;
         PlayerProgressData.Instance.bonusPaperDamage = 0;
         PlayerProgressData.Instance.bonusScissorsDamage = 0;
+        PlayerProgressData.Instance.bonusMaxHealth = 0;
 
-        Debug.Log($"[PassivePowerUpHandler] AFTER reset - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
+        Debug.Log($"[PassivePowerUpHandler] AFTER reset - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}, bonusMaxHealth: {PlayerProgressData.Instance.bonusMaxHealth}");
         Debug.Log($"[PassivePowerUpHandler] Processing {RunProgressManager.Instance.persistentPowerUps.Count} persistent power-ups");
 
         foreach (PowerUpData data in RunProgressManager.Instance.persistentPowerUps)
@@ -68,6 +69,6 @@ public static class PassivePowerUpHandler
             }
         }
 
-        Debug.Log($"[PassivePowerUpHandler] FINAL VALUES - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}");
+        Debug.Log($"[PassivePowerUpHandler] FINAL VALUES - bonusBaseDamage: {PlayerProgressData.Instance.bonusBaseDamage}, bonusRockDamage: {PlayerProgressData.Instance.bonusRockDamage}, bonusPaperDamage: {PlayerProgressData.Instance.bonusPaperDamage}, bonusScissorsDamage: {PlayerProgressData.Instance.bonusScissorsDamage}, bonusMaxHealth: {PlayerProgressData.Instance.bonusMaxHealth}");
     }
 }

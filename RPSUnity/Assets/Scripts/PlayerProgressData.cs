@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class PlayerProgressData
@@ -15,6 +16,11 @@ public class PlayerProgressData
     public int bonusRockDamage = 0;
     public int bonusPaperDamage = 0;
     public int bonusScissorsDamage = 0;
+    public int bonusMaxHealth = 0;  // NEW: Add this line
+
+    // Track which one-time effects have been applied this run (not serialized)
+    [System.NonSerialized]
+    private HashSet<string> appliedOneTimeEffects = new HashSet<string>();
 
     private const string SaveKey = "PlayerProgress";
 
@@ -50,6 +56,12 @@ public class PlayerProgressData
         {
             _instance = new PlayerProgressData();
         }
+
+        // Initialize the HashSet after loading (it's not serialized)
+        if (_instance.appliedOneTimeEffects == null)
+        {
+            _instance.appliedOneTimeEffects = new HashSet<string>();
+        }
     }
 
     public static void ResetProgress()
@@ -66,5 +78,35 @@ public class PlayerProgressData
         bonusRockDamage = 0;
         bonusPaperDamage = 0;
         bonusScissorsDamage = 0;
+        bonusMaxHealth = 0;  // NEW: Add this line
+
+        // Clear one-time effects for new run
+        if (appliedOneTimeEffects == null)
+            appliedOneTimeEffects = new HashSet<string>();
+        else
+            appliedOneTimeEffects.Clear();
+
+        Debug.Log("[PlayerProgressData] Reset passive bonuses and one-time effects for new run");
+    }
+
+    // Check if a one-time effect has been applied this run
+    public bool HasAppliedOneTimeEffect(string powerUpName)
+    {
+        if (appliedOneTimeEffects == null)
+            appliedOneTimeEffects = new HashSet<string>();
+
+        bool hasApplied = appliedOneTimeEffects.Contains(powerUpName);
+        Debug.Log($"[PlayerProgressData] Checking if {powerUpName} has been applied: {hasApplied}");
+        return hasApplied;
+    }
+
+    // Mark a one-time effect as applied
+    public void MarkOneTimeEffectApplied(string powerUpName)
+    {
+        if (appliedOneTimeEffects == null)
+            appliedOneTimeEffects = new HashSet<string>();
+
+        appliedOneTimeEffects.Add(powerUpName);
+        Debug.Log($"[PlayerProgressData] Marked {powerUpName} as applied this run");
     }
 }
