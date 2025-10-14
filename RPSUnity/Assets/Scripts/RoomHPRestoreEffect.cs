@@ -3,9 +3,9 @@ using UnityEngine;
 public class RoomHPRestoreEffect : PowerUpEffectBase
 {
     [Header("Configuration")]
-    [SerializeField] private float restorePercentage = 30f;
+    [SerializeField] private float restorePercentage = 30f; // Default fallback
 
-    private static string lastHealedRoomName = "";
+    private bool hasHealedThisRoom = false;
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
@@ -15,23 +15,15 @@ public class RoomHPRestoreEffect : PowerUpEffectBase
 
     public override void OnRoomStart()
     {
-        if (RoomManager.Instance == null || RoomManager.Instance.GetCurrentRoom() == null)
+        // Only heal once per room
+        if (hasHealedThisRoom)
         {
-            Debug.LogWarning("[RoomHPRestoreEffect] RoomManager or current room is null!");
-            return;
-        }
-
-        string currentRoomName = RoomManager.Instance.GetCurrentRoom().roomName;
-
-        // Only heal once per unique room
-        if (lastHealedRoomName == currentRoomName)
-        {
-            Debug.Log($"[RoomHPRestoreEffect] Already healed in room '{currentRoomName}', skipping");
+            Debug.Log("[RoomHPRestoreEffect] Already healed this room, skipping");
             return;
         }
 
         // Get the current restore percentage based on upgrade level
-        float currentRestorePercentage = restorePercentage;
+        float currentRestorePercentage = restorePercentage; // Default
 
         if (sourceData != null && sourceData.isUpgradeable && RunProgressManager.Instance != null)
         {
@@ -44,7 +36,7 @@ public class RoomHPRestoreEffect : PowerUpEffectBase
             currentRestorePercentage = sourceData.value;
         }
 
-        // Get player reference
+        // Get player reference from PowerUpEffectManager if we don't have it
         HandController activePlayer = player;
         if (activePlayer == null && PowerUpEffectManager.Instance != null)
         {
@@ -59,6 +51,8 @@ public class RoomHPRestoreEffect : PowerUpEffectBase
 
         // Calculate heal amount
         int healAmount = Mathf.RoundToInt(activePlayer.maxHealth * (currentRestorePercentage / 100f));
+
+        // Calculate actual healing (can't exceed max health)
         int previousHealth = activePlayer.CurrentHealth;
         int newHealth = Mathf.Min(activePlayer.CurrentHealth + healAmount, activePlayer.maxHealth);
         int actualHealing = newHealth - previousHealth;
@@ -67,11 +61,11 @@ public class RoomHPRestoreEffect : PowerUpEffectBase
         activePlayer.health = newHealth;
         activePlayer.UpdateHealthBar();
 
-        lastHealedRoomName = currentRoomName;
+        hasHealedThisRoom = true; // Mark as healed
 
-        Debug.Log($"[RoomHPRestoreEffect] Healed player for {actualHealing} HP (from {previousHealth} to {newHealth}) in room '{currentRoomName}' - {currentRestorePercentage}% of max HP");
+        Debug.Log($"[RoomHPRestoreEffect] Healed player for {actualHealing} HP (from {previousHealth} to {newHealth}) - {currentRestorePercentage}% of max HP");
 
-        // Show floating text
+        // Optional: Show floating text
         if (actualHealing > 0 && activePlayer.combatTextPrefab != null)
         {
             GameObject instance = Instantiate(activePlayer.combatTextPrefab, activePlayer.transform.position, Quaternion.identity);
@@ -79,8 +73,14 @@ public class RoomHPRestoreEffect : PowerUpEffectBase
             if (textComponent != null)
             {
                 textComponent.text = "+" + actualHealing.ToString();
-                textComponent.color = Color.green;
+                textComponent.color = Color.green; // Green for healing
             }
         }
+    }
+
+    public override void OnRoundEnd(string playerChoice, string enemyChoice, RoundResult result)
+    {
+        // Reset the flag at round end so it can heal again next room
+        hasHealedThisRoom = false;
     }
 }
