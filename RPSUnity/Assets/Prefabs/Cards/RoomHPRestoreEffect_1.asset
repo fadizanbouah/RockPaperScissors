@@ -16,11 +16,11 @@ MonoBehaviour:
   description: 
   icon: {fileID: 21300000, guid: d6534df6438cd334eb34cb40e16afee8, type: 3}
   favorCost: 2
-  isPassive: 0
+  isPassive: 1
   effectPrefab: {fileID: 2413408387201518304, guid: db265ab721bc71247a591e836edd3623, type: 3}
   value: 0
   isUnique: 0
-  isUpgradeable: 0
+  isUpgradeable: 1
   replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
