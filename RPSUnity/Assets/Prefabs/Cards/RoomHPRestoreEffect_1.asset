@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
+  m_Name: RoomHPRestoreEffect_1
+  m_EditorClassIdentifier: 
+  powerUpName: Drop The Mic
+  description: 
+  icon: {fileID: 0}
+  favorCost: 2
+  isPassive: 0
+  effectPrefab: {fileID: 2413408387201518304, guid: db265ab721bc71247a591e836edd3623, type: 3}
+  value: 0
+  isUnique: 0
+  isUpgradeable: 0
+  replacesPowerUp: {fileID: 0}
+  prerequisitePowerUps: []
+  blocksThesePowerUps: []
+  sellValue: 1
+  passiveTrackerIcon: {fileID: 0}
+  statusIcon: {fileID: 0}
+  upgradeLevels:
+  - levelSuffix: I
+    value: 10
+    descriptionOverride: 
+  - levelSuffix: II
+    value: 15
+    descriptionOverride: 
+  - levelSuffix: III
+    value: 20
+    descriptionOverride: 
+  descriptionTemplate: Dropping the mic is a ballsy move. Your confidence is boosted,
+    restoring {0}% HP at the end of each room
