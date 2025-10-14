@@ -15,6 +15,10 @@ public class HandController : MonoBehaviour
     public int paperDamage = 10;
     public int scissorsDamage = 10;
 
+    [HideInInspector] public int baseRockDamage;
+    [HideInInspector] public int basePaperDamage;
+    [HideInInspector] public int baseScissorsDamage;
+
     [Header("Runtime Stats")]
     public int health;
     public int maxHealth;
@@ -95,6 +99,11 @@ public class HandController : MonoBehaviour
 
     private void Awake()
     {
+        // Store base values before any modifications
+        baseRockDamage = rockDamage;
+        basePaperDamage = paperDamage;
+        baseScissorsDamage = scissorsDamage;
+
         // Initialize prediction sequence if this is an enemy
         if (!isPlayer && usesPredictionSystem)
         {

@@ -7220,11 +7220,11 @@ PrefabInstance:
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.data[8]
       value: 
-      objectReference: {fileID: 11400000, guid: a6ab2ef8ace0a154280315069d5c74a4, type: 2}
+      objectReference: {fileID: 11400000, guid: 8fdd80217aee42f439550006c1fce795, type: 2}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.data[9]
       value: 
-      objectReference: {fileID: 11400000, guid: 8fdd80217aee42f439550006c1fce795, type: 2}
+      objectReference: {fileID: 11400000, guid: a6ab2ef8ace0a154280315069d5c74a4, type: 2}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.data[10]
       value: 
