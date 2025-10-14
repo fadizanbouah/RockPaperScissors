@@ -16,6 +16,8 @@ public class StarterPackEffect : PowerUpEffectBase
     [Header("Visual Feedback")]
     [SerializeField] private bool showNotifications = true;
 
+    private bool hasBeenApplied = false;
+
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
@@ -24,8 +26,14 @@ public class StarterPackEffect : PowerUpEffectBase
 
     public override void OnRoomStart()
     {
+        // Only apply once per run
+        if (hasBeenApplied)
+        {
+            Debug.Log("[StarterPackEffect] Already applied this run, skipping");
+            return;
+        }
+
         Debug.Log("[StarterPackEffect] Applying Starter Pack bonuses...");
-        Debug.Log($"[StarterPackEffect] Player reference: {player?.name ?? "NULL"}");
 
         // Apply damage bonus if configured
         if (grantDamageBonus)
@@ -44,6 +52,8 @@ public class StarterPackEffect : PowerUpEffectBase
         {
             GrantRandomCard();
         }
+
+        hasBeenApplied = true;
     }
 
     private void ApplyDamageBonus()
@@ -54,7 +64,7 @@ public class StarterPackEffect : PowerUpEffectBase
             return;
         }
 
-        // CRITICAL FIX: Get player reference from PowerUpEffectManager if we don't have it
+        // Get player reference
         HandController activePlayer = player;
         if (activePlayer == null && PowerUpEffectManager.Instance != null)
         {
@@ -91,7 +101,7 @@ public class StarterPackEffect : PowerUpEffectBase
 
     private void ApplyHealthBonus()
     {
-        // CRITICAL FIX: Get player reference from PowerUpEffectManager if we don't have it
+        // Get player reference
         HandController activePlayer = player;
         if (activePlayer == null && PowerUpEffectManager.Instance != null)
         {
@@ -105,17 +115,19 @@ public class StarterPackEffect : PowerUpEffectBase
             return;
         }
 
-        // Calculate health increase based on percentage of base max health
-        int healthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (healthPercentage / 100f));
+        // Calculate health increase based on percentage of CURRENT max health
+        int healthIncrease = Mathf.RoundToInt(activePlayer.maxHealth * (healthPercentage / 100f));
 
         // Increase max health
         activePlayer.maxHealth += healthIncrease;
 
-        // Also heal the player by the same amount (so they get the benefit immediately)
-        activePlayer.health = Mathf.Min(activePlayer.health + healthIncrease, activePlayer.maxHealth);
+        // CRITICAL: Increase current health proportionally (not a heal)
+        // If player is at 50/100, and gets +10 max HP, they should be at 55/110
+        activePlayer.health += healthIncrease;
         activePlayer.UpdateHealthBar();
 
-        Debug.Log($"[StarterPackEffect] Applied +{healthIncrease} max health ({healthPercentage}% of {activePlayer.baseMaxHealth})");
+        Debug.Log($"[StarterPackEffect] Applied +{healthIncrease} max health ({healthPercentage}% of current max HP)");
+        Debug.Log($"[StarterPackEffect] Player health is now {activePlayer.health}/{activePlayer.maxHealth}");
 
         if (showNotifications)
         {
