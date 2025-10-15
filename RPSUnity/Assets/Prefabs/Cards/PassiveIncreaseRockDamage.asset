@@ -21,10 +21,12 @@ MonoBehaviour:
   value: 0
   isUnique: 1
   isUpgradeable: 1
+  replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
   passiveTrackerIcon: {fileID: 21300000, guid: 3d12c3f3eef543642a71f9c5d2ccd08f, type: 3}
+  statusIcon: {fileID: 0}
   upgradeLevels:
   - levelSuffix: I
     value: 2
@@ -35,4 +37,4 @@ MonoBehaviour:
   - levelSuffix: III
     value: 6
     descriptionOverride: 
-  descriptionTemplate: Increase Rock damage by {0}
+  descriptionTemplate: Increase Rock Base Damage by {0}

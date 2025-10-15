@@ -49,4 +49,13 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnHitAnimationFinished();
         }
     }
+
+    // Called by animation events at the end of the CheatDeath animation
+    public void TriggerCheatDeathAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.OnCheatDeathAnimationFinished();
+        }
+    }
 }

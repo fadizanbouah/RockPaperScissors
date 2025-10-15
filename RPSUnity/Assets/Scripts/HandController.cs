@@ -37,9 +37,6 @@ public class HandController : MonoBehaviour
     public Animator handAnimator;
     public SpriteRenderer handSpriteRenderer;
 
-    public delegate void DodgeHandler(HandController hand);
-    public event DodgeHandler OnDodge;
-
     public Sprite defaultHandSprite;
     public Sprite paperHandSprite;
     public Sprite scissorsHandSprite;
@@ -96,6 +93,15 @@ public class HandController : MonoBehaviour
 
     public delegate void HitAnimationFinishedHandler(HandController hand);
     public event HitAnimationFinishedHandler HitAnimationFinished;
+
+    public delegate void DodgeHandler(HandController hand);
+    public event DodgeHandler OnDodge;
+
+    public delegate void CheatDeathAnimationFinishedHandler(HandController hand);
+    public event CheatDeathAnimationFinishedHandler CheatDeathAnimationFinished;
+
+    public delegate bool CheatDeathCheckHandler(HandController hand);
+    public event CheatDeathCheckHandler OnCheatDeathCheck;
 
     private void Awake()
     {
@@ -316,6 +322,31 @@ public class HandController : MonoBehaviour
         }
 
         health -= damage;
+
+        // NEW: Check for Cheat Death BEFORE setting health to 0
+        if (health <= 0 && isPlayer)
+        {
+            // Check if player has Cheat Death active
+            bool cheatDeathTriggered = TryTriggerCheatDeath();
+
+            if (cheatDeathTriggered)
+            {
+                // Cheat Death saved us! Don't proceed with death
+                UpdateHealthBar();
+
+                if (handAnimator != null && handAnimator.HasParameter("Hit") && damage > 0)
+                {
+                    handAnimator.SetTrigger("Hit");
+                    handAnimator.Update(0f);
+                }
+
+                if (combatTextPrefab != null && damage > 0)
+                    SpawnFloatingDamageText(damage, isCriticalHit);
+
+                return; // Exit without dying
+            }
+        }
+
         if (health < 0) health = 0;
         UpdateHealthBar();
 
@@ -332,6 +363,20 @@ public class HandController : MonoBehaviour
         {
             StartCoroutine(HandleDeathWithDelay());
         }
+    }
+
+    //Check if Cheat Death can trigger
+    private bool TryTriggerCheatDeath()
+    {
+        // Fire a special event that Cheat Death can listen to
+        if (OnCheatDeathCheck != null)
+        {
+            // This event returns true if Cheat Death triggered successfully
+            var result = OnCheatDeathCheck.Invoke(this);
+            return result;
+        }
+
+        return false; // No Cheat Death active
     }
 
     private void SpawnFloatingDamageText(int amount, bool isCriticalHit = false)
@@ -472,6 +517,12 @@ public class HandController : MonoBehaviour
         if (isDying) return;
         Debug.Log($"{gameObject.name} hit animation finished!");
         HitAnimationFinished?.Invoke(this);
+    }
+
+    public void OnCheatDeathAnimationFinished()
+    {
+        Debug.Log($"{gameObject.name} cheat death animation finished!");
+        CheatDeathAnimationFinished?.Invoke(this);
     }
 
     // Prediction System Methods

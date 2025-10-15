@@ -21,10 +21,12 @@ MonoBehaviour:
   value: 0
   isUnique: 1
   isUpgradeable: 1
+  replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
   passiveTrackerIcon: {fileID: 21300000, guid: 13b851b0337843240a48c58f36b51330, type: 3}
+  statusIcon: {fileID: 0}
   upgradeLevels:
   - levelSuffix: I
     value: 2
@@ -35,4 +37,4 @@ MonoBehaviour:
   - levelSuffix: III
     value: 6
     descriptionOverride: 
-  descriptionTemplate: Increase Scissors damage by {0}
+  descriptionTemplate: Increase Scissors Base Damage by {0}

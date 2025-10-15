@@ -21,10 +21,12 @@ MonoBehaviour:
   value: 0
   isUnique: 1
   isUpgradeable: 1
+  replacesPowerUp: {fileID: 0}
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
   passiveTrackerIcon: {fileID: 21300000, guid: a9458a8f7a842364fb17addeb0ea268d, type: 3}
+  statusIcon: {fileID: 0}
   upgradeLevels:
   - levelSuffix: I
     value: 3
@@ -35,4 +37,4 @@ MonoBehaviour:
   - levelSuffix: III
     value: 7
     descriptionOverride: 
-  descriptionTemplate: Increase all damage by {0}
+  descriptionTemplate: Increase Base Damage by {0}
