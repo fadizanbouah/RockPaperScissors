@@ -323,42 +323,52 @@ public class HandController : MonoBehaviour
 
         health -= damage;
 
-        // NEW: Check for Cheat Death BEFORE setting health to 0
+        // NEW: Check for Cheat Death BEFORE any animations or visuals
         if (health <= 0 && isPlayer)
         {
+            Debug.Log($"[TakeDamage] Health <= 0 detected. Health before clamp: {health}");
+
             // Check if player has Cheat Death active
             bool cheatDeathTriggered = TryTriggerCheatDeath();
 
+            Debug.Log($"[TakeDamage] CheatDeath triggered: {cheatDeathTriggered}");
+
             if (cheatDeathTriggered)
             {
-                // Cheat Death saved us! Don't proceed with death
+                Debug.Log("[TakeDamage] CheatDeath saved player! Skipping Hit animation and returning early.");
+
+                // Cheat Death saved us! Update health bar but skip hit animation
                 UpdateHealthBar();
 
-                if (handAnimator != null && handAnimator.HasParameter("Hit") && damage > 0)
-                {
-                    handAnimator.SetTrigger("Hit");
-                    handAnimator.Update(0f);
-                }
-
+                // Show damage text (player still "took" damage, just survived)
                 if (combatTextPrefab != null && damage > 0)
                     SpawnFloatingDamageText(damage, isCriticalHit);
 
-                return; // Exit without dying
+                // CheatDeath animation is triggered inside TryTriggerCheatDeath via the effect
+                // So we just exit here - NO Hit animation plays
+                return;
             }
+
+            Debug.Log("[TakeDamage] CheatDeath did not trigger, continuing with normal death flow.");
         }
 
+        // Clamp health
         if (health < 0) health = 0;
         UpdateHealthBar();
 
+        // Play Hit animation only if we didn't CheatDeath
         if (handAnimator != null && handAnimator.HasParameter("Hit") && damage > 0)
         {
+            Debug.Log($"[TakeDamage] Playing Hit animation. isDying: {isDying}, damage: {damage}");
             handAnimator.SetTrigger("Hit");
             handAnimator.Update(0f); // Force immediate animator update
         }
 
+        // Show damage text
         if (combatTextPrefab != null && damage > 0)
-            SpawnFloatingDamageText(damage, isCriticalHit); // Pass crit flag
+            SpawnFloatingDamageText(damage, isCriticalHit);
 
+        // Handle death if health reached 0 (and CheatDeath didn't save us)
         if (health <= 0)
         {
             StartCoroutine(HandleDeathWithDelay());
@@ -371,12 +381,21 @@ public class HandController : MonoBehaviour
         // Fire a special event that Cheat Death can listen to
         if (OnCheatDeathCheck != null)
         {
-            // This event returns true if Cheat Death triggered successfully
-            var result = OnCheatDeathCheck.Invoke(this);
-            return result;
+            // IMPORTANT: Invoke each subscriber individually and stop on first true
+            foreach (CheatDeathCheckHandler handler in OnCheatDeathCheck.GetInvocationList())
+            {
+                bool result = handler.Invoke(this);
+                if (result)
+                {
+                    // First handler that returns true means CheatDeath triggered
+                    Debug.Log("[TryTriggerCheatDeath] CheatDeath triggered by a handler!");
+                    return true;
+                }
+            }
         }
 
-        return false; // No Cheat Death active
+        Debug.Log("[TryTriggerCheatDeath] No CheatDeath handler triggered");
+        return false; // No Cheat Death active or none triggered
     }
 
     private void SpawnFloatingDamageText(int amount, bool isCriticalHit = false)

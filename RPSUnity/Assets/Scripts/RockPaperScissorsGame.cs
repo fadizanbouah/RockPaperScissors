@@ -203,17 +203,6 @@ public class RockPaperScissorsGame : MonoBehaviour
 
             playerInstance.TakeDamage(damage, enemyHandController, isCrit);
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
-
-            // Check if CheatDeath triggered (player survived when they should have died)
-            if (healthBeforeDamage - damage <= 0 && playerInstance.CurrentHealth > 0)
-            {
-                Debug.Log("[RockPaperScissorsGame] CheatDeath detected - player survived lethal damage!");
-                // Player survived via CheatDeath - we need to wait for CheatDeath animation instead of Hit animation
-                playerHitDone = false; // Wait for CheatDeath animation
-
-                // Subscribe to CheatDeath animation finished
-                playerInstance.CheatDeathAnimationFinished += OnPlayerCheatDeathFinished;
-            }
         }
         else
         {
@@ -255,21 +244,6 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             EnterIdleState();
         }
-    }
-
-    //Add this handler method
-    private void OnPlayerCheatDeathFinished(HandController hand)
-    {
-        Debug.Log("[RockPaperScissorsGame] Player CheatDeath animation finished - continuing round");
-
-        // Unsubscribe
-        if (playerInstance != null)
-        {
-            playerInstance.CheatDeathAnimationFinished -= OnPlayerCheatDeathFinished;
-        }
-
-        // Mark hit as done so the coroutine can continue
-        playerHitDone = true;
     }
 
     private void DisableButtons()

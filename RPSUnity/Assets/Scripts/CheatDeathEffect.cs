@@ -42,6 +42,7 @@ public class CheatDeathEffect : PowerUpEffectBase
 
     private bool OnCheatDeathCheck(HandController dyingPlayer)
     {
+        // Check FIRST before logging anything
         if (hasBeenUsed)
         {
             Debug.Log("[CheatDeathEffect] Cheat Death already used - cannot trigger again");
@@ -49,9 +50,11 @@ public class CheatDeathEffect : PowerUpEffectBase
         }
 
         Debug.Log("[CheatDeathEffect] CHEAT DEATH TRIGGERED! Saving player...");
+
+        // Mark as used IMMEDIATELY to prevent double-triggering
         hasBeenUsed = true;
 
-        // Unsubscribe since it's one-time use
+        // Unsubscribe IMMEDIATELY since it's one-time use
         player.OnCheatDeathCheck -= OnCheatDeathCheck;
 
         // Calculate and restore health
