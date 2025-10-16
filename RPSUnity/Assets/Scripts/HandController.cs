@@ -542,6 +542,10 @@ public class HandController : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} cheat death animation finished!");
         CheatDeathAnimationFinished?.Invoke(this);
+
+        // IMPORTANT: Also trigger HitAnimationFinished so the game flow continues
+        // This makes CheatDeath animation work the same as Hit animation for game flow
+        HitAnimationFinished?.Invoke(this);
     }
 
     // Prediction System Methods
