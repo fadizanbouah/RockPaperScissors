@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CheatDeathEffect
   m_EditorClassIdentifier: 
   powerUpName: Cheat Death
-  description: 
-  icon: {fileID: 0}
+  description: A Black Rose that would impress Lady Death if you were to meet her
+  icon: {fileID: 21300000, guid: eef5b177560e37c42b7765f394658a7b, type: 3}
   favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 3456197379598519012, guid: 442c7b2bf6cb97d43bdf2617eb7f04ad, type: 3}
@@ -25,7 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
-  passiveTrackerIcon: {fileID: 0}
+  passiveTrackerIcon: {fileID: 21300000, guid: 06e1dc207536f34419c4f0be7dd31fa7, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []
   descriptionTemplate: 
