@@ -107,6 +107,10 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log("[RunProgressManager] Cleared prediction UI");
         }
 
+        // NEW: Reset CheatDeathEffect/StarterPackHPEffect for new run
+        CheatDeathEffect.ResetForNewRun();
+        StarterPackHPEffect.ResetForNewRun();
+
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");
     }
