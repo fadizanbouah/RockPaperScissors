@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: rockDamage
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: dodgeChance
@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: paperDamage
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: baseMaxHealth
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: scissorsDamage
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: critDamageMultiplier

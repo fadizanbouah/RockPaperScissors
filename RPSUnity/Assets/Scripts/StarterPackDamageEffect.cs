@@ -49,19 +49,20 @@ public class StarterPackDamageEffect : PowerUpEffectBase
             return;
         }
 
-        // Calculate damage increase based on BASE values (before any upgrades or bonuses)
-        int rockDamageIncrease = Mathf.RoundToInt(activePlayer.baseRockDamage * (percentage / 100f));
-        int paperDamageIncrease = Mathf.RoundToInt(activePlayer.basePaperDamage * (percentage / 100f));
-        int scissorsDamageIncrease = Mathf.RoundToInt(activePlayer.baseScissorsDamage * (percentage / 100f));
+        // CHANGED: Calculate damage increase based on CURRENT values (which include upgrades)
+        // instead of base values. This gives us the upgraded damage values.
+        int rockDamageIncrease = Mathf.RoundToInt(activePlayer.rockDamage * (percentage / 100f));
+        int paperDamageIncrease = Mathf.RoundToInt(activePlayer.paperDamage * (percentage / 100f));
+        int scissorsDamageIncrease = Mathf.RoundToInt(activePlayer.scissorsDamage * (percentage / 100f));
 
         // Apply the increases to the appropriate bonus fields
         PlayerProgressData.Instance.bonusRockDamage += rockDamageIncrease;
         PlayerProgressData.Instance.bonusPaperDamage += paperDamageIncrease;
         PlayerProgressData.Instance.bonusScissorsDamage += scissorsDamageIncrease;
 
-        Debug.Log($"[StarterPackDamageEffect] Applied damage bonuses ({percentage}% of BASE damage):");
-        Debug.Log($"  Rock: +{rockDamageIncrease} ({percentage}% of base {activePlayer.baseRockDamage})");
-        Debug.Log($"  Paper: +{paperDamageIncrease} ({percentage}% of base {activePlayer.basePaperDamage})");
-        Debug.Log($"  Scissors: +{scissorsDamageIncrease} ({percentage}% of base {activePlayer.baseScissorsDamage})");
+        Debug.Log($"[StarterPackDamageEffect] Applied damage bonuses ({percentage}% of CURRENT damage):");
+        Debug.Log($"  Rock: +{rockDamageIncrease} ({percentage}% of current {activePlayer.rockDamage})");
+        Debug.Log($"  Paper: +{paperDamageIncrease} ({percentage}% of current {activePlayer.paperDamage})");
+        Debug.Log($"  Scissors: +{scissorsDamageIncrease} ({percentage}% of current {activePlayer.scissorsDamage})");
     }
 }
