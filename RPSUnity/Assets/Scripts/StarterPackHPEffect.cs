@@ -7,6 +7,7 @@ public class StarterPackHPEffect : PowerUpEffectBase
 
     private static bool hasAppliedHealthBonus = false;
     private static int lastAppliedLevel = -1; // Track which level was last applied
+    private static int storedBaseMaxHealth = -1; // Store the maxHealth at first application
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
@@ -62,8 +63,15 @@ public class StarterPackHPEffect : PowerUpEffectBase
             return;
         }
 
-        // Calculate the NEW health increase
-        int newHealthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (percentage / 100f));
+        // NEW: Store the base maxHealth on FIRST application
+        if (storedBaseMaxHealth == -1)
+        {
+            storedBaseMaxHealth = activePlayer.maxHealth;
+            Debug.Log($"[StarterPackHPEffect] Stored base maxHealth: {storedBaseMaxHealth}");
+        }
+
+        // Calculate the NEW health increase based on STORED base maxHealth
+        int newHealthIncrease = Mathf.RoundToInt(storedBaseMaxHealth * (percentage / 100f));
 
         // Calculate the OLD health increase (if upgrading)
         int oldHealthIncrease = 0;
@@ -74,7 +82,8 @@ public class StarterPackHPEffect : PowerUpEffectBase
             {
                 previousHealthPercentage = sourceData.GetValueForLevel(lastAppliedLevel);
             }
-            oldHealthIncrease = Mathf.RoundToInt(activePlayer.baseMaxHealth * (previousHealthPercentage / 100f));
+            // Use the SAME stored base for old calculation
+            oldHealthIncrease = Mathf.RoundToInt(storedBaseMaxHealth * (previousHealthPercentage / 100f));
         }
 
         // Calculate the DIFFERENCE (how much extra we're adding)
@@ -89,6 +98,7 @@ public class StarterPackHPEffect : PowerUpEffectBase
         activePlayer.UpdateHealthBar();
 
         Debug.Log($"[StarterPackHPEffect] Applied +{healthDifference} max health (difference from {oldHealthIncrease} to {newHealthIncrease})");
+        Debug.Log($"[StarterPackHPEffect] Calculation: {storedBaseMaxHealth} * {percentage}% = {newHealthIncrease}");
         Debug.Log($"[StarterPackHPEffect] New max health: {activePlayer.maxHealth}");
     }
 
@@ -96,6 +106,7 @@ public class StarterPackHPEffect : PowerUpEffectBase
     {
         hasAppliedHealthBonus = false;
         lastAppliedLevel = -1;
+        storedBaseMaxHealth = -1; // NEW: Reset stored value
         Debug.Log("[StarterPackHPEffect] Cleanup - reset flags");
     }
 
@@ -103,6 +114,7 @@ public class StarterPackHPEffect : PowerUpEffectBase
     {
         hasAppliedHealthBonus = false;
         lastAppliedLevel = -1;
+        storedBaseMaxHealth = -1; // NEW: Reset stored value
         Debug.Log("[StarterPackHPEffect] Reset for new run");
     }
 }
