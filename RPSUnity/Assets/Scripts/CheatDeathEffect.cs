@@ -76,11 +76,30 @@ public class CheatDeathEffect : PowerUpEffectBase
 
         Debug.Log($"[CheatDeathEffect] Player saved with {restoreAmount} HP ({healthRestorePercentage}% of {player.maxHealth})");
 
-        // Remove icon from tracker since it's been used
+        // Remove icon from PlayerCombatTracker since it's been used
         PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
         if (tracker != null)
         {
             tracker.RemoveActiveEffect(this);
+        }
+
+        // NEW: Remove from PassivePowerUpTracker as well
+        if (sourceData != null && sourceData.isPassive)
+        {
+            // Remove from the persistent power-ups list
+            if (RunProgressManager.Instance != null && RunProgressManager.Instance.persistentPowerUps.Contains(sourceData))
+            {
+                RunProgressManager.Instance.persistentPowerUps.Remove(sourceData);
+                Debug.Log($"[CheatDeathEffect] Removed {sourceData.powerUpName} from persistent power-ups");
+            }
+
+            // Refresh the passive tracker UI to reflect the removal
+            PassivePowerUpTracker passiveTracker = Object.FindObjectOfType<PassivePowerUpTracker>();
+            if (passiveTracker != null)
+            {
+                passiveTracker.RefreshDisplay();
+                Debug.Log("[CheatDeathEffect] Refreshed PassivePowerUpTracker UI");
+            }
         }
 
         return true; // Tell TakeDamage that we handled it
