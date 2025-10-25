@@ -5,6 +5,10 @@ public class StarterPackDamageEffect : PowerUpEffectBase
     [Header("Damage Configuration")]
     [SerializeField] private float damagePercentage = 10f; // 10% damage increase
 
+    private static int storedBaseRockDamage = -1;
+    private static int storedBasePaperDamage = -1;
+    private static int storedBaseScissorsDamage = -1;
+
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
         base.Initialize(data, player, enemy);
@@ -15,14 +19,14 @@ public class StarterPackDamageEffect : PowerUpEffectBase
     {
         Debug.Log("[StarterPackDamageEffect] Applying damage bonus...");
 
-        // Get the appropriate percentage based on upgrade level
+        // Get the current level
         float currentDamagePercentage = damagePercentage;
 
         if (sourceData != null && sourceData.isUpgradeable && RunProgressManager.Instance != null)
         {
             int currentLevel = RunProgressManager.Instance.GetPowerUpLevel(sourceData);
             currentDamagePercentage = sourceData.GetValueForLevel(currentLevel);
-            Debug.Log($"[StarterPackDamageEffect] Using level {currentLevel} value: {currentDamagePercentage}%");
+            Debug.Log($"[StarterPackDamageEffect] Current level: {currentLevel}, percentage: {currentDamagePercentage}%");
         }
 
         ApplyDamageBonus(currentDamagePercentage);
@@ -49,20 +53,47 @@ public class StarterPackDamageEffect : PowerUpEffectBase
             return;
         }
 
-        // CHANGED: Calculate damage increase based on CURRENT values (which include upgrades)
-        // instead of base values. This gives us the upgraded damage values.
-        int rockDamageIncrease = Mathf.RoundToInt(activePlayer.rockDamage * (percentage / 100f));
-        int paperDamageIncrease = Mathf.RoundToInt(activePlayer.paperDamage * (percentage / 100f));
-        int scissorsDamageIncrease = Mathf.RoundToInt(activePlayer.scissorsDamage * (percentage / 100f));
+        // Store base damage values on FIRST application (just like HP does)
+        if (storedBaseRockDamage == -1)
+        {
+            storedBaseRockDamage = activePlayer.rockDamage;
+            storedBasePaperDamage = activePlayer.paperDamage;
+            storedBaseScissorsDamage = activePlayer.scissorsDamage;
+            Debug.Log($"[StarterPackDamageEffect] Stored base damage: Rock={storedBaseRockDamage}, Paper={storedBasePaperDamage}, Scissors={storedBaseScissorsDamage}");
+        }
 
-        // Apply the increases to the appropriate bonus fields
-        PlayerProgressData.Instance.bonusRockDamage += rockDamageIncrease;
-        PlayerProgressData.Instance.bonusPaperDamage += paperDamageIncrease;
-        PlayerProgressData.Instance.bonusScissorsDamage += scissorsDamageIncrease;
+        // CRITICAL: Since PassivePowerUpHandler resets bonuses to 0 before calling OnRoomStart,
+        // we need to add the FULL current bonus amount (not the difference)
+        // The "stored baseline" approach means we always calculate the full bonus from the stored values
+        int rockBonus = Mathf.RoundToInt(storedBaseRockDamage * (percentage / 100f));
+        int paperBonus = Mathf.RoundToInt(storedBasePaperDamage * (percentage / 100f));
+        int scissorsBonus = Mathf.RoundToInt(storedBaseScissorsDamage * (percentage / 100f));
 
-        Debug.Log($"[StarterPackDamageEffect] Applied damage bonuses ({percentage}% of CURRENT damage):");
-        Debug.Log($"  Rock: +{rockDamageIncrease} ({percentage}% of current {activePlayer.rockDamage})");
-        Debug.Log($"  Paper: +{paperDamageIncrease} ({percentage}% of current {activePlayer.paperDamage})");
-        Debug.Log($"  Scissors: +{scissorsDamageIncrease} ({percentage}% of current {activePlayer.scissorsDamage})");
+        // Apply the FULL bonus (bonuses were already reset to 0 by PassivePowerUpHandler)
+        PlayerProgressData.Instance.bonusRockDamage += rockBonus;
+        PlayerProgressData.Instance.bonusPaperDamage += paperBonus;
+        PlayerProgressData.Instance.bonusScissorsDamage += scissorsBonus;
+
+        Debug.Log($"[StarterPackDamageEffect] Applied damage bonuses ({percentage}% of stored baseline):");
+        Debug.Log($"  Rock: {storedBaseRockDamage} × {percentage}% = +{rockBonus}");
+        Debug.Log($"  Paper: {storedBasePaperDamage} × {percentage}% = +{paperBonus}");
+        Debug.Log($"  Scissors: {storedBaseScissorsDamage} × {percentage}% = +{scissorsBonus}");
+        Debug.Log($"[StarterPackDamageEffect] Total bonuses now: Rock +{PlayerProgressData.Instance.bonusRockDamage}, Paper +{PlayerProgressData.Instance.bonusPaperDamage}, Scissors +{PlayerProgressData.Instance.bonusScissorsDamage}");
+    }
+
+    public override void Cleanup()
+    {
+        storedBaseRockDamage = -1;
+        storedBasePaperDamage = -1;
+        storedBaseScissorsDamage = -1;
+        Debug.Log("[StarterPackDamageEffect] Cleanup - reset flags");
+    }
+
+    public static void ResetForNewRun()
+    {
+        storedBaseRockDamage = -1;
+        storedBasePaperDamage = -1;
+        storedBaseScissorsDamage = -1;
+        Debug.Log("[StarterPackDamageEffect] Reset for new run");
     }
 }

@@ -94,7 +94,7 @@ public class RunProgressManager : MonoBehaviour
         {
             if (gamblerUI.gameObject.scene.IsValid())
             {
-                gamblerUI.FullReset();  // Call FullReset instead of just SetActive(false)
+                gamblerUI.FullReset();
                 Debug.Log($"[RunProgressManager] Fully reset GamblerUI: {gamblerUI.name}");
             }
         }
@@ -107,9 +107,10 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log("[RunProgressManager] Cleared prediction UI");
         }
 
-        // NEW: Reset CheatDeathEffect/StarterPackHPEffect for new run
+        // NEW: Reset CheatDeathEffect/StarterPackHPEffect/StarterPackDamageEffect for new run
         CheatDeathEffect.ResetForNewRun();
         StarterPackHPEffect.ResetForNewRun();
+        StarterPackDamageEffect.ResetForNewRun(); // NEW LINE ADDED
 
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");

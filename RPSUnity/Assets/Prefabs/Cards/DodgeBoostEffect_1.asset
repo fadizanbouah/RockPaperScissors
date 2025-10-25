@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: DodgeBoostEffect_1
   m_EditorClassIdentifier: 
   powerUpName: Sop
-  description: Apply to gain 25% dodge chance the next 3 rounds of this room. Stay
+  description: Apply to gain 20% dodge chance the next 3 rounds of this room. Stay
     clean!
   icon: {fileID: 21300000, guid: 510d9ad24f932d240a8385b5e42671bd, type: 3}
   favorCost: 5
   isPassive: 0
   effectPrefab: {fileID: 53510028999730253, guid: 13c24f541f8d6b948aa2011648723e24, type: 3}
-  value: 100
+  value: 20
   isUnique: 0
   isUpgradeable: 0
   replacesPowerUp: {fileID: 0}
