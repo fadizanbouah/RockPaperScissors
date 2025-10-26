@@ -18,6 +18,7 @@ public class PassivePowerUpTracker : MonoBehaviour
     [SerializeField] private bool autoHide = true; // Hide when no passives
 
     private List<GameObject> activeIcons = new List<GameObject>();
+    private Dictionary<GameObject, TextMeshProUGUI> iconDRTexts = new Dictionary<GameObject, TextMeshProUGUI>();
 
     private void Start()
     {
@@ -45,6 +46,11 @@ public class PassivePowerUpTracker : MonoBehaviour
         }
 
         RefreshDisplay();
+    }
+
+    private void Update()
+    {
+        UpdateRockDRText();
     }
 
     public void RefreshDisplay()
@@ -96,11 +102,54 @@ public class PassivePowerUpTracker : MonoBehaviour
                 rect.sizeDelta = new Vector2(iconWidth, iconHeight);
             }
 
+            // NEW: Set up DR text for RockDRStackEffect
+            SetupDRTextForRockStack(iconGO, powerUpData);
+
             // Optional: Add tooltip or hover info
             AddTooltip(iconGO, powerUpData);
         }
 
         activeIcons.Add(iconGO);
+    }
+
+    // NEW METHOD: Setup DR text display for Rock DR Stack power-up
+    private void SetupDRTextForRockStack(GameObject iconGO, PowerUpData powerUpData)
+    {
+        // Check if this is the Rock DR Stack power-up
+        if (powerUpData.effectPrefab != null &&
+            powerUpData.effectPrefab.GetComponent<RockDRStackEffect>() != null)
+        {
+            // Find the DR text component (should be a child of the icon prefab)
+            TextMeshProUGUI drText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            if (drText != null)
+            {
+                drText.gameObject.SetActive(true);
+                drText.text = $"{RockDRStackEffect.GetCurrentDR():F0}%";
+
+                // Store reference for efficient updates
+                iconDRTexts[iconGO] = drText;
+
+                Debug.Log($"[PassivePowerUpTracker] Enabled DR text for Rock DR Stack: {RockDRStackEffect.GetCurrentDR()}%");
+            }
+            else
+            {
+                Debug.LogWarning("[PassivePowerUpTracker] RockDRStackEffect icon missing TextMeshProUGUI child for DR display!");
+            }
+        }
+    }
+
+    // NEW METHOD: Update DR text each frame
+    private void UpdateRockDRText()
+    {
+        foreach (var kvp in iconDRTexts)
+        {
+            if (kvp.Key != null && kvp.Value != null)
+            {
+                float currentDR = RockDRStackEffect.GetCurrentDR();
+                kvp.Value.text = $"{currentDR:F0}%";
+            }
+        }
     }
 
     private Sprite GetIconForPowerUp(PowerUpData data)
@@ -145,6 +194,7 @@ public class PassivePowerUpTracker : MonoBehaviour
                 Destroy(icon);
         }
         activeIcons.Clear();
+        iconDRTexts.Clear(); // NEW: Clear the DR text dictionary
     }
 
     // Call this when entering a new room
