@@ -110,7 +110,8 @@ public class RunProgressManager : MonoBehaviour
         // NEW: Reset CheatDeathEffect/StarterPackHPEffect/StarterPackDamageEffect for new run
         CheatDeathEffect.ResetForNewRun();
         StarterPackHPEffect.ResetForNewRun();
-        StarterPackDamageEffect.ResetForNewRun(); // NEW LINE ADDED
+        StarterPackDamageEffect.ResetForNewRun();
+        RockDRStackEffect.ResetForNewRun();
 
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");

@@ -39,14 +39,17 @@ public static class PassivePowerUpHandler
                 effect.OnRoomStart(); // Apply effect immediately (e.g., stat boost)
                 Debug.Log($"[PassivePowerUpHandler] OnRoomStart completed for {data.powerUpName}");
 
-                // SPECIAL CASE: Only register The Gambler with PowerUpEffectManager since it needs callbacks
-                // Regular passive effects (like +5 damage) should NOT be registered
-                if (data.powerUpName == "The Gambler" || effect is GamblerEffect || effect is IGamblerEffect)
+                // SPECIAL CASE: Register effects that need ongoing callbacks with PowerUpEffectManager
+                // These effects need OnRoundEnd, ModifyIncomingDamage, etc.
+                if (data.powerUpName == "The Gambler" ||
+                    effect is GamblerEffect ||
+                    effect is IGamblerEffect ||
+                    effect is RockDRStackEffect) // NEW: Add RockDRStackEffect
                 {
                     if (PowerUpEffectManager.Instance != null)
                     {
                         PowerUpEffectManager.Instance.RegisterEffect(effect);
-                        Debug.Log($"[PassivePowerUpHandler] Registered {data.powerUpName} with PowerUpEffectManager (special case)");
+                        Debug.Log($"[PassivePowerUpHandler] Registered {data.powerUpName} with PowerUpEffectManager (needs callbacks)");
                     }
                     else
                     {
