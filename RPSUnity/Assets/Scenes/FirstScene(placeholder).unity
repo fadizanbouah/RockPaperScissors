@@ -7207,7 +7207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: passivePowerUps.Array.size
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: availablePowerUps.Array.size
@@ -7229,6 +7229,10 @@ PrefabInstance:
       propertyPath: passivePowerUps.Array.data[10]
       value: 
       objectReference: {fileID: 11400000, guid: d1a71f5279fd97940839653f73416e70, type: 2}
+    - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
+      propertyPath: passivePowerUps.Array.data[11]
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ee06b2ed99dbb0448fcaef4e37d1061, type: 2}
     - target: {fileID: 7030260988202487010, guid: 1e2b63a7bdd56fb40a6f73055ab20c3b, type: 3}
       propertyPath: availablePowerUps.Array.data[0]
       value: 
