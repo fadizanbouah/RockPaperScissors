@@ -50,7 +50,7 @@ public class PassivePowerUpTracker : MonoBehaviour
 
     private void Update()
     {
-        UpdateRockDRText();
+        UpdateStackEffectTexts(); // Renamed from UpdateRockDRText
     }
 
     public void RefreshDisplay()
@@ -112,42 +112,77 @@ public class PassivePowerUpTracker : MonoBehaviour
         activeIcons.Add(iconGO);
     }
 
-    // NEW METHOD: Setup DR text display for Rock DR Stack power-up
+    // Handles RockDRStackEffect and PaperDodgeStackEffect:
     private void SetupDRTextForRockStack(GameObject iconGO, PowerUpData powerUpData)
     {
+        TextMeshProUGUI statText = null;
+        string displayText = "";
+
         // Check if this is the Rock DR Stack power-up
         if (powerUpData.effectPrefab != null &&
             powerUpData.effectPrefab.GetComponent<RockDRStackEffect>() != null)
         {
-            // Find the DR text component (should be a child of the icon prefab)
-            TextMeshProUGUI drText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
-
-            if (drText != null)
+            statText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (statText != null)
             {
-                drText.gameObject.SetActive(true);
-                drText.text = $"{RockDRStackEffect.GetCurrentDR():F0}%";
-
-                // Store reference for efficient updates
-                iconDRTexts[iconGO] = drText;
-
-                Debug.Log($"[PassivePowerUpTracker] Enabled DR text for Rock DR Stack: {RockDRStackEffect.GetCurrentDR()}%");
+                statText.gameObject.SetActive(true);
+                displayText = $"{RockDRStackEffect.GetCurrentDR():F0}%";
+                statText.text = displayText;
+                iconDRTexts[iconGO] = statText;
+                Debug.Log($"[PassivePowerUpTracker] Enabled DR text for Rock DR Stack: {displayText}");
             }
-            else
+        }
+        // Check if this is the Paper Dodge Stack power-up
+        else if (powerUpData.effectPrefab != null &&
+                 powerUpData.effectPrefab.GetComponent<PaperDodgeStackEffect>() != null)
+        {
+            statText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (statText != null)
             {
-                Debug.LogWarning("[PassivePowerUpTracker] RockDRStackEffect icon missing TextMeshProUGUI child for DR display!");
+                statText.gameObject.SetActive(true);
+                displayText = $"{PaperDodgeStackEffect.GetCurrentDodge():F0}%";
+                statText.text = displayText;
+                iconDRTexts[iconGO] = statText;
+                Debug.Log($"[PassivePowerUpTracker] Enabled Dodge text for Paper Dodge Stack: {displayText}");
             }
+        }
+
+        if (statText == null && (powerUpData.effectPrefab?.GetComponent<RockDRStackEffect>() != null ||
+                                  powerUpData.effectPrefab?.GetComponent<PaperDodgeStackEffect>() != null))
+        {
+            Debug.LogWarning("[PassivePowerUpTracker] Stack effect icon missing TextMeshProUGUI child for stat display!");
         }
     }
 
-    // NEW METHOD: Update DR text each frame
-    private void UpdateRockDRText()
+    // Update UpdateRockDRText method (rename to UpdateStackEffectTexts):
+    private void UpdateStackEffectTexts()
     {
         foreach (var kvp in iconDRTexts)
         {
             if (kvp.Key != null && kvp.Value != null)
             {
+                // Determine which stat to show based on the icon's power-up
+                // For simplicity, check both and update whichever is relevant
+
+                // Check for Rock DR
                 float currentDR = RockDRStackEffect.GetCurrentDR();
-                kvp.Value.text = $"{currentDR:F0}%";
+                float currentDodge = PaperDodgeStackEffect.GetCurrentDodge();
+
+                // Simple approach: if dodge > 0, show dodge, else show DR
+                // You might want a more sophisticated way to track which icon is which
+                if (currentDodge > 0)
+                {
+                    kvp.Value.text = $"{currentDodge:F0}%";
+                }
+                else if (currentDR > 0)
+                {
+                    kvp.Value.text = $"{currentDR:F0}%";
+                }
+                else
+                {
+                    // Show 0% for whichever one exists
+                    kvp.Value.text = "0%";
+                }
             }
         }
     }

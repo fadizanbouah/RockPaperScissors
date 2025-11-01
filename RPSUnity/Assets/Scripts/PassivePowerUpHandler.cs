@@ -44,7 +44,8 @@ public static class PassivePowerUpHandler
                 if (data.powerUpName == "The Gambler" ||
                     effect is GamblerEffect ||
                     effect is IGamblerEffect ||
-                    effect is RockDRStackEffect) // NEW: Add RockDRStackEffect
+                    effect is RockDRStackEffect ||
+                    effect is PaperDodgeStackEffect) // FIXED: Added closing parenthesis and removed extra parentheses
                 {
                     if (PowerUpEffectManager.Instance != null)
                     {
