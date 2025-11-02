@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
   m_Name: ScissorsCritChanceStackEffect
   m_EditorClassIdentifier: 
-  powerUpName: Crit Stack
-  description: blabla
-  icon: {fileID: 0}
+  powerUpName: Sharpen The Blade
+  description: Each time you draw with Scissors, gain 1% Critical Chance, up to 10%.
+    No flavour text on this one lads.
+  icon: {fileID: 21300000, guid: 345b0edf76d84dc4cb4dfa406e858e40, type: 3}
   favorCost: 0
   isPassive: 1
   effectPrefab: {fileID: 3018486306489697309, guid: a941115bd01103348aefb1ba6c9d2135, type: 3}
@@ -25,7 +26,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
-  passiveTrackerIcon: {fileID: 21300000, guid: 9eb9af65c945f5142af28568fe6e9f36, type: 3}
+  passiveTrackerIcon: {fileID: 21300000, guid: c55e3d3a46e48c54992da66744bfe6cb, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []
   descriptionTemplate: 
