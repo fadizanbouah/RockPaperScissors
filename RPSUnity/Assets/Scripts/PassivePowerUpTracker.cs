@@ -18,7 +18,10 @@ public class PassivePowerUpTracker : MonoBehaviour
     [SerializeField] private bool autoHide = true; // Hide when no passives
 
     private List<GameObject> activeIcons = new List<GameObject>();
-    private Dictionary<GameObject, TextMeshProUGUI> iconDRTexts = new Dictionary<GameObject, TextMeshProUGUI>();
+
+    // NEW: Store which type of stack effect each icon represents
+    private Dictionary<GameObject, System.Type> iconEffectTypes = new Dictionary<GameObject, System.Type>();
+    private Dictionary<GameObject, TextMeshProUGUI> iconStackTexts = new Dictionary<GameObject, TextMeshProUGUI>();
 
     private void Start()
     {
@@ -50,7 +53,7 @@ public class PassivePowerUpTracker : MonoBehaviour
 
     private void Update()
     {
-        UpdateStackEffectTexts(); // Renamed from UpdateRockDRText
+        UpdateStackEffectTexts();
     }
 
     public void RefreshDisplay()
@@ -102,8 +105,8 @@ public class PassivePowerUpTracker : MonoBehaviour
                 rect.sizeDelta = new Vector2(iconWidth, iconHeight);
             }
 
-            // NEW: Set up DR text for RockDRStackEffect
-            SetupDRTextForRockStack(iconGO, powerUpData);
+            // NEW: Set up stack effect text if applicable
+            SetupStackEffectText(iconGO, powerUpData);
 
             // Optional: Add tooltip or hover info
             AddTooltip(iconGO, powerUpData);
@@ -112,77 +115,91 @@ public class PassivePowerUpTracker : MonoBehaviour
         activeIcons.Add(iconGO);
     }
 
-    // Handles RockDRStackEffect and PaperDodgeStackEffect:
-    private void SetupDRTextForRockStack(GameObject iconGO, PowerUpData powerUpData)
+    // NEW: Setup text display for stack effects (Rock DR, Paper Dodge, Scissors Crit)
+    private void SetupStackEffectText(GameObject iconGO, PowerUpData powerUpData)
     {
+        if (powerUpData.effectPrefab == null) return;
+
         TextMeshProUGUI statText = null;
-        string displayText = "";
+        System.Type effectType = null;
 
-        // Check if this is the Rock DR Stack power-up
-        if (powerUpData.effectPrefab != null &&
-            powerUpData.effectPrefab.GetComponent<RockDRStackEffect>() != null)
+        // Check if this is a Rock DR Stack power-up
+        if (powerUpData.effectPrefab.GetComponent<RockDRStackEffect>() != null)
         {
+            effectType = typeof(RockDRStackEffect);
             statText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
             if (statText != null)
             {
                 statText.gameObject.SetActive(true);
-                displayText = $"{RockDRStackEffect.GetCurrentDR():F0}%";
-                statText.text = displayText;
-                iconDRTexts[iconGO] = statText;
-                Debug.Log($"[PassivePowerUpTracker] Enabled DR text for Rock DR Stack: {displayText}");
+                statText.text = $"{RockDRStackEffect.GetCurrentDR():F0}%";
+                Debug.Log($"[PassivePowerUpTracker] Enabled DR text for Rock DR Stack");
             }
         }
-        // Check if this is the Paper Dodge Stack power-up
-        else if (powerUpData.effectPrefab != null &&
-                 powerUpData.effectPrefab.GetComponent<PaperDodgeStackEffect>() != null)
+        // Check if this is a Paper Dodge Stack power-up
+        else if (powerUpData.effectPrefab.GetComponent<PaperDodgeStackEffect>() != null)
         {
+            effectType = typeof(PaperDodgeStackEffect);
             statText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
             if (statText != null)
             {
                 statText.gameObject.SetActive(true);
-                displayText = $"{PaperDodgeStackEffect.GetCurrentDodge():F0}%";
-                statText.text = displayText;
-                iconDRTexts[iconGO] = statText;
-                Debug.Log($"[PassivePowerUpTracker] Enabled Dodge text for Paper Dodge Stack: {displayText}");
+                statText.text = $"{PaperDodgeStackEffect.GetCurrentDodge():F0}%";
+                Debug.Log($"[PassivePowerUpTracker] Enabled Dodge text for Paper Dodge Stack");
+            }
+        }
+        // Check if this is a Scissors Crit Stack power-up
+        else if (powerUpData.effectPrefab.GetComponent<ScissorsCritChanceStackEffect>() != null)
+        {
+            effectType = typeof(ScissorsCritChanceStackEffect);
+            statText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (statText != null)
+            {
+                statText.gameObject.SetActive(true);
+                statText.text = $"{ScissorsCritChanceStackEffect.GetCurrentCrit():F0}%";
+                Debug.Log($"[PassivePowerUpTracker] Enabled Crit text for Scissors Crit Stack");
             }
         }
 
-        if (statText == null && (powerUpData.effectPrefab?.GetComponent<RockDRStackEffect>() != null ||
-                                  powerUpData.effectPrefab?.GetComponent<PaperDodgeStackEffect>() != null))
+        // Store the references if we found a stack effect
+        if (statText != null && effectType != null)
+        {
+            iconStackTexts[iconGO] = statText;
+            iconEffectTypes[iconGO] = effectType;
+        }
+        else if (effectType != null)
         {
             Debug.LogWarning("[PassivePowerUpTracker] Stack effect icon missing TextMeshProUGUI child for stat display!");
         }
     }
 
-    // Update UpdateRockDRText method (rename to UpdateStackEffectTexts):
+    // NEW: Update stack effect texts based on their type
     private void UpdateStackEffectTexts()
     {
-        foreach (var kvp in iconDRTexts)
+        foreach (var kvp in iconStackTexts)
         {
-            if (kvp.Key != null && kvp.Value != null)
+            GameObject iconGO = kvp.Key;
+            TextMeshProUGUI textComponent = kvp.Value;
+
+            if (iconGO == null || textComponent == null) continue;
+
+            // Get the effect type for this icon
+            if (!iconEffectTypes.TryGetValue(iconGO, out System.Type effectType)) continue;
+
+            // Update based on the specific effect type
+            if (effectType == typeof(RockDRStackEffect))
             {
-                // Determine which stat to show based on the icon's power-up
-                // For simplicity, check both and update whichever is relevant
-
-                // Check for Rock DR
                 float currentDR = RockDRStackEffect.GetCurrentDR();
+                textComponent.text = $"{currentDR:F0}%";
+            }
+            else if (effectType == typeof(PaperDodgeStackEffect))
+            {
                 float currentDodge = PaperDodgeStackEffect.GetCurrentDodge();
-
-                // Simple approach: if dodge > 0, show dodge, else show DR
-                // You might want a more sophisticated way to track which icon is which
-                if (currentDodge > 0)
-                {
-                    kvp.Value.text = $"{currentDodge:F0}%";
-                }
-                else if (currentDR > 0)
-                {
-                    kvp.Value.text = $"{currentDR:F0}%";
-                }
-                else
-                {
-                    // Show 0% for whichever one exists
-                    kvp.Value.text = "0%";
-                }
+                textComponent.text = $"{currentDodge:F0}%";
+            }
+            else if (effectType == typeof(ScissorsCritChanceStackEffect))
+            {
+                float currentCrit = ScissorsCritChanceStackEffect.GetCurrentCrit();
+                textComponent.text = $"{currentCrit:F0}%";
             }
         }
     }
@@ -229,7 +246,8 @@ public class PassivePowerUpTracker : MonoBehaviour
                 Destroy(icon);
         }
         activeIcons.Clear();
-        iconDRTexts.Clear(); // NEW: Clear the DR text dictionary
+        iconStackTexts.Clear(); // Clear the text dictionary
+        iconEffectTypes.Clear(); // Clear the type dictionary
     }
 
     // Call this when entering a new room

@@ -45,7 +45,8 @@ public static class PassivePowerUpHandler
                     effect is GamblerEffect ||
                     effect is IGamblerEffect ||
                     effect is RockDRStackEffect ||
-                    effect is PaperDodgeStackEffect) // FIXED: Added closing parenthesis and removed extra parentheses
+                    effect is PaperDodgeStackEffect ||
+                    effect is ScissorsCritChanceStackEffect)
                 {
                     if (PowerUpEffectManager.Instance != null)
                     {

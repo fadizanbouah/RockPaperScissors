@@ -113,6 +113,7 @@ public class RunProgressManager : MonoBehaviour
         StarterPackDamageEffect.ResetForNewRun();
         RockDRStackEffect.ResetForNewRun();
         PaperDodgeStackEffect.ResetForNewRun();
+        ScissorsCritChanceStackEffect.ResetForNewRun();
 
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");

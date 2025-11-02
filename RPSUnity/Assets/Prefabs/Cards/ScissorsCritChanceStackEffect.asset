@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1901deb620fa0514db15442a6dd33ca2, type: 3}
-  m_Name: PaperDodgeStackEffect
+  m_Name: ScissorsCritChanceStackEffect
   m_EditorClassIdentifier: 
-  powerUpName: Paper Affinity
-  description: Each time you draw with Paper, gain 1% Dodge Chance, up to 5%. Might
-    help with tax evasion.
-  icon: {fileID: 21300000, guid: 5c5115805b3ec0247ab541a9a99bd11e, type: 3}
+  powerUpName: Crit Stack
+  description: blabla
+  icon: {fileID: 0}
   favorCost: 0
   isPassive: 1
-  effectPrefab: {fileID: 6665523655247630889, guid: ba64dcf1844a82e42b8fae38f6b89138, type: 3}
+  effectPrefab: {fileID: 3018486306489697309, guid: a941115bd01103348aefb1ba6c9d2135, type: 3}
   value: 0
   isUnique: 1
   isUpgradeable: 0
@@ -26,7 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
-  passiveTrackerIcon: {fileID: 21300000, guid: 9c9312c46a57dd54b902b100bdbc852c, type: 3}
+  passiveTrackerIcon: {fileID: 21300000, guid: 9eb9af65c945f5142af28568fe6e9f36, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []
   descriptionTemplate: 
