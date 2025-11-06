@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5081159128653923750}
+  - component: {fileID: 7514275345206621759}
+  - component: {fileID: 3743721224730466802}
   m_Layer: 0
   m_Name: EnemyHandContainer
   m_TagString: Untagged
@@ -32,6 +34,39 @@ Transform:
   - {fileID: 5033482333895500587}
   m_Father: {fileID: 7679948664225929950}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 11.666672}
+--- !u!114 &7514275345206621759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2863953019351338761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d52b6bff14632f94f803ce5c868b9c04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &3743721224730466802
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2863953019351338761}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 93e907dfe6a404143808011463b18298, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4555752092877891789
 GameObject:
   m_ObjectHideFlags: 0
@@ -42,8 +77,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5033482333895500587}
   - component: {fileID: 7813983361860719102}
-  - component: {fileID: 2991300258156510983}
-  - component: {fileID: 5426930156772836632}
   m_Layer: 0
   m_Name: EnemyHand
   m_TagString: Untagged
@@ -118,39 +151,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &2991300258156510983
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4555752092877891789}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 93e907dfe6a404143808011463b18298, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5426930156772836632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4555752092877891789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d52b6bff14632f94f803ce5c868b9c04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5695551020761293874
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,13 +531,16 @@ MonoBehaviour:
   rockDamage: 7
   paperDamage: 9
   scissorsDamage: 9
+  baseRockDamage: 0
+  basePaperDamage: 0
+  baseScissorsDamage: 0
   health: 20
   maxHealth: 20
   dodgeChance: 0
   canDodge: 1
   critChance: 10
   critDamageMultiplier: 2
-  handAnimator: {fileID: 2991300258156510983}
+  handAnimator: {fileID: 3743721224730466802}
   handSpriteRenderer: {fileID: 7813983361860719102}
   defaultHandSprite: {fileID: 21300000, guid: 76d62449ea51e6e47b5b74d744bfcd0d, type: 3}
   paperHandSprite: {fileID: 21300000, guid: 8633d282acffbf34f8d736757869c4c1, type: 3}
