@@ -227,44 +227,38 @@ public class HandController : MonoBehaviour
                 baseFinalDamage += signSpecificBonus;
             }
 
-            // Add flat damage bonuses from active power-ups (player only)
+            // Add flat damage bonuses from active power-ups
             int flatPowerUpBonus = 0;
             var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
             if (effects != null)
             {
                 foreach (var effect in effects)
                 {
-                    int bonus = effect.GetFlatDamageBonus(signUsed);
-                    if (bonus > 0)
+                    // Only apply if this effect belongs to THIS hand controller
+                    if (IsEffectOwnedByThis(effect))
                     {
-                        flatPowerUpBonus += bonus;
+                        int bonus = effect.GetFlatDamageBonus(signUsed);
+                        if (bonus > 0)
+                        {
+                            flatPowerUpBonus += bonus;
+                        }
                     }
                 }
             }
             baseFinalDamage += flatPowerUpBonus;
         }
 
-        // MOVED OUTSIDE THE isPlayer CHECK - Apply multipliers for EVERYONE
+        // Apply multipliers for everyone (player or enemy)
         float multiplier = 1f;
         var allEffects = PowerUpEffectManager.Instance?.GetActiveEffects();
         if (allEffects != null)
         {
             foreach (var effect in allEffects)
             {
-                // Only apply effects that belong to THIS hand controller
-                PowerUpEffectBase effectBase = effect as PowerUpEffectBase;
-                if (effectBase != null)
+                // Only apply effects owned by THIS hand controller
+                if (IsEffectOwnedByThis(effect))
                 {
-                    // Check if this effect's "player" is this hand controller
-                    System.Reflection.FieldInfo playerField = typeof(PowerUpEffectBase).GetField("player",
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-                    HandController effectOwner = playerField?.GetValue(effectBase) as HandController;
-
-                    if (effectOwner == this)
-                    {
-                        effect.ModifyDamageMultiplier(ref multiplier, signUsed);
-                    }
+                    effect.ModifyDamageMultiplier(ref multiplier, signUsed);
                 }
             }
         }
@@ -272,7 +266,7 @@ public class HandController : MonoBehaviour
         // Calculate modified damage from base * multiplier
         finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
 
-        // Apply temporary bonus
+        // Apply temporary bonus (player only)
         if (isPlayer)
         {
             finalDamage += temporaryBonusDamage;
@@ -291,6 +285,23 @@ public class HandController : MonoBehaviour
         return finalDamage;
     }
 
+    private bool IsEffectOwnedByThis(PowerUpEffectBase effect)
+    {
+        if (effect == null) return false;
+
+        // Use reflection to get the protected "player" field
+        var playerField = typeof(PowerUpEffectBase).GetField("player",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+        if (playerField != null)
+        {
+            HandController effectOwner = playerField.GetValue(effect) as HandController;
+            return effectOwner == this;
+        }
+
+        return false;
+    }
+
     public void TakeDamage(int damage, HandController source = null, bool isCriticalHit = false)
     {
         if (isDying) return;
@@ -301,33 +312,34 @@ public class HandController : MonoBehaviour
             float roll = Random.Range(0f, 100f);
             if (roll < dodgeChance)
             {
-                // Dodged! No damage taken
                 Debug.Log($"{gameObject.name} dodged the attack! (Roll: {roll:F1} < Dodge: {dodgeChance:F1}%)");
-                // Trigger dodge visuals/feedback
                 OnDodge?.Invoke(this);
-                TriggerDodgeAnimation(); // Play dodge animation
-                return; // Exit without taking damage
+                TriggerDodgeAnimation();
+                return;
             }
         }
 
-        // If this is the player taking damage, check for damage reduction effects
-        if (isPlayer && PowerUpEffectManager.Instance != null)
+        // MODIFIED: Check for damage reduction effects that belong to THIS hand controller
+        if (PowerUpEffectManager.Instance != null)
         {
             var effects = PowerUpEffectManager.Instance.GetActiveEffects();
             foreach (var effect in effects)
             {
-                effect.ModifyIncomingDamage(ref damage, source);
+                // Only apply damage reduction if this effect belongs to THIS hand controller
+                if (IsEffectOwnedByThis(effect))
+                {
+                    effect.ModifyIncomingDamage(ref damage, source);
+                }
             }
         }
 
         health -= damage;
 
-        // NEW: Check for Cheat Death BEFORE any animations or visuals
+        // Check for Cheat Death (player only)
         if (health <= 0 && isPlayer)
         {
             Debug.Log($"[TakeDamage] Health <= 0 detected. Health before clamp: {health}");
 
-            // Check if player has Cheat Death active
             bool cheatDeathTriggered = TryTriggerCheatDeath();
 
             Debug.Log($"[TakeDamage] CheatDeath triggered: {cheatDeathTriggered}");
@@ -335,16 +347,11 @@ public class HandController : MonoBehaviour
             if (cheatDeathTriggered)
             {
                 Debug.Log("[TakeDamage] CheatDeath saved player! Skipping Hit animation and returning early.");
-
-                // Cheat Death saved us! Update health bar but skip hit animation
                 UpdateHealthBar();
 
-                // Show damage text (player still "took" damage, just survived)
                 if (combatTextPrefab != null && damage > 0)
                     SpawnFloatingDamageText(damage, isCriticalHit);
 
-                // CheatDeath animation is triggered inside TryTriggerCheatDeath via the effect
-                // So we just exit here - NO Hit animation plays
                 return;
             }
 
@@ -355,19 +362,19 @@ public class HandController : MonoBehaviour
         if (health < 0) health = 0;
         UpdateHealthBar();
 
-        // Play Hit animation only if we didn't CheatDeath
+        // Play Hit animation
         if (handAnimator != null && handAnimator.HasParameter("Hit") && damage > 0)
         {
             Debug.Log($"[TakeDamage] Playing Hit animation. isDying: {isDying}, damage: {damage}");
             handAnimator.SetTrigger("Hit");
-            handAnimator.Update(0f); // Force immediate animator update
+            handAnimator.Update(0f);
         }
 
         // Show damage text
         if (combatTextPrefab != null && damage > 0)
             SpawnFloatingDamageText(damage, isCriticalHit);
 
-        // Handle death if health reached 0 (and CheatDeath didn't save us)
+        // Handle death
         if (health <= 0)
         {
             StartCoroutine(HandleDeathWithDelay());

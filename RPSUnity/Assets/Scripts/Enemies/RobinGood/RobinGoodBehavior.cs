@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
 {
-    private float stealChance = 30f; // Default 30%
+    private float stealChance = 30f;
     private HandController enemyHand;
+    private List<PowerUpEffectBase> stolenEffects = new List<PowerUpEffectBase>(); // Track stolen effects
 
     public void Initialize(HandController enemy, float[] configValues)
     {
@@ -18,28 +19,44 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         Debug.Log($"[RobinGoodBehavior] Initialized with {stealChance}% steal chance");
+
+        // Subscribe to enemy death to clean up stolen effects
+        if (enemyHand != null)
+        {
+            enemyHand.OnDeath += OnEnemyDeath;
+        }
+    }
+
+    private void OnEnemyDeath(HandController hand)
+    {
+        Debug.Log($"[RobinGoodBehavior] Enemy died - cleaning up {stolenEffects.Count} stolen effects");
+
+        // Remove all stolen effects from PowerUpEffectManager
+        foreach (var effect in stolenEffects)
+        {
+            if (effect != null && PowerUpEffectManager.Instance != null)
+            {
+                PowerUpEffectManager.Instance.RemoveEffect(effect);
+                Debug.Log($"[RobinGoodBehavior] Removed stolen effect: {effect.GetType().Name}");
+            }
+        }
+
+        stolenEffects.Clear();
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
-        // Roll the dice
         float roll = Random.Range(0f, 100f);
-
         Debug.Log($"[RobinGoodBehavior] Rolled {roll:F1} (need < {stealChance} to steal)");
 
         if (roll < stealChance)
         {
-            // Get all active power-ups from player's hand
             List<PowerUpData> activePowerUps = GetPlayerActivePowerUps(player);
 
             if (activePowerUps.Count > 0)
             {
-                // Pick a random active power-up
                 PowerUpData stolenPowerUp = activePowerUps[Random.Range(0, activePowerUps.Count)];
-
                 Debug.Log($"[RobinGoodBehavior] Robin Good stole: {stolenPowerUp.powerUpName}!");
-
-                // Apply the stolen power-up to the enemy
                 yield return ApplyStolenPowerUp(stolenPowerUp, player);
             }
             else
@@ -77,37 +94,29 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Instantiate the effect
         GameObject effectObj = Instantiate(powerUpData.effectPrefab);
         PowerUpEffectBase effect = effectObj.GetComponent<PowerUpEffectBase>();
 
         if (effect != null)
         {
-            // IMPORTANT: Initialize with SWAPPED player/enemy references
-            // This makes the effect benefit the enemy instead of the player
             effect.Initialize(powerUpData, enemyHand, player);
-
-            // Apply the effect immediately
             effect.OnRoomStart();
 
-            // Register with PowerUpEffectManager if needed
             if (PowerUpEffectManager.Instance != null)
             {
                 PowerUpEffectManager.Instance.RegisterEffect(effect);
+                stolenEffects.Add(effect); // Track this stolen effect
                 Debug.Log($"[RobinGoodBehavior] Registered stolen effect with manager");
             }
 
-            // Remove the card from player's inventory
             if (RunProgressManager.Instance != null)
             {
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(powerUpData);
                 Debug.Log($"[RobinGoodBehavior] Removed {powerUpData.powerUpName} from player inventory");
             }
 
-            // Remove the card visually from gameplay
             RemoveCardFromGameplay(powerUpData);
-
-            yield return new WaitForSeconds(0.5f); // Brief pause to show the steal
+            yield return new WaitForSeconds(0.5f);
         }
         else
         {
@@ -121,17 +130,13 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
         if (spawner != null)
         {
-            // Access the serialized cardContainer directly using reflection or a public getter
-            // Since cardContainer is private, we need to get all PowerUpCardDisplay in the scene
             PowerUpCardDisplay[] allCards = FindObjectsOfType<PowerUpCardDisplay>();
-
             List<GameObject> cardsToDestroy = new List<GameObject>();
 
             foreach (PowerUpCardDisplay display in allCards)
             {
                 if (display != null && display.GetPowerUpData() == powerUpData)
                 {
-                    // Check if this card is in gameplay (has draggable component enabled)
                     PowerUpCardDrag drag = display.GetComponent<PowerUpCardDrag>();
                     if (drag != null && drag.isDraggable)
                     {
@@ -140,26 +145,20 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
                 }
             }
 
-            // Find the FanLayout BEFORE destroying cards
             FanLayout fanLayout = FindObjectOfType<FanLayout>();
-
-            // Stop any ongoing animation first
             if (fanLayout != null)
             {
                 fanLayout.StopAllCoroutines();
             }
 
-            // Destroy all matching cards
             foreach (GameObject card in cardsToDestroy)
             {
                 Destroy(card);
                 Debug.Log($"[RobinGoodBehavior] Destroyed card visual for {powerUpData.powerUpName}");
             }
 
-            // Refresh fan layout AFTER destroying cards
             if (cardsToDestroy.Count > 0 && fanLayout != null)
             {
-                // Wait a frame before refreshing to ensure destruction is complete
                 StartCoroutine(RefreshFanLayoutNextFrame(fanLayout));
             }
         }
@@ -169,12 +168,21 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         }
     }
 
-    private System.Collections.IEnumerator RefreshFanLayoutNextFrame(FanLayout fanLayout)
+    private IEnumerator RefreshFanLayoutNextFrame(FanLayout fanLayout)
     {
-        yield return null; // Wait one frame for destruction to complete
+        yield return null;
         if (fanLayout != null)
         {
             fanLayout.RefreshLayout();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up subscription
+        if (enemyHand != null)
+        {
+            enemyHand.OnDeath -= OnEnemyDeath;
         }
     }
 }

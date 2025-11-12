@@ -17,4 +17,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 7e7242b6be597e142bd85ba2f21f3b00, type: 3}
   behaviorPrefab: {fileID: 5666719196023852977, guid: 08aa2f222bcab224785c3ce8297134df, type: 3}
   configValues:
-  - 50
+  - 100
