@@ -121,28 +121,60 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
         if (spawner != null)
         {
-            // Find and destroy the card in the gameplay area
-            Transform cardContainer = spawner.transform.Find("CardContainer");
-            if (cardContainer != null)
-            {
-                foreach (Transform child in cardContainer)
-                {
-                    PowerUpCardDisplay display = child.GetComponent<PowerUpCardDisplay>();
-                    if (display != null && display.GetPowerUpData() == powerUpData)
-                    {
-                        Destroy(child.gameObject);
-                        Debug.Log($"[RobinGoodBehavior] Destroyed card visual for {powerUpData.powerUpName}");
+            // Access the serialized cardContainer directly using reflection or a public getter
+            // Since cardContainer is private, we need to get all PowerUpCardDisplay in the scene
+            PowerUpCardDisplay[] allCards = FindObjectsOfType<PowerUpCardDisplay>();
 
-                        // Refresh fan layout
-                        FanLayout fanLayout = cardContainer.GetComponent<FanLayout>();
-                        if (fanLayout != null)
-                        {
-                            fanLayout.RefreshLayout();
-                        }
-                        break;
+            List<GameObject> cardsToDestroy = new List<GameObject>();
+
+            foreach (PowerUpCardDisplay display in allCards)
+            {
+                if (display != null && display.GetPowerUpData() == powerUpData)
+                {
+                    // Check if this card is in gameplay (has draggable component enabled)
+                    PowerUpCardDrag drag = display.GetComponent<PowerUpCardDrag>();
+                    if (drag != null && drag.isDraggable)
+                    {
+                        cardsToDestroy.Add(display.gameObject);
                     }
                 }
             }
+
+            // Find the FanLayout BEFORE destroying cards
+            FanLayout fanLayout = FindObjectOfType<FanLayout>();
+
+            // Stop any ongoing animation first
+            if (fanLayout != null)
+            {
+                fanLayout.StopAllCoroutines();
+            }
+
+            // Destroy all matching cards
+            foreach (GameObject card in cardsToDestroy)
+            {
+                Destroy(card);
+                Debug.Log($"[RobinGoodBehavior] Destroyed card visual for {powerUpData.powerUpName}");
+            }
+
+            // Refresh fan layout AFTER destroying cards
+            if (cardsToDestroy.Count > 0 && fanLayout != null)
+            {
+                // Wait a frame before refreshing to ensure destruction is complete
+                StartCoroutine(RefreshFanLayoutNextFrame(fanLayout));
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[RobinGoodBehavior] PowerUpCardSpawnerGameplay not found!");
+        }
+    }
+
+    private System.Collections.IEnumerator RefreshFanLayoutNextFrame(FanLayout fanLayout)
+    {
+        yield return null; // Wait one frame for destruction to complete
+        if (fanLayout != null)
+        {
+            fanLayout.RefreshLayout();
         }
     }
 }

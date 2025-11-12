@@ -190,10 +190,7 @@ public class HandController : MonoBehaviour
 
     public int GetEffectiveDamage(string signUsed, out bool isCriticalHit)
     {
-        isCriticalHit = false; // Initialize out parameter
-
-        //Debug.Log($"=== GET EFFECTIVE DAMAGE DEBUG ===");
-        //Debug.Log($"[START] signUsed: {signUsed}, isPlayer: {isPlayer}");
+        isCriticalHit = false;
 
         // Get base damage for the specific sign
         int baseDamageForSign = signUsed switch
@@ -201,44 +198,36 @@ public class HandController : MonoBehaviour
             "Rock" => rockDamage,
             "Paper" => paperDamage,
             "Scissors" => scissorsDamage,
-            _ => rockDamage // fallback
+            _ => rockDamage
         };
-
-        //Debug.Log($"[BASE DAMAGE FOR SIGN] {signUsed}: {baseDamageForSign}");
 
         int baseFinalDamage = baseDamageForSign;
         int finalDamage = baseFinalDamage;
 
         if (isPlayer)
         {
-            //Debug.Log($"[BEFORE BONUSES] baseFinalDamage: {baseFinalDamage}");
-
-            // Add persistent passive flat boosts
+            // Add persistent passive flat boosts (player only)
             int bonusBaseDamage = PlayerProgressData.Instance.bonusBaseDamage;
             baseFinalDamage += bonusBaseDamage;
-            //Debug.Log($"[BONUS BASE] Added bonusBaseDamage: {bonusBaseDamage}, new total: {baseFinalDamage}");
 
             int signSpecificBonus = 0;
             if (signUsed == "Rock")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusRockDamage;
                 baseFinalDamage += signSpecificBonus;
-                //Debug.Log($"[BONUS ROCK] Added bonusRockDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
             else if (signUsed == "Paper")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusPaperDamage;
                 baseFinalDamage += signSpecificBonus;
-                //Debug.Log($"[BONUS PAPER] Added bonusPaperDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
             else if (signUsed == "Scissors")
             {
                 signSpecificBonus = PlayerProgressData.Instance.bonusScissorsDamage;
                 baseFinalDamage += signSpecificBonus;
-                //Debug.Log($"[BONUS SCISSORS] Added bonusScissorsDamage: {signSpecificBonus}, new total: {baseFinalDamage}");
             }
 
-            // NEW: Add flat damage bonuses from active power-ups (like The Gambler)
+            // Add flat damage bonuses from active power-ups (player only)
             int flatPowerUpBonus = 0;
             var effects = PowerUpEffectManager.Instance?.GetActiveEffects();
             if (effects != null)
@@ -249,38 +238,48 @@ public class HandController : MonoBehaviour
                     if (bonus > 0)
                     {
                         flatPowerUpBonus += bonus;
-                        //Debug.Log($"[FLAT POWERUP] {effect.GetType().Name} added {bonus} flat damage");
                     }
                 }
             }
             baseFinalDamage += flatPowerUpBonus;
-            //Debug.Log($"[TOTAL FLAT BONUSES] Added {flatPowerUpBonus} from power-ups, new total: {baseFinalDamage}");
-
-            // Start with 1.0f (100%) multiplier
-            float multiplier = 1f;
-            //Debug.Log($"[MULTIPLIER START] multiplier: {multiplier}");
-
-            // Let power-ups modify the multiplier (percentage-based effects only)
-            ActivePowerUpHandler.GetModifiedMultiplier(ref multiplier, signUsed);
-            //Debug.Log($"[MULTIPLIER AFTER] multiplier: {multiplier}");
-
-            // Calculate modified damage from base * multiplier
-            finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
-            //Debug.Log($"[AFTER MULTIPLIER] baseFinalDamage: {baseFinalDamage} * multiplier: {multiplier} = finalDamage: {finalDamage}");
-
-            // Apply and clear one-time temporary bonus
-            finalDamage += temporaryBonusDamage;
-            if (temporaryBonusDamage > 0)
-            {
-                //Debug.Log($"[HandController] Temporary bonus damage applied: +{temporaryBonusDamage}");
-            }
-            temporaryBonusDamage = 0;
-
-            //Debug.Log($"[FINAL RESULT] finalDamage: {finalDamage}");
-            //Debug.Log($"=== END GET EFFECTIVE DAMAGE DEBUG ===");
         }
 
-        // Check for critical hit AFTER all other calculations (works for both player and enemy)
+        // MOVED OUTSIDE THE isPlayer CHECK - Apply multipliers for EVERYONE
+        float multiplier = 1f;
+        var allEffects = PowerUpEffectManager.Instance?.GetActiveEffects();
+        if (allEffects != null)
+        {
+            foreach (var effect in allEffects)
+            {
+                // Only apply effects that belong to THIS hand controller
+                PowerUpEffectBase effectBase = effect as PowerUpEffectBase;
+                if (effectBase != null)
+                {
+                    // Check if this effect's "player" is this hand controller
+                    System.Reflection.FieldInfo playerField = typeof(PowerUpEffectBase).GetField("player",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                    HandController effectOwner = playerField?.GetValue(effectBase) as HandController;
+
+                    if (effectOwner == this)
+                    {
+                        effect.ModifyDamageMultiplier(ref multiplier, signUsed);
+                    }
+                }
+            }
+        }
+
+        // Calculate modified damage from base * multiplier
+        finalDamage = Mathf.RoundToInt(baseFinalDamage * multiplier);
+
+        // Apply temporary bonus
+        if (isPlayer)
+        {
+            finalDamage += temporaryBonusDamage;
+            temporaryBonusDamage = 0;
+        }
+
+        // Check for critical hit (works for both player and enemy)
         float critRoll = Random.Range(0f, 100f);
         if (critRoll < critChance)
         {

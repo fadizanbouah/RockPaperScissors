@@ -3,6 +3,7 @@ using UnityEngine;
 public class IncreaseRoomDamageEffect : PowerUpEffectBase
 {
     private float bonusPercentage;
+    private bool hasBeenAppliedToRoom = false;
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
@@ -19,8 +20,18 @@ public class IncreaseRoomDamageEffect : PowerUpEffectBase
 
     public override void OnRoomStart()
     {
-        Debug.Log("[IncreaseRoomDamageEffect] OnRoomStart called — removing effect.");
-        PowerUpEffectManager.Instance?.RemoveEffect(this);
+        if (!hasBeenAppliedToRoom)
+        {
+            // First time applying - mark as applied
+            hasBeenAppliedToRoom = true;
+            Debug.Log("[IncreaseRoomDamageEffect] OnRoomStart called — effect is now active for this room.");
+        }
+        else
+        {
+            // New room started - remove effect
+            Debug.Log("[IncreaseRoomDamageEffect] OnRoomStart called on new room — removing effect.");
+            PowerUpEffectManager.Instance?.RemoveEffect(this);
+        }
     }
 
     public override void Cleanup()
