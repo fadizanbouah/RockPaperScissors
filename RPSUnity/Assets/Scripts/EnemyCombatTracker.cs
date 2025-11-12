@@ -26,6 +26,7 @@ public class EnemyCombatTracker : MonoBehaviour
 
     private HandController enemyHand;
     private List<GameObject> currentIcons = new List<GameObject>();
+    private List<GameObject> currentTraitIcons = new List<GameObject>();
     private Dictionary<string, TextMeshProUGUI> damageTexts = new Dictionary<string, TextMeshProUGUI>();
     private bool isInitialized = false;
 
@@ -91,6 +92,7 @@ public class EnemyCombatTracker : MonoBehaviour
         }
 
         CreateDamageIcons();
+        CreateTraitIcons();
     }
 
     private void CreateDamageIcons()
@@ -294,5 +296,72 @@ public class EnemyCombatTracker : MonoBehaviour
             enemyHand = null;
             isInitialized = false;
         }
+    }
+
+    private void CreateTraitIcons()
+    {
+        Debug.Log("[EnemyCombatTracker] CreateTraitIcons called");
+
+        if (enemyHand == null)
+        {
+            Debug.LogWarning("[EnemyCombatTracker] enemyHand is null!");
+            return;
+        }
+
+        // Get enemy traits
+        EnemyTraits enemyTraits = enemyHand.GetComponent<EnemyTraits>();
+        Debug.Log($"[EnemyCombatTracker] EnemyTraits component: {(enemyTraits != null ? "Found" : "NOT FOUND")}");
+
+        if (enemyTraits == null)
+        {
+            Debug.Log("[EnemyCombatTracker] Enemy has no traits");
+            return;
+        }
+
+        // Get the trait list
+        List<EnemyTraitData> traits = enemyTraits.GetTraitDataList();
+        Debug.Log($"[EnemyCombatTracker] Found {traits.Count} traits");
+
+        foreach (EnemyTraitData trait in traits)
+        {
+            Debug.Log($"[EnemyCombatTracker] Processing trait: {(trait != null ? trait.traitName : "NULL")}");
+
+            if (trait == null || trait.icon == null)
+            {
+                Debug.LogWarning($"[EnemyCombatTracker] Trait or icon is null!");
+                continue;
+            }
+
+            CreateTraitIcon(trait);
+        }
+
+        Debug.Log($"[EnemyCombatTracker] Created {currentTraitIcons.Count} trait icons");
+    }
+
+    private void CreateTraitIcon(EnemyTraitData traitData)
+    {
+        if (iconPrefab == null || iconContainer == null) return; // Use iconContainer, not traitIconContainer
+
+        GameObject iconGO = Instantiate(iconPrefab, iconContainer); // Spawn in same container!
+        Image iconImage = iconGO.GetComponent<Image>();
+
+        if (iconImage != null)
+        {
+            iconImage.sprite = traitData.icon;
+        }
+
+        // Set size
+        RectTransform rect = iconGO.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.sizeDelta = new Vector2(iconWidth, iconHeight);
+        }
+
+        // Add tooltip
+        SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
+        tooltip.tooltipTitle = traitData.traitName;
+        tooltip.tooltipDescription = traitData.description;
+
+        currentTraitIcons.Add(iconGO);
     }
 }

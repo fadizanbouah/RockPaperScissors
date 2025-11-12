@@ -153,6 +153,33 @@ public class RockPaperScissorsGame : MonoBehaviour
 
         yield return new WaitUntil(() => playerSignDone && enemySignDone);
 
+        // NEW: Check for enemy behaviors BEFORE determining outcome
+        Debug.Log("[RockPaperScissorsGame] Checking for enemy behaviors...");
+        if (enemyHandController != null)
+        {
+            Debug.Log($"[RockPaperScissorsGame] Enemy controller exists: {enemyHandController.name}");
+
+            EnemyTraits enemyTraits = enemyHandController.GetComponent<EnemyTraits>();
+            Debug.Log($"[RockPaperScissorsGame] EnemyTraits component: {(enemyTraits != null ? "Found" : "NOT FOUND")}");
+
+            if (enemyTraits != null)
+            {
+                var behaviors = enemyTraits.GetActiveBehaviors();
+                Debug.Log($"[RockPaperScissorsGame] Found {behaviors.Count} behaviors");
+
+                foreach (var behavior in behaviors)
+                {
+                    Debug.Log($"[RockPaperScissorsGame] Behavior type: {behavior.GetType().Name}");
+
+                    if (behavior is IEnemyBehavior enemyBehavior)
+                    {
+                        Debug.Log($"[RockPaperScissorsGame] Executing enemy behavior: {behavior.GetType().Name}");
+                        yield return StartCoroutine(enemyBehavior.OnBeforeRoundResolves(playerInstance, playerChoice, enemyChoice));
+                    }
+                }
+            }
+        }
+
         RoundResult result = DetermineOutcome(playerChoice, enemyChoice);
 
         SetSubstate(GameSubstate.Resolving_TakeDamage);
