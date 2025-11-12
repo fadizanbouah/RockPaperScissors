@@ -30,6 +30,9 @@ public class EnemyCombatTracker : MonoBehaviour
     private Dictionary<string, TextMeshProUGUI> damageTexts = new Dictionary<string, TextMeshProUGUI>();
     private bool isInitialized = false;
 
+    // NEW: Track active effect icons (like PlayerCombatTracker)
+    private Dictionary<PowerUpEffectBase, GameObject> activeEffectIcons = new Dictionary<PowerUpEffectBase, GameObject>();
+
     private void OnEnable()
     {
         // Reset initialization flag
@@ -59,6 +62,26 @@ public class EnemyCombatTracker : MonoBehaviour
         {
             UpdateTooltips();
             UpdateDamageTexts();
+        }
+
+        // NEW: Clean up icons for effects that have been removed
+        if (isInitialized)
+        {
+            List<PowerUpEffectBase> toRemove = new List<PowerUpEffectBase>();
+
+            foreach (var kvp in activeEffectIcons)
+            {
+                // If the effect GameObject is null (destroyed), remove its icon
+                if (kvp.Key == null)
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+
+            foreach (var effect in toRemove)
+            {
+                RemoveActiveEffect(effect);
+            }
         }
     }
 
@@ -296,6 +319,9 @@ public class EnemyCombatTracker : MonoBehaviour
             enemyHand = null;
             isInitialized = false;
         }
+
+        // NEW: Clear active effects for new room
+        ClearActiveEffects();
     }
 
     private void CreateTraitIcons()
@@ -363,5 +389,96 @@ public class EnemyCombatTracker : MonoBehaviour
         tooltip.tooltipDescription = traitData.description;
 
         currentTraitIcons.Add(iconGO);
+    }
+
+    // NEW: Methods for managing active effect icons (like PlayerCombatTracker)
+    public void AddActiveEffect(PowerUpEffectBase effect)
+    {
+        if (effect == null || effect.SourceData == null) return;
+        if (activeEffectIcons.ContainsKey(effect)) return;
+
+        PowerUpData data = effect.SourceData;
+
+        if (data.statusIcon == null)
+        {
+            Debug.Log($"[EnemyCombatTracker] {data.powerUpName} has no status icon - not adding to tracker");
+            return;
+        }
+
+        GameObject iconGO = Instantiate(iconPrefab, iconContainer);
+
+        // Configure icon
+        Image iconImage = iconGO.GetComponent<Image>();
+        if (iconImage != null)
+        {
+            iconImage.sprite = data.statusIcon;
+        }
+
+        RectTransform rect = iconGO.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.sizeDelta = new Vector2(iconWidth, iconHeight);
+        }
+
+        // Set up counter text if effect has duration
+        TextMeshProUGUI counterText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (counterText != null)
+        {
+            // Check if effect has rounds remaining
+            if (effect is IDurationEffect durationEffect)
+            {
+                counterText.gameObject.SetActive(true);
+                counterText.text = durationEffect.GetRoundsRemaining().ToString();
+            }
+            else
+            {
+                counterText.gameObject.SetActive(false);
+            }
+        }
+
+        SimpleTooltip tooltip = iconGO.AddComponent<SimpleTooltip>();
+        tooltip.tooltipTitle = data.powerUpName;
+        tooltip.tooltipDescription = data.description;
+
+        activeEffectIcons[effect] = iconGO;
+
+        Debug.Log($"[EnemyCombatTracker] Added active effect icon: {data.powerUpName}");
+    }
+
+    public void RemoveActiveEffect(PowerUpEffectBase effect)
+    {
+        if (activeEffectIcons.ContainsKey(effect))
+        {
+            Destroy(activeEffectIcons[effect]);
+            activeEffectIcons.Remove(effect);
+            Debug.Log($"[EnemyCombatTracker] Removed active effect icon");
+        }
+    }
+
+    public void ClearActiveEffects()
+    {
+        foreach (var kvp in activeEffectIcons)
+        {
+            if (kvp.Value != null)
+                Destroy(kvp.Value);
+        }
+        activeEffectIcons.Clear();
+    }
+
+    public void UpdateEffectCounter(PowerUpEffectBase effect)
+    {
+        if (!activeEffectIcons.ContainsKey(effect)) return;
+
+        GameObject iconGO = activeEffectIcons[effect];
+        TextMeshProUGUI counterText = iconGO.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        if (counterText != null && effect is IDurationEffect durationEffect)
+        {
+            int remaining = durationEffect.GetRoundsRemaining();
+            if (remaining > 0)
+            {
+                counterText.text = remaining.ToString();
+            }
+        }
     }
 }

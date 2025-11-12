@@ -109,6 +109,14 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.Log($"[RobinGoodBehavior] Registered stolen effect with manager");
             }
 
+            // NEW: Add icon to enemy combat tracker
+            EnemyCombatTracker tracker = FindObjectOfType<EnemyCombatTracker>();
+            if (tracker != null && !powerUpData.isPassive && powerUpData.statusIcon != null)
+            {
+                tracker.AddActiveEffect(effect);
+                Debug.Log($"[RobinGoodBehavior] Added {powerUpData.powerUpName} icon to enemy combat tracker");
+            }
+
             if (RunProgressManager.Instance != null)
             {
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(powerUpData);
@@ -124,6 +132,7 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
             Destroy(effectObj);
         }
     }
+
 
     private void RemoveCardFromGameplay(PowerUpData powerUpData)
     {
