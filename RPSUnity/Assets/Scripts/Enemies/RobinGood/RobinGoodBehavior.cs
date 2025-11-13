@@ -146,6 +146,11 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
             effect.Initialize(powerUpData, enemyHand, player);
             effect.OnRoomStart();
 
+            if (effect is IncreaseDamageNextHitEffect nextHitEffect)
+            {
+                nextHitEffect.MarkAsJustStolen();
+            }
+
             if (PowerUpEffectManager.Instance != null)
             {
                 PowerUpEffectManager.Instance.RegisterEffect(effect);
