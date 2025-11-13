@@ -233,7 +233,13 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
         else
         {
-            // IMPORTANT: Call OnRoundEnd even for draws
+            // For draws, no damage animations, so skip waiting
+            // But still call post-damage behaviors and OnRoundEnd
+            Debug.Log("[HandleTakeDamage] Draw - no damage to resolve");
+
+            // NEW: Check for post-damage enemy behaviors (even on draw)
+            yield return StartCoroutine(ExecutePostDamageBehaviors(result, playerChoice, enemyChoice));
+
             PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
             Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for Draw result");
 
@@ -246,14 +252,19 @@ public class RockPaperScissorsGame : MonoBehaviour
             yield break;
         }
 
+        // Wait for hit animations to complete
         yield return new WaitUntil(() => playerHitDone && enemyHitDone);
-        Debug.Log("Both hit animations finished.");
+        Debug.Log("[HandleTakeDamage] Both hit animations finished.");
 
-        // IMPORTANT: Call OnRoundEnd after damage is dealt but before state transitions
+        // NEW: Execute post-damage behaviors AFTER hit animations but BEFORE OnRoundEnd
+        Debug.Log("[RockPaperScissorsGame] Checking for post-damage enemy behaviors...");
+        yield return StartCoroutine(ExecutePostDamageBehaviors(result, playerChoice, enemyChoice));
+
+        // IMPORTANT: Call OnRoundEnd after damage AND post-damage behaviors
         PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
         Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for {result} result");
 
-        // NEW: Notify enemy that round is complete for sign shuffle
+        // Notify enemy that round is complete for sign shuffle
         if (enemyHandController != null)
         {
             enemyHandController.OnRoundComplete();
@@ -270,6 +281,28 @@ public class RockPaperScissorsGame : MonoBehaviour
         else
         {
             EnterIdleState();
+        }
+    }
+
+    private IEnumerator ExecutePostDamageBehaviors(RoundResult result, string playerChoice, string enemyChoice)
+    {
+        if (enemyHandController != null)
+        {
+            EnemyTraits enemyTraits = enemyHandController.GetComponent<EnemyTraits>();
+
+            if (enemyTraits != null)
+            {
+                var behaviors = enemyTraits.GetActiveBehaviors();
+
+                foreach (var behavior in behaviors)
+                {
+                    if (behavior is IEnemyBehavior enemyBehavior)
+                    {
+                        Debug.Log($"[RockPaperScissorsGame] Executing OnAfterDamageResolved: {behavior.GetType().Name}");
+                        yield return StartCoroutine(enemyBehavior.OnAfterDamageResolved(playerInstance, playerChoice, enemyChoice, result));
+                    }
+                }
+            }
         }
     }
 

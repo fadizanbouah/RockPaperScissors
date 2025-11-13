@@ -46,6 +46,16 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
+        // No longer doing anything before round resolves - stealing moved to after damage
+        Debug.Log("[RobinGoodBehavior] OnBeforeRoundResolves - no action (stealing happens after damage now)");
+        yield return null;
+    }
+
+    public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
+    {
+        Debug.Log($"[RobinGoodBehavior] OnAfterDamageResolved called - Result: {result}");
+
+        // Roll for steal
         float roll = Random.Range(0f, 100f);
         Debug.Log($"[RobinGoodBehavior] Rolled {roll:F1} (need < {stealChance} to steal)");
 
@@ -56,7 +66,12 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
             if (activePowerUps.Count > 0)
             {
                 PowerUpData stolenPowerUp = activePowerUps[Random.Range(0, activePowerUps.Count)];
-                Debug.Log($"[RobinGoodBehavior] Robin Good stole: {stolenPowerUp.powerUpName}!");
+                Debug.Log($"[RobinGoodBehavior] Robin Good is stealing: {stolenPowerUp.powerUpName}!");
+
+                // Placeholder for steal animation
+                yield return PlayStealAnimation();
+
+                // Apply the stolen power-up
                 yield return ApplyStolenPowerUp(stolenPowerUp, player);
             }
             else
@@ -66,6 +81,35 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         yield return null;
+    }
+
+    private IEnumerator PlayStealAnimation()
+    {
+        // Check if enemy has a Steal animation
+        if (enemyHand != null && enemyHand.handAnimator != null)
+        {
+            Animator animator = enemyHand.handAnimator;
+
+            if (animator.HasParameter("Steal"))
+            {
+                Debug.Log("[RobinGoodBehavior] Playing Steal animation");
+                animator.SetTrigger("Steal");
+
+                // Wait for animation to complete
+                // You can adjust this timing or add a proper animation event callback later
+                yield return new WaitForSeconds(1.0f);
+            }
+            else
+            {
+                // No animation exists yet, just a small delay for visual feedback
+                Debug.Log("[RobinGoodBehavior] No Steal animation parameter found - using placeholder delay");
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private List<PowerUpData> GetPlayerActivePowerUps(HandController player)
@@ -109,7 +153,7 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.Log($"[RobinGoodBehavior] Registered stolen effect with manager");
             }
 
-            // NEW: Add icon to enemy combat tracker
+            // Add icon to enemy combat tracker
             EnemyCombatTracker tracker = FindObjectOfType<EnemyCombatTracker>();
             if (tracker != null && !powerUpData.isPassive && powerUpData.statusIcon != null)
             {
