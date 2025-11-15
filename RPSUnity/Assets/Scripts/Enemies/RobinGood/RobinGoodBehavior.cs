@@ -189,8 +189,9 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         if (spawner != null)
         {
             PowerUpCardDisplay[] allCards = FindObjectsOfType<PowerUpCardDisplay>();
-            List<GameObject> cardsToDestroy = new List<GameObject>();
+            GameObject cardToDestroy = null; // Changed from List to single GameObject
 
+            // Find the FIRST matching card only
             foreach (PowerUpCardDisplay display in allCards)
             {
                 if (display != null && display.GetPowerUpData() == powerUpData)
@@ -198,26 +199,28 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
                     PowerUpCardDrag drag = display.GetComponent<PowerUpCardDrag>();
                     if (drag != null && drag.isDraggable)
                     {
-                        cardsToDestroy.Add(display.gameObject);
+                        cardToDestroy = display.gameObject;
+                        Debug.Log($"[RobinGoodBehavior] Found card to destroy: {powerUpData.powerUpName}");
+                        break; // Stop after finding the first one!
                     }
                 }
             }
 
-            FanLayout fanLayout = FindObjectOfType<FanLayout>();
-            if (fanLayout != null)
+            if (cardToDestroy != null)
             {
-                fanLayout.StopAllCoroutines();
-            }
+                FanLayout fanLayout = FindObjectOfType<FanLayout>();
+                if (fanLayout != null)
+                {
+                    fanLayout.StopAllCoroutines();
+                }
 
-            foreach (GameObject card in cardsToDestroy)
-            {
-                Destroy(card);
+                Destroy(cardToDestroy);
                 Debug.Log($"[RobinGoodBehavior] Destroyed card visual for {powerUpData.powerUpName}");
-            }
 
-            if (cardsToDestroy.Count > 0 && fanLayout != null)
-            {
-                StartCoroutine(RefreshFanLayoutNextFrame(fanLayout));
+                if (fanLayout != null)
+                {
+                    StartCoroutine(RefreshFanLayoutNextFrame(fanLayout));
+                }
             }
         }
         else
