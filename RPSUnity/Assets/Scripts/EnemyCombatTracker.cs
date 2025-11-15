@@ -280,7 +280,6 @@ public class EnemyCombatTracker : MonoBehaviour
         damageTexts.Clear();
     }
 
-    // Call this to manually set the enemy reference if needed
     public void UpdateEnemyReference(HandController enemy)
     {
         if (enemy != null && !enemy.isPlayer)
@@ -294,6 +293,12 @@ public class EnemyCombatTracker : MonoBehaviour
             }
             else
             {
+                // Clear old trait icons before creating new ones
+                ClearTraitIcons();
+
+                // Recreate trait icons for the new enemy
+                CreateTraitIcons();
+
                 // Just refresh the tooltips and damage texts for the new enemy
                 UpdateTooltips();
                 UpdateDamageTexts();
@@ -316,11 +321,12 @@ public class EnemyCombatTracker : MonoBehaviour
         {
             // Clear icons if no enemy
             ClearIcons();
+            ClearTraitIcons(); // NEW: Also clear trait icons
             enemyHand = null;
             isInitialized = false;
         }
 
-        // NEW: Clear active effects for new room
+        // Clear active effects for new room
         ClearActiveEffects();
     }
 
@@ -389,6 +395,16 @@ public class EnemyCombatTracker : MonoBehaviour
         tooltip.tooltipDescription = traitData.description;
 
         currentTraitIcons.Add(iconGO);
+    }
+
+    private void ClearTraitIcons()
+    {
+        foreach (GameObject icon in currentTraitIcons)
+        {
+            if (icon != null)
+                Destroy(icon);
+        }
+        currentTraitIcons.Clear();
     }
 
     // NEW: Methods for managing active effect icons (like PlayerCombatTracker)
