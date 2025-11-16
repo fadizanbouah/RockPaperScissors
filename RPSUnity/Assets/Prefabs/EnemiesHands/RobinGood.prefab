@@ -40,6 +40,18 @@ PrefabInstance:
       propertyPath: critDamageMultiplier
       value: 1.25
       objectReference: {fileID: 0}
+    - target: {fileID: 5033482333895500587, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5033482333895500587, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5033482333895500587, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -80,6 +92,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7813983361860719102, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: af47904033a814a4f8e2b41c8d17d93d, type: 3}
     - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
       value: RobinGood
