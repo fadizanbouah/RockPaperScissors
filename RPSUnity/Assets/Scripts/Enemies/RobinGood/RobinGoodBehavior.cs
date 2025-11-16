@@ -55,6 +55,13 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
     {
         Debug.Log($"[RobinGoodBehavior] OnAfterDamageResolved called - Result: {result}");
 
+        // NEW: Check if enemy is dead before attempting to steal
+        if (enemyHand == null || enemyHand.CurrentHealth <= 0)
+        {
+            Debug.Log("[RobinGoodBehavior] Enemy is dead or dying - skipping steal attempt");
+            yield break; // Exit early
+        }
+
         // Roll for steal
         float roll = Random.Range(0f, 100f);
         Debug.Log($"[RobinGoodBehavior] Rolled {roll:F1} (need < {stealChance} to steal)");

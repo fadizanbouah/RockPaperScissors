@@ -852,7 +852,6 @@ public class HandController : MonoBehaviour
 
     public void OnStealAnimationFinished()
     {
-        Debug.Log($"{gameObject.name} steal animation finished!");
         StealAnimationFinished?.Invoke(this);
     }
 }
