@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305668139e80a4740b6215a47e5bbfbf, type: 3}
   m_Name: RobinGoodBehavior
   m_EditorClassIdentifier: 
-  traitName: Card Thief
-  description: Steals your cards
-  icon: {fileID: 21300000, guid: 7e7242b6be597e142bd85ba2f21f3b00, type: 3}
+  traitName: Pickpocket
+  description: Robin may decide your cards are his cards
+  icon: {fileID: 21300000, guid: cb7928db2df94524aa34e7ddd1180779, type: 3}
   behaviorPrefab: {fileID: 5666719196023852977, guid: 08aa2f222bcab224785c3ce8297134df, type: 3}
   configValues:
   - 100
