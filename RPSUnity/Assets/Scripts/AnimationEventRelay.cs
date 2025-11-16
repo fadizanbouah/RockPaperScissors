@@ -58,4 +58,12 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnCheatDeathAnimationFinished();
         }
     }
+
+    public void TriggerStealAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.OnStealAnimationFinished();
+        }
+    }
 }

@@ -100,6 +100,9 @@ public class HandController : MonoBehaviour
     public delegate void CheatDeathAnimationFinishedHandler(HandController hand);
     public event CheatDeathAnimationFinishedHandler CheatDeathAnimationFinished;
 
+    public delegate void StealAnimationFinishedHandler(HandController hand);
+    public event StealAnimationFinishedHandler StealAnimationFinished;
+
     public delegate bool CheatDeathCheckHandler(HandController hand);
     public event CheatDeathCheckHandler OnCheatDeathCheck;
 
@@ -845,6 +848,12 @@ public class HandController : MonoBehaviour
         shufflePendingAfterRound = false;
 
         Debug.Log($"[HandController] Sign shuffle reset - next shuffle in {roundsUntilShuffle} rounds");
+    }
+
+    public void OnStealAnimationFinished()
+    {
+        Debug.Log($"{gameObject.name} steal animation finished!");
+        StealAnimationFinished?.Invoke(this);
     }
 }
 

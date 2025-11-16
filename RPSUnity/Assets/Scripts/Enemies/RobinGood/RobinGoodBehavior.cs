@@ -85,7 +85,6 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
 
     private IEnumerator PlayStealAnimation()
     {
-        // Check if enemy has a Steal animation
         if (enemyHand != null && enemyHand.handAnimator != null)
         {
             Animator animator = enemyHand.handAnimator;
@@ -95,13 +94,20 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.Log("[RobinGoodBehavior] Playing Steal animation");
                 animator.SetTrigger("Steal");
 
-                // Wait for animation to complete
-                // You can adjust this timing or add a proper animation event callback later
-                yield return new WaitForSeconds(1.0f);
+                // Wait for animation event callback
+                bool animationFinished = false;
+
+                // Create the callback with the correct delegate signature
+                HandController.StealAnimationFinishedHandler callback = (hand) => animationFinished = true;
+
+                enemyHand.StealAnimationFinished += callback;
+
+                yield return new WaitUntil(() => animationFinished);
+
+                enemyHand.StealAnimationFinished -= callback;
             }
             else
             {
-                // No animation exists yet, just a small delay for visual feedback
                 Debug.Log("[RobinGoodBehavior] No Steal animation parameter found - using placeholder delay");
                 yield return new WaitForSeconds(0.5f);
             }
