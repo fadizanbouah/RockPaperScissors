@@ -37,6 +37,18 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 65afffb3d012baa41bafc210c2ff68e6, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: defaultHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5bebfece4a9aa5d46b4cc082ddfb325f, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: da38a28005325e944ae3eef976210575, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: critDamageMultiplier
       value: 1.25
       objectReference: {fileID: 0}
@@ -88,6 +100,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7813983361860719102, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5bebfece4a9aa5d46b4cc082ddfb325f, type: 3}
     - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
       value: ForestMerchant_1

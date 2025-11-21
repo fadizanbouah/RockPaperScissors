@@ -123,15 +123,15 @@ PrefabInstance:
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: paperHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 43742f2d8fbb2a54193c1d23062228b7, type: 3}
+      objectReference: {fileID: 21300000, guid: 93986ac8a9a1c7e43a779f6a47f48b33, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: defaultHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 315f8eba8d417134f84afb46396069da, type: 3}
+      objectReference: {fileID: 21300000, guid: 489dad211d69a9a4e9cf3b292abd25a7, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: scissorsHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: d35a0ce1cd3d85f488e9623a8e1dd5a5, type: 3}
+      objectReference: {fileID: 21300000, guid: d0c306774ebb90e47802fd973f0a119c, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: critDamageMultiplier
       value: 1.25
@@ -199,7 +199,7 @@ PrefabInstance:
     - target: {fileID: 7813983361860719102, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 315f8eba8d417134f84afb46396069da, type: 3}
+      objectReference: {fileID: 21300000, guid: 489dad211d69a9a4e9cf3b292abd25a7, type: 3}
     - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
       value: RobinGood
