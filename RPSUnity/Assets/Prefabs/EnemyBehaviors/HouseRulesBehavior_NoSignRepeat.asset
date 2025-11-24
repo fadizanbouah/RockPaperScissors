@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305668139e80a4740b6215a47e5bbfbf, type: 3}
   m_Name: HouseRulesBehavior_NoSignRepeat
   m_EditorClassIdentifier: 
-  traitName: Pattern Reader
-  description: Reads paterns kekw
-  icon: {fileID: 21300000, guid: 974ba5467aac41e41bb706b7ea9c5375, type: 3}
+  traitName: House Rules
+  description: 'No selecting the same sign 2 times in a row against this enemy. Punishment:
+    deduct 15% HP.'
+  icon: {fileID: 21300000, guid: d02c56882886e0943b8f18be168149b7, type: 3}
   behaviorPrefab: {fileID: 3868869466403128555, guid: 26fa10d1b701b8045aaa0cf42a08bd11, type: 3}
   configValues:
   - 2
-  - 10
-  - 0
+  - 15

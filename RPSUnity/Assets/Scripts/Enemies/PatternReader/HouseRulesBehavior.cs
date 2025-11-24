@@ -1,18 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
+public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
 {
     [Header("Pattern Detection")]
     [SerializeField] private int requiredConsecutiveSigns = 3; // X times in a row
 
-    [Header("Punishment Type")]
-    [SerializeField] private PunishmentType punishmentType = PunishmentType.DamagePercent;
-
-    [Header("Punishment Configuration")]
-    [Tooltip("For DamagePercent: % of player's max HP (e.g., 20 = 20%)")]
-    [SerializeField] private float punishmentValue = 20f;
+    [Header("Damage Punishment")]
+    [Tooltip("% of player's max HP dealt as damage (e.g., 20 = 20%)")]
+    [SerializeField] private float damagePercent = 20f;
 
     private HandController enemyHand;
     private HandController playerHand;
@@ -21,34 +17,22 @@ public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
     private string lastPlayerSign = "";
     private int consecutiveCount = 0;
 
-    public enum PunishmentType
-    {
-        DamagePercent,      // Deal X% of player's max HP as damage
-        ReducePlayerDamage, // Player deals -X% damage next hit
-        IncreaseEnemyDamage // Enemy deals +X% damage next hit
-        // Add more types here later
-    }
-
     public void Initialize(HandController enemy, float[] configValues)
     {
         enemyHand = enemy;
 
         // configValues[0] = requiredConsecutiveSigns
-        // configValues[1] = punishmentValue
-        // configValues[2] = punishmentType (cast to int)
+        // configValues[1] = damagePercent
         if (configValues != null && configValues.Length > 0)
         {
             if (configValues.Length > 0)
                 requiredConsecutiveSigns = Mathf.RoundToInt(configValues[0]);
 
             if (configValues.Length > 1)
-                punishmentValue = configValues[1];
-
-            if (configValues.Length > 2)
-                punishmentType = (PunishmentType)Mathf.RoundToInt(configValues[2]);
+                damagePercent = configValues[1];
         }
 
-        Debug.Log($"[HouseRulesBehavior] Initialized with {requiredConsecutiveSigns} consecutive signs required, punishment: {punishmentType} ({punishmentValue})");
+        Debug.Log($"[HouseRuleBehavior] Initialized with {requiredConsecutiveSigns} consecutive signs required, dealing {damagePercent}% damage");
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
@@ -60,16 +44,23 @@ public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         // Track the player's sign pattern
-        if (playerChoice == lastPlayerSign)
+        if (string.IsNullOrEmpty(lastPlayerSign))
+        {
+            // First sign of the battle
+            lastPlayerSign = playerChoice;
+            consecutiveCount = 1;
+            Debug.Log($"[HouseRuleBehavior] First sign tracked: {playerChoice}. Count: {consecutiveCount}");
+        }
+        else if (playerChoice == lastPlayerSign)
         {
             consecutiveCount++;
-            Debug.Log($"[HouseRulesBehavior] Player repeated {playerChoice}! Count: {consecutiveCount}/{requiredConsecutiveSigns}");
+            Debug.Log($"[HouseRuleBehavior] Player repeated {playerChoice}! Count: {consecutiveCount}/{requiredConsecutiveSigns}");
         }
         else
         {
             // Different sign - reset the counter
-            Debug.Log($"[HouseRulesBehavior] Player switched from {lastPlayerSign} to {playerChoice}. Resetting counter.");
-            consecutiveCount = 1; // Start counting this new sign
+            Debug.Log($"[HouseRuleBehavior] Player switched from {lastPlayerSign} to {playerChoice}. Resetting counter.");
+            consecutiveCount = 1;
             lastPlayerSign = playerChoice;
         }
 
@@ -81,25 +72,25 @@ public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
         // Check if enemy is dead before punishing
         if (enemyHand == null || enemyHand.CurrentHealth <= 0)
         {
-            Debug.Log("[HouseRulesBehavior] Enemy is dead - skipping punishment");
+            Debug.Log("[HouseRuleBehavior] Enemy is dead - skipping punishment");
             yield break;
         }
 
         // Check if player has triggered the punishment
         if (consecutiveCount >= requiredConsecutiveSigns)
         {
-            Debug.Log($"[HouseRulesBehavior] Pattern detected! Player used {lastPlayerSign} {consecutiveCount} times. Activating punishment: {punishmentType}");
+            Debug.Log($"[HouseRuleBehavior] House rule violated! Player used {lastPlayerSign} {consecutiveCount} times in a row.");
 
             // Placeholder for punishment animation
             yield return PlayPunishmentAnimation();
 
-            // Apply the punishment
-            ApplyPunishment(player);
+            // Apply the damage punishment
+            ApplyDamagePunishment(player);
 
             // Reset counter after punishment
             consecutiveCount = 0;
             lastPlayerSign = "";
-            Debug.Log("[HouseRulesBehavior] Counter reset after punishment");
+            Debug.Log("[HouseRuleBehavior] Counter reset after punishment");
         }
 
         yield return null;
@@ -109,66 +100,30 @@ public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
     {
         // TODO: Add animation similar to RobinGood's steal animation
         // For now, just a placeholder delay
-        Debug.Log("[HouseRulesBehavior] Playing punishment animation (placeholder)");
+        Debug.Log("[HouseRuleBehavior] Playing punishment animation (placeholder)");
         yield return new WaitForSeconds(0.5f);
     }
 
-    private void ApplyPunishment(HandController player)
+    private void ApplyDamagePunishment(HandController player)
     {
         if (player == null)
         {
-            Debug.LogWarning("[HouseRulesBehavior] Cannot apply punishment - player is null!");
+            Debug.LogWarning("[HouseRuleBehavior] Cannot apply punishment - player is null!");
             return;
         }
 
-        switch (punishmentType)
-        {
-            case PunishmentType.DamagePercent:
-                ApplyDamagePercentPunishment(player);
-                break;
-
-            case PunishmentType.ReducePlayerDamage:
-                ApplyReducePlayerDamagePunishment(player);
-                break;
-
-            case PunishmentType.IncreaseEnemyDamage:
-                ApplyIncreaseEnemyDamagePunishment(player);
-                break;
-
-            default:
-                Debug.LogWarning($"[HouseRulesBehavior] Unknown punishment type: {punishmentType}");
-                break;
-        }
-    }
-
-    private void ApplyDamagePercentPunishment(HandController player)
-    {
         // Calculate damage as percentage of player's max HP
-        int damage = Mathf.RoundToInt(player.maxHealth * (punishmentValue / 100f));
+        int damage = Mathf.RoundToInt(player.maxHealth * (damagePercent / 100f));
         damage = Mathf.Max(1, damage); // At least 1 damage
 
-        Debug.Log($"[HouseRulesBehavior] Dealing {damage} damage to player ({punishmentValue}% of {player.maxHealth} max HP)");
+        Debug.Log($"[HouseRuleBehavior] Dealing {damage} damage to player ({damagePercent}% of {player.maxHealth} max HP)");
 
         player.TakeDamage(damage, enemyHand);
-    }
-
-    private void ApplyReducePlayerDamagePunishment(HandController player)
-    {
-        // TODO: Implement when you want this effect
-        // This would require a temporary debuff system on the player
-        Debug.Log($"[HouseRulesBehavior] TODO: Reduce player damage by {punishmentValue}% next hit");
-    }
-
-    private void ApplyIncreaseEnemyDamagePunishment(HandController player)
-    {
-        // TODO: Implement when you want this effect
-        // This would require a temporary buff system on the enemy
-        Debug.Log($"[HouseRulesBehavior] TODO: Increase enemy damage by {punishmentValue}% next hit");
     }
 
     private void OnDestroy()
     {
         // Clean up if needed
-        Debug.Log("[HouseRulesBehavior] Destroyed");
+        Debug.Log("[HouseRuleBehavior] Destroyed");
     }
 }
