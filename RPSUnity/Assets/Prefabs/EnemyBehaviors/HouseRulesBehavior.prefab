@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1661728280879528683}
   - component: {fileID: 390567414809360804}
   m_Layer: 0
-  m_Name: PatternReaderBehavior
+  m_Name: HouseRulesBehavior
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,3 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dfe4db94bbc0ab40bef162d7bdba500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  requiredConsecutiveSigns: 0
+  punishmentType: 0
+  punishmentValue: 0

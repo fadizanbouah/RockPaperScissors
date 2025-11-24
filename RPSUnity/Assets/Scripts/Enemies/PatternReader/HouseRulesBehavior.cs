@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
+public class HouseRulesBehavior : MonoBehaviour, IEnemyBehavior
 {
     [Header("Pattern Detection")]
     [SerializeField] private int requiredConsecutiveSigns = 3; // X times in a row
@@ -48,7 +48,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
                 punishmentType = (PunishmentType)Mathf.RoundToInt(configValues[2]);
         }
 
-        Debug.Log($"[PatternReaderBehavior] Initialized with {requiredConsecutiveSigns} consecutive signs required, punishment: {punishmentType} ({punishmentValue})");
+        Debug.Log($"[HouseRulesBehavior] Initialized with {requiredConsecutiveSigns} consecutive signs required, punishment: {punishmentType} ({punishmentValue})");
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
@@ -63,12 +63,12 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
         if (playerChoice == lastPlayerSign)
         {
             consecutiveCount++;
-            Debug.Log($"[PatternReaderBehavior] Player repeated {playerChoice}! Count: {consecutiveCount}/{requiredConsecutiveSigns}");
+            Debug.Log($"[HouseRulesBehavior] Player repeated {playerChoice}! Count: {consecutiveCount}/{requiredConsecutiveSigns}");
         }
         else
         {
             // Different sign - reset the counter
-            Debug.Log($"[PatternReaderBehavior] Player switched from {lastPlayerSign} to {playerChoice}. Resetting counter.");
+            Debug.Log($"[HouseRulesBehavior] Player switched from {lastPlayerSign} to {playerChoice}. Resetting counter.");
             consecutiveCount = 1; // Start counting this new sign
             lastPlayerSign = playerChoice;
         }
@@ -81,14 +81,14 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
         // Check if enemy is dead before punishing
         if (enemyHand == null || enemyHand.CurrentHealth <= 0)
         {
-            Debug.Log("[PatternReaderBehavior] Enemy is dead - skipping punishment");
+            Debug.Log("[HouseRulesBehavior] Enemy is dead - skipping punishment");
             yield break;
         }
 
         // Check if player has triggered the punishment
         if (consecutiveCount >= requiredConsecutiveSigns)
         {
-            Debug.Log($"[PatternReaderBehavior] Pattern detected! Player used {lastPlayerSign} {consecutiveCount} times. Activating punishment: {punishmentType}");
+            Debug.Log($"[HouseRulesBehavior] Pattern detected! Player used {lastPlayerSign} {consecutiveCount} times. Activating punishment: {punishmentType}");
 
             // Placeholder for punishment animation
             yield return PlayPunishmentAnimation();
@@ -99,7 +99,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
             // Reset counter after punishment
             consecutiveCount = 0;
             lastPlayerSign = "";
-            Debug.Log("[PatternReaderBehavior] Counter reset after punishment");
+            Debug.Log("[HouseRulesBehavior] Counter reset after punishment");
         }
 
         yield return null;
@@ -109,7 +109,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
     {
         // TODO: Add animation similar to RobinGood's steal animation
         // For now, just a placeholder delay
-        Debug.Log("[PatternReaderBehavior] Playing punishment animation (placeholder)");
+        Debug.Log("[HouseRulesBehavior] Playing punishment animation (placeholder)");
         yield return new WaitForSeconds(0.5f);
     }
 
@@ -117,7 +117,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
     {
         if (player == null)
         {
-            Debug.LogWarning("[PatternReaderBehavior] Cannot apply punishment - player is null!");
+            Debug.LogWarning("[HouseRulesBehavior] Cannot apply punishment - player is null!");
             return;
         }
 
@@ -136,7 +136,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
                 break;
 
             default:
-                Debug.LogWarning($"[PatternReaderBehavior] Unknown punishment type: {punishmentType}");
+                Debug.LogWarning($"[HouseRulesBehavior] Unknown punishment type: {punishmentType}");
                 break;
         }
     }
@@ -147,7 +147,7 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
         int damage = Mathf.RoundToInt(player.maxHealth * (punishmentValue / 100f));
         damage = Mathf.Max(1, damage); // At least 1 damage
 
-        Debug.Log($"[PatternReaderBehavior] Dealing {damage} damage to player ({punishmentValue}% of {player.maxHealth} max HP)");
+        Debug.Log($"[HouseRulesBehavior] Dealing {damage} damage to player ({punishmentValue}% of {player.maxHealth} max HP)");
 
         player.TakeDamage(damage, enemyHand);
     }
@@ -156,19 +156,19 @@ public class PatternReaderBehavior : MonoBehaviour, IEnemyBehavior
     {
         // TODO: Implement when you want this effect
         // This would require a temporary debuff system on the player
-        Debug.Log($"[PatternReaderBehavior] TODO: Reduce player damage by {punishmentValue}% next hit");
+        Debug.Log($"[HouseRulesBehavior] TODO: Reduce player damage by {punishmentValue}% next hit");
     }
 
     private void ApplyIncreaseEnemyDamagePunishment(HandController player)
     {
         // TODO: Implement when you want this effect
         // This would require a temporary buff system on the enemy
-        Debug.Log($"[PatternReaderBehavior] TODO: Increase enemy damage by {punishmentValue}% next hit");
+        Debug.Log($"[HouseRulesBehavior] TODO: Increase enemy damage by {punishmentValue}% next hit");
     }
 
     private void OnDestroy()
     {
         // Clean up if needed
-        Debug.Log("[PatternReaderBehavior] Destroyed");
+        Debug.Log("[HouseRulesBehavior] Destroyed");
     }
 }
