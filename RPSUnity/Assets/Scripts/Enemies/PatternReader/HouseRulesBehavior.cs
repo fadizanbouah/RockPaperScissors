@@ -81,11 +81,14 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
         {
             Debug.Log($"[HouseRuleBehavior] House rule violated! Player used {lastPlayerSign} {consecutiveCount} times in a row.");
 
-            // Placeholder for punishment animation
+            // Play punishment animation
             yield return PlayPunishmentAnimation();
 
             // Apply the damage punishment
             ApplyDamagePunishment(player);
+
+            // NEW: Wait for the Hit animation to complete
+            yield return WaitForHitAnimation(player);
 
             // Reset counter after punishment
             consecutiveCount = 0;
@@ -94,6 +97,34 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         yield return null;
+    }
+
+    // NEW: Helper method to wait for Hit animation
+    private IEnumerator WaitForHitAnimation(HandController player)
+    {
+        if (player == null || player.handAnimator == null)
+        {
+            yield break;
+        }
+
+        bool hitAnimationFinished = false;
+
+        HandController.HitAnimationFinishedHandler callback = (hand) => hitAnimationFinished = true;
+        player.HitAnimationFinished += callback;
+
+        // Wait for Hit animation to complete (with timeout for safety)
+        float timeout = 2f;
+        float elapsed = 0f;
+
+        while (!hitAnimationFinished && elapsed < timeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        player.HitAnimationFinished -= callback;
+
+        Debug.Log("[HouseRuleBehavior] Hit animation completed");
     }
 
     private IEnumerator PlayPunishmentAnimation()
