@@ -107,10 +107,24 @@ public class DodgeBoostEffect : PowerUpEffectBase, IDurationEffect
 
     private void UpdateCounterDisplay()
     {
-        PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
-        if (tracker != null)
+        // Check if this effect belongs to the player or enemy
+        if (player != null && player.isPlayer)
         {
-            tracker.UpdateEffectCounter(this);
+            // Player owns this effect - update PlayerCombatTracker
+            PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.UpdateEffectCounter(this);
+            }
+        }
+        else if (player != null && !player.isPlayer)
+        {
+            // Enemy owns this effect - update EnemyCombatTracker
+            EnemyCombatTracker tracker = Object.FindObjectOfType<EnemyCombatTracker>();
+            if (tracker != null)
+            {
+                tracker.UpdateEffectCounter(this);
+            }
         }
     }
 }
