@@ -338,6 +338,19 @@ public class PredictionUI : MonoBehaviour
 
     private Sprite GetSpriteForSign(string sign)
     {
+        // Use enemy's hand sprites if available, otherwise fall back to defaults
+        if (currentEnemy != null)
+        {
+            return sign switch
+            {
+                "Rock" => currentEnemy.defaultHandSprite,
+                "Paper" => currentEnemy.paperHandSprite,
+                "Scissors" => currentEnemy.scissorsHandSprite,
+                _ => null
+            };
+        }
+
+        // Fallback to inspector-assigned sprites if enemy reference is lost
         return sign switch
         {
             "Rock" => rockSprite,
