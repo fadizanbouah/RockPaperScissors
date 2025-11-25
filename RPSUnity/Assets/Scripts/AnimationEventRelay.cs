@@ -66,4 +66,12 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnStealAnimationFinished();
         }
     }
+
+    public void TriggerHouseRulesAnimationFinished()
+    {
+        if (handController != null)
+        {
+            handController.OnHouseRulesAnimationFinished();
+        }
+    }
 }

@@ -98,10 +98,38 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
 
     private IEnumerator PlayPunishmentAnimation()
     {
-        // TODO: Add animation similar to RobinGood's steal animation
-        // For now, just a placeholder delay
-        Debug.Log("[HouseRuleBehavior] Playing punishment animation (placeholder)");
-        yield return new WaitForSeconds(0.5f);
+        // Play animation on the PLAYER, not the enemy
+        if (playerHand != null && playerHand.handAnimator != null)
+        {
+            Animator animator = playerHand.handAnimator;
+
+            if (animator.HasParameter("HouseRulesHammer"))
+            {
+                Debug.Log("[HouseRuleBehavior] Playing HouseRulesHammer animation on player");
+                animator.SetTrigger("HouseRulesHammer");
+
+                // Wait for animation event callback
+                bool animationFinished = false;
+
+                // Create the callback with the correct delegate signature
+                HandController.HouseRulesAnimationFinishedHandler callback = (hand) => animationFinished = true;
+
+                playerHand.HouseRulesAnimationFinished += callback;
+
+                yield return new WaitUntil(() => animationFinished);
+
+                playerHand.HouseRulesAnimationFinished -= callback;
+            }
+            else
+            {
+                Debug.Log("[HouseRuleBehavior] No HouseRulesHammer animation parameter found - using placeholder delay");
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private void ApplyDamagePunishment(HandController player)

@@ -106,6 +106,9 @@ public class HandController : MonoBehaviour
     public delegate bool CheatDeathCheckHandler(HandController hand);
     public event CheatDeathCheckHandler OnCheatDeathCheck;
 
+    public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
+    public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
+
     private void Awake()
     {
         // Store base values before any modifications
@@ -555,6 +558,12 @@ public class HandController : MonoBehaviour
         // IMPORTANT: Also trigger HitAnimationFinished so the game flow continues
         // This makes CheatDeath animation work the same as Hit animation for game flow
         HitAnimationFinished?.Invoke(this);
+    }
+
+    public void OnHouseRulesAnimationFinished()
+    {
+        Debug.Log($"{gameObject.name} house rules animation finished!");
+        HouseRulesAnimationFinished?.Invoke(this);
     }
 
     // Prediction System Methods
