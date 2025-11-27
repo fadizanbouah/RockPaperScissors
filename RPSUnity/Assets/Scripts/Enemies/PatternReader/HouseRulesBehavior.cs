@@ -76,26 +76,28 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
+        // NEW: Check if player is dead before punishing
+        if (player == null || player.CurrentHealth <= 0)
+        {
+            Debug.Log("[HouseRuleBehavior] Player is dead - skipping punishment");
+            yield break;
+        }
+
         // Check if player has triggered the punishment
         if (consecutiveCount >= requiredConsecutiveSigns)
         {
             Debug.Log($"[HouseRuleBehavior] House rule violated! Player used {lastPlayerSign} {consecutiveCount} times in a row.");
-
             // Play punishment animation
             yield return PlayPunishmentAnimation();
-
             // Apply the damage punishment
             ApplyDamagePunishment(player);
-
             // NEW: Wait for the Hit animation to complete
             yield return WaitForHitAnimation(player);
-
             // Reset counter after punishment
             consecutiveCount = 0;
             lastPlayerSign = "";
             Debug.Log("[HouseRuleBehavior] Counter reset after punishment");
         }
-
         yield return null;
     }
 
