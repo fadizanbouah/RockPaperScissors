@@ -224,24 +224,20 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             int damage = enemyHandController.GetEffectiveDamage(enemyChoice, out bool isCrit);
             playerHitDone = false;
-
-            // Store health before damage
-            int healthBeforeDamage = playerInstance.CurrentHealth;
-
             playerInstance.TakeDamage(damage, enemyHandController, isCrit);
             Debug.Log($"Enemy {enemyHandController?.name} dealt {damage} damage to Player");
         }
         else
         {
             // For draws, no damage animations, so skip waiting
-            // But still call post-damage behaviors and OnRoundEnd
             Debug.Log("[HandleTakeDamage] Draw - no damage to resolve");
+
+            // IMPORTANT: Call OnRoundEnd BEFORE post-damage behaviors
+            PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
+            Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for Draw result");
 
             // NEW: Check for post-damage enemy behaviors (even on draw)
             yield return StartCoroutine(ExecutePostDamageBehaviors(result, playerChoice, enemyChoice));
-
-            PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
-            Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for Draw result");
 
             if (enemyHandController != null)
             {
@@ -256,13 +252,13 @@ public class RockPaperScissorsGame : MonoBehaviour
         yield return new WaitUntil(() => playerHitDone && enemyHitDone);
         Debug.Log("[HandleTakeDamage] Both hit animations finished.");
 
-        // NEW: Execute post-damage behaviors AFTER hit animations but BEFORE OnRoundEnd
-        Debug.Log("[RockPaperScissorsGame] Checking for post-damage enemy behaviors...");
-        yield return StartCoroutine(ExecutePostDamageBehaviors(result, playerChoice, enemyChoice));
-
-        // IMPORTANT: Call OnRoundEnd after damage AND post-damage behaviors
+        // IMPORTANT: Call OnRoundEnd BEFORE post-damage behaviors (like stealing)
         PowerUpEffectManager.Instance?.OnRoundEnd(playerChoice, enemyChoice, result);
         Debug.Log($"[RockPaperScissorsGame] Called OnRoundEnd for {result} result");
+
+        // NEW: Execute post-damage behaviors AFTER OnRoundEnd
+        Debug.Log("[RockPaperScissorsGame] Checking for post-damage enemy behaviors...");
+        yield return StartCoroutine(ExecutePostDamageBehaviors(result, playerChoice, enemyChoice));
 
         // Notify enemy that round is complete for sign shuffle
         if (enemyHandController != null)
