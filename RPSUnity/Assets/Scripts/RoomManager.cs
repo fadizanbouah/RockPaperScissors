@@ -46,6 +46,15 @@ public class RoomManager : MonoBehaviour
         Debug.Log("[RoomManager] Starting new room sequence. Resetting run progress...");
         RunProgressManager.Instance.ResetRun();
 
+        // NEW: Clear enemy combat tracker for new run
+        EnemyCombatTracker enemyTracker = FindObjectOfType<EnemyCombatTracker>();
+        if (enemyTracker != null)
+        {
+            enemyTracker.ClearTraitIcons();
+            enemyTracker.ClearActiveEffects();
+            Debug.Log("[RoomManager] Cleared EnemyCombatTracker for new run");
+        }
+
         currentPoolIndex = 0;
         SelectNextRoom();
     }

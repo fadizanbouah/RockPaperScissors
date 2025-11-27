@@ -397,7 +397,7 @@ public class EnemyCombatTracker : MonoBehaviour
         currentTraitIcons.Add(iconGO);
     }
 
-    private void ClearTraitIcons()
+    public void ClearTraitIcons()
     {
         foreach (GameObject icon in currentTraitIcons)
         {
