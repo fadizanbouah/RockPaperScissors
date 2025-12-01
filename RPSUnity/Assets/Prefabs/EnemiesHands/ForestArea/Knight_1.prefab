@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: health
-      value: 25
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: maxHealth
-      value: 25
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: critChance
@@ -22,19 +22,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: rockDamage
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: paperDamage
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: baseMaxHealth
-      value: 25
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: scissorsDamage
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: critDamageMultiplier
@@ -82,10 +82,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
-      value: Enemy33
+      value: Knight_1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8806589722131954323}
   m_SourcePrefab: {fileID: 100100000, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+--- !u!1 &4690570568020390453 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+  m_PrefabInstance: {fileID: 3886205823369268498}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-8806589722131954323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4690570568020390453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f47d418b86976594e8505a9b6b213c6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  traits:
+  - {fileID: 11400000, guid: 5975435d5369fd7408a06a54553f08f2, type: 2}
