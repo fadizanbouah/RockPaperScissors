@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305668139e80a4740b6215a47e5bbfbf, type: 3}
   m_Name: HardenBehavior
   m_EditorClassIdentifier: 
-  traitName: 
-  description: 
-  icon: {fileID: 0}
-  behaviorPrefab: {fileID: 0}
-  configValues: []
+  traitName: Harden
+  description: This enemy has 30% damage reduction when reaching 50% HP
+  icon: {fileID: 21300000, guid: b4a7f18863b764b41a0331de7dc45d73, type: 3}
+  behaviorPrefab: {fileID: 614732002834369251, guid: 999558ab4ddebfd4db5e8fd94663a7c5, type: 3}
+  configValues:
+  - 50
+  - 30
