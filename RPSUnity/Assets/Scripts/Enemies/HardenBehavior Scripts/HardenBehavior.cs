@@ -1,4 +1,3 @@
-// RPSUnity/Assets/Scripts/Enemies/Harden/HardenBehavior.cs
 using System.Collections;
 using UnityEngine;
 
@@ -40,20 +39,21 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         // Check if we should activate Harden based on current HP
-        CheckHardenActivation();
-        yield return null;
+        yield return StartCoroutine(CheckHardenActivation());
     }
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
         // Check again after damage in case it just crossed the threshold
-        CheckHardenActivation();
-        yield return null;
+        yield return StartCoroutine(CheckHardenActivation());
     }
 
-    private void CheckHardenActivation()
+    private IEnumerator CheckHardenActivation()
     {
-        if (enemyHand == null || enemyHand.CurrentHealth <= 0) return;
+        if (enemyHand == null || enemyHand.CurrentHealth <= 0)
+        {
+            yield break;
+        }
 
         // Check if we should activate Harden
         bool shouldBeHardened = enemyHand.CurrentHealth <= hpThreshold;
@@ -61,15 +61,72 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
         // If state changed, update it
         if (shouldBeHardened && !isHardened)
         {
-            ActivateHarden();
+            yield return StartCoroutine(ActivateHarden());
         }
     }
 
-    private void ActivateHarden()
+    private IEnumerator ActivateHarden()
     {
         isHardened = true;
         Debug.Log($"[HardenBehavior] HARDEN ACTIVATED! Enemy now has {damageReductionPercent}% damage reduction");
 
+        // Play the harden animation
+        yield return StartCoroutine(PlayHardenAnimation());
+
+        // AFTER animation completes, create the damage reduction effect
+        CreateDamageReductionEffect();
+    }
+
+    private IEnumerator PlayHardenAnimation()
+    {
+        if (enemyHand != null && enemyHand.handAnimator != null)
+        {
+            Animator animator = enemyHand.handAnimator;
+
+            if (animator.HasParameter("Harden"))
+            {
+                Debug.Log("[HardenBehavior] Playing Harden animation");
+                animator.SetTrigger("Harden");
+
+                // Wait for animation event callback
+                bool animationFinished = false;
+
+                // Create the callback with the correct delegate signature
+                HandController.HardenAnimationFinishedHandler callback = (hand) => animationFinished = true;
+
+                enemyHand.HardenAnimationFinished += callback;
+
+                // Wait for animation to finish (with timeout for safety)
+                float timeout = 3f;
+                float elapsed = 0f;
+
+                while (!animationFinished && elapsed < timeout)
+                {
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+
+                enemyHand.HardenAnimationFinished -= callback;
+
+                if (elapsed >= timeout)
+                {
+                    Debug.LogWarning("[HardenBehavior] Harden animation timed out!");
+                }
+            }
+            else
+            {
+                Debug.Log("[HardenBehavior] No Harden animation parameter found - using placeholder delay");
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void CreateDamageReductionEffect()
+    {
         // Create a HardenEffect that will handle the damage reduction
         GameObject effectObj = new GameObject("HardenEffect");
         activeEffect = effectObj.AddComponent<HardenEffect>();
