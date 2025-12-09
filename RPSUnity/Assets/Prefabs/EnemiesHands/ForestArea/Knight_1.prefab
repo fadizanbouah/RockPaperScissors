@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: b4d0628909cdb58438bee894d0557e34, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -123,15 +123,15 @@ PrefabInstance:
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: paperHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6330d624ffd01cc4098fa80fe6e2362a, type: 3}
+      objectReference: {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: defaultHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: aaf371d088d3fa2469fb849b0d178c1d, type: 3}
+      objectReference: {fileID: 21300000, guid: 3c1f9dee2934dcd41a9beefc9103cfc7, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: scissorsHandSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 16efbdf8acf0a0f47ad941f07de67a65, type: 3}
+      objectReference: {fileID: 21300000, guid: cc867d7eb9d867d4a96f0e0d2ea460d1, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: critDamageMultiplier
       value: 1.25
@@ -183,7 +183,7 @@ PrefabInstance:
     - target: {fileID: 7813983361860719102, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: aaf371d088d3fa2469fb849b0d178c1d, type: 3}
+      objectReference: {fileID: 21300000, guid: 3c1f9dee2934dcd41a9beefc9103cfc7, type: 3}
     - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
       value: Knight_1

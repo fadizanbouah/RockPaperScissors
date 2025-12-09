@@ -21,9 +21,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 6330d624ffd01cc4098fa80fe6e2362a, type: 3}
+      value: {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
     - time: 0.75
-      value: {fileID: 21300000, guid: 6330d624ffd01cc4098fa80fe6e2362a, type: 3}
+      value: {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
     attribute: m_Sprite
     path: EnemyHand
     classID: 212
@@ -46,8 +46,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 6330d624ffd01cc4098fa80fe6e2362a, type: 3}
-    - {fileID: 21300000, guid: 6330d624ffd01cc4098fa80fe6e2362a, type: 3}
+    - {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
+    - {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
