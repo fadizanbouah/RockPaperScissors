@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiredConsecutiveSigns: 0
-  punishmentType: 0
-  punishmentValue: 0
+  damagePercent: 20
+  houseRulesVFXPrefab: {fileID: 5344017363046957277, guid: e3ad94a9a5ed0784aa5792612f3971fb, type: 3}

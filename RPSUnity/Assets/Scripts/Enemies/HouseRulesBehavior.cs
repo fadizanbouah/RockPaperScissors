@@ -10,6 +10,10 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
     [Tooltip("% of player's max HP dealt as damage (e.g., 20 = 20%)")]
     [SerializeField] private float damagePercent = 20f;
 
+    [Header("Visual Effect")]
+    [Tooltip("VFX prefab that plays when House Rules triggers")]
+    [SerializeField] private GameObject houseRulesVFXPrefab;
+
     private HandController enemyHand;
     private HandController playerHand;
 
@@ -76,7 +80,7 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // NEW: Check if player is dead before punishing
+        // Check if player is dead before punishing
         if (player == null || player.CurrentHealth <= 0)
         {
             Debug.Log("[HouseRuleBehavior] Player is dead - skipping punishment");
@@ -87,21 +91,25 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
         if (consecutiveCount >= requiredConsecutiveSigns)
         {
             Debug.Log($"[HouseRuleBehavior] House rule violated! Player used {lastPlayerSign} {consecutiveCount} times in a row.");
+
             // Play punishment animation
             yield return PlayPunishmentAnimation();
+
             // Apply the damage punishment
             ApplyDamagePunishment(player);
-            // NEW: Wait for the Hit animation to complete
+
+            // Wait for the Hit animation to complete
             yield return WaitForHitAnimation(player);
+
             // Reset counter after punishment
             consecutiveCount = 0;
             lastPlayerSign = "";
             Debug.Log("[HouseRuleBehavior] Counter reset after punishment");
         }
+
         yield return null;
     }
 
-    // NEW: Helper method to wait for Hit animation
     private IEnumerator WaitForHitAnimation(HandController player)
     {
         if (player == null || player.handAnimator == null)
@@ -131,36 +139,55 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
 
     private IEnumerator PlayPunishmentAnimation()
     {
-        // Play animation on the PLAYER, not the enemy
-        if (playerHand != null && playerHand.handAnimator != null)
+        if (houseRulesVFXPrefab != null && playerHand != null)
         {
-            Animator animator = playerHand.handAnimator;
+            Debug.Log("[HouseRuleBehavior] Spawning House Rules VFX prefab");
 
-            if (animator.HasParameter("HouseRulesHammer"))
+            // Spawn the effect at player's position
+            GameObject vfx = Instantiate(houseRulesVFXPrefab, playerHand.transform.position, Quaternion.identity);
+
+            // Parent it to the player so it moves with them
+            vfx.transform.SetParent(playerHand.transform);
+
+            // Get the animator from the VFX prefab
+            Animator vfxAnimator = vfx.GetComponent<Animator>();
+
+            if (vfxAnimator != null)
             {
-                Debug.Log("[HouseRuleBehavior] Playing HouseRulesHammer animation on player");
-                animator.SetTrigger("HouseRulesHammer");
+                // Wait one frame for animator to initialize
+                yield return null;
 
-                // Wait for animation event callback
-                bool animationFinished = false;
+                // Wait for the animation to finish
+                AnimatorStateInfo stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
+                float timeout = 3f;
+                float elapsed = 0f;
 
-                // Create the callback with the correct delegate signature
-                HandController.HouseRulesAnimationFinishedHandler callback = (hand) => animationFinished = true;
+                while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
+                {
+                    yield return null;
+                    stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
+                    elapsed += Time.deltaTime;
+                }
 
-                playerHand.HouseRulesAnimationFinished += callback;
-
-                yield return new WaitUntil(() => animationFinished);
-
-                playerHand.HouseRulesAnimationFinished -= callback;
+                if (elapsed >= timeout)
+                {
+                    Debug.LogWarning("[HouseRuleBehavior] VFX animation timed out!");
+                }
             }
             else
             {
-                Debug.Log("[HouseRuleBehavior] No HouseRulesHammer animation parameter found - using placeholder delay");
-                yield return new WaitForSeconds(0.5f);
+                // No animator found, just wait a bit
+                Debug.LogWarning("[HouseRuleBehavior] VFX prefab has no Animator - using fallback delay");
+                yield return new WaitForSeconds(1f);
             }
+
+            // Clean up the VFX
+            Destroy(vfx);
         }
         else
         {
+            // No VFX prefab assigned - just use a simple delay
+            Debug.Log("[HouseRuleBehavior] No VFX prefab assigned - using delay");
             yield return new WaitForSeconds(0.5f);
         }
     }
