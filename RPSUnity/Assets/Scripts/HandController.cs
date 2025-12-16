@@ -109,9 +109,6 @@ public class HandController : MonoBehaviour
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
 
-    public delegate void HardenAnimationFinishedHandler(HandController hand);
-    public event HardenAnimationFinishedHandler HardenAnimationFinished;
-
     private void Awake()
     {
         // Store base values before any modifications
@@ -567,12 +564,6 @@ public class HandController : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} house rules animation finished!");
         HouseRulesAnimationFinished?.Invoke(this);
-    }
-
-    public void OnHardenAnimationFinished()
-    {
-        Debug.Log($"{gameObject.name} harden animation finished!");
-        HardenAnimationFinished?.Invoke(this);
     }
 
     // Prediction System Methods

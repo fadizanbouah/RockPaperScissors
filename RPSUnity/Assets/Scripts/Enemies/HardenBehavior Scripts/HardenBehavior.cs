@@ -10,17 +10,19 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
     [Tooltip("% of damage reduction when active (e.g., 30 = 30% damage reduction)")]
     [SerializeField] private float damageReductionPercent = 30f;
 
+    [Header("Visual Effect")]
+    [Tooltip("VFX prefab that plays when Harden activates")]
+    [SerializeField] private GameObject hardenVFXPrefab;
+
     private HandController enemyHand;
     private bool isHardened = false;
-    private float hpThreshold; // Calculated actual HP value
-    private HardenEffect activeEffect; // Reference to the power-up effect we create
+    private float hpThreshold;
+    private HardenEffect activeEffect;
 
     public void Initialize(HandController enemy, float[] configValues)
     {
         enemyHand = enemy;
 
-        // configValues[0] = hpThresholdPercent
-        // configValues[1] = damageReductionPercent
         if (configValues != null && configValues.Length > 0)
         {
             if (configValues.Length > 0)
@@ -30,7 +32,6 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
                 damageReductionPercent = configValues[1];
         }
 
-        // Calculate the actual HP threshold
         hpThreshold = enemyHand.maxHealth * (hpThresholdPercent / 100f);
 
         Debug.Log($"[HardenBehavior] Initialized - Activates at {hpThresholdPercent}% HP ({hpThreshold} HP), {damageReductionPercent}% damage reduction");
@@ -38,13 +39,11 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
-        // Check if we should activate Harden based on current HP
         yield return StartCoroutine(CheckHardenActivation());
     }
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
-        // Check again after damage in case it just crossed the threshold
         yield return StartCoroutine(CheckHardenActivation());
     }
 
@@ -55,10 +54,8 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Check if we should activate Harden
         bool shouldBeHardened = enemyHand.CurrentHealth <= hpThreshold;
 
-        // If state changed, update it
         if (shouldBeHardened && !isHardened)
         {
             yield return StartCoroutine(ActivateHarden());
@@ -70,57 +67,64 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
         isHardened = true;
         Debug.Log($"[HardenBehavior] HARDEN ACTIVATED! Enemy now has {damageReductionPercent}% damage reduction");
 
-        // Play the harden animation
-        yield return StartCoroutine(PlayHardenAnimation());
+        // Play the harden visual effect
+        yield return StartCoroutine(PlayHardenVFX());
 
-        // AFTER animation completes, create the damage reduction effect
+        // Create damage reduction effect
         CreateDamageReductionEffect();
     }
 
-    private IEnumerator PlayHardenAnimation()
+    private IEnumerator PlayHardenVFX()
     {
-        if (enemyHand != null && enemyHand.handAnimator != null)
+        if (hardenVFXPrefab != null && enemyHand != null)
         {
-            Animator animator = enemyHand.handAnimator;
+            Debug.Log("[HardenBehavior] Spawning Harden VFX prefab");
 
-            if (animator.HasParameter("Harden"))
+            // Spawn the effect at enemy's position
+            GameObject vfx = Instantiate(hardenVFXPrefab, enemyHand.transform.position, Quaternion.identity);
+
+            // Parent it to the enemy so it moves with them
+            vfx.transform.SetParent(enemyHand.transform);
+
+            // Get the animator from the VFX prefab
+            Animator vfxAnimator = vfx.GetComponent<Animator>();
+
+            if (vfxAnimator != null)
             {
-                Debug.Log("[HardenBehavior] Playing Harden animation");
-                animator.SetTrigger("Harden");
+                // Wait one frame for animator to initialize
+                yield return null;
 
-                // Wait for animation event callback
-                bool animationFinished = false;
-
-                // Create the callback with the correct delegate signature
-                HandController.HardenAnimationFinishedHandler callback = (hand) => animationFinished = true;
-
-                enemyHand.HardenAnimationFinished += callback;
-
-                // Wait for animation to finish (with timeout for safety)
+                // Wait for the animation to finish
+                AnimatorStateInfo stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
                 float timeout = 3f;
                 float elapsed = 0f;
 
-                while (!animationFinished && elapsed < timeout)
+                while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
                 {
-                    elapsed += Time.deltaTime;
                     yield return null;
+                    stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
+                    elapsed += Time.deltaTime;
                 }
-
-                enemyHand.HardenAnimationFinished -= callback;
 
                 if (elapsed >= timeout)
                 {
-                    Debug.LogWarning("[HardenBehavior] Harden animation timed out!");
+                    Debug.LogWarning("[HardenBehavior] VFX animation timed out!");
                 }
             }
             else
             {
-                Debug.Log("[HardenBehavior] No Harden animation parameter found - using placeholder delay");
-                yield return new WaitForSeconds(0.5f);
+                // No animator found, just wait a bit
+                Debug.LogWarning("[HardenBehavior] VFX prefab has no Animator - using fallback delay");
+                yield return new WaitForSeconds(1f);
             }
+
+            // Clean up the VFX
+            Destroy(vfx);
         }
         else
         {
+            // No VFX prefab assigned - just use a simple delay
+            Debug.Log("[HardenBehavior] No VFX prefab assigned - using delay");
             yield return new WaitForSeconds(0.5f);
         }
     }
@@ -155,19 +159,7 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log("[HardenBehavior] Destroyed");
     }
 
-    // Getters for UI/debugging
-    public bool IsHardened()
-    {
-        return isHardened;
-    }
-
-    public float GetCurrentThreshold()
-    {
-        return hpThreshold;
-    }
-
-    public float GetThresholdPercent()
-    {
-        return hpThresholdPercent;
-    }
+    public bool IsHardened() => isHardened;
+    public float GetCurrentThreshold() => hpThreshold;
+    public float GetThresholdPercent() => hpThresholdPercent;
 }

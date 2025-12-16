@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpThresholdPercent: 50
   damageReductionPercent: 30
+  hardenVFXPrefab: {fileID: 8397488744006301618, guid: d155820eabaaf5a42acf39c433ad3d93, type: 3}

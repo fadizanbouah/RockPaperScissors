@@ -74,12 +74,4 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnHouseRulesAnimationFinished();
         }
     }
-
-    public void TriggerHardenAnimationFinished()
-    {
-        if (handController != null)
-        {
-            handController.OnHardenAnimationFinished();
-        }
-    }
 }
