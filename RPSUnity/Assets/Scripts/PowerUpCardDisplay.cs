@@ -438,7 +438,8 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         // Only float in the power-up panel, not during gameplay
         if (isGameplayCard) return;
 
-        if (floatingAnimator != null)
+        // NEW: Check if the GameObject is active before playing animation
+        if (floatingAnimator != null && floatingAnimator.enabled && gameObject.activeInHierarchy)
         {
             // Start the floating animation at a random offset
             float randomOffset = Random.Range(0f, floatingStartDelay); // 0-100% through the animation cycle

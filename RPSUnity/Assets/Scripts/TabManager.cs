@@ -103,9 +103,7 @@ public class TabManager : MonoBehaviour
 
             case 1: // Active Power-Ups Tab
                 Debug.Log("[TabManager] Active power-ups tab activated");
-                // Remove the PopulateActiveTab() call from here
-                // It should only be called once when the panel opens
-                RestartFloatingAnimations();
+                RestartFloatingAnimations(); // This will start the animations when tab is shown
                 break;
 
             case 2: // Sell Tab
