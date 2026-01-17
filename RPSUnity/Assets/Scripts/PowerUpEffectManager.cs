@@ -75,11 +75,16 @@ public class PowerUpEffectManager : MonoBehaviour
 
     public void CleanupAllEffects()
     {
-        foreach (var effect in activeEffects)
+        // Create a copy of the list to avoid modification during iteration
+        var effectsCopy = new List<PowerUpEffectBase>(activeEffects);
+
+        foreach (var effect in effectsCopy)
         {
+            if (effect == null) continue; // Skip if already destroyed
+
             effect.Cleanup();
 
-            if (effect is MonoBehaviour mb)
+            if (effect is MonoBehaviour mb && mb != null)
             {
                 Destroy(mb.gameObject);
             }

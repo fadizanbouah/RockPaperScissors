@@ -73,12 +73,12 @@ public class RunProgressManager : MonoBehaviour
         powerUpLevels.Clear();
         blockedPowerUps.Clear();
 
+        // Clean up activeEffects list (but objects may already be destroyed)
         foreach (var effect in activeEffects)
         {
             if (effect != null)
                 GameObject.Destroy(effect.gameObject);
         }
-
         activeEffects.Clear();
 
         // NEW: Clean up ALL effects registered with PowerUpEffectManager
@@ -92,7 +92,7 @@ public class RunProgressManager : MonoBehaviour
         GamblerUI[] allGamblerUIs = Resources.FindObjectsOfTypeAll<GamblerUI>();
         foreach (var gamblerUI in allGamblerUIs)
         {
-            if (gamblerUI.gameObject.scene.IsValid())
+            if (gamblerUI != null && gamblerUI.gameObject.scene.IsValid())
             {
                 gamblerUI.FullReset();
                 Debug.Log($"[RunProgressManager] Fully reset GamblerUI: {gamblerUI.name}");
@@ -107,7 +107,7 @@ public class RunProgressManager : MonoBehaviour
             Debug.Log("[RunProgressManager] Cleared prediction UI");
         }
 
-        // NEW: Reset CheatDeathEffect/StarterPackHPEffect/StarterPackDamageEffect for new run
+        // Reset static effect states for new run
         CheatDeathEffect.ResetForNewRun();
         StarterPackHPEffect.ResetForNewRun();
         StarterPackDamageEffect.ResetForNewRun();
