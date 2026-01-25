@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   traitName: Gold
   description: Gives gold on defeat
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b89374c1d4687454e85af7acf8b4e29a, type: 3}
   behaviorPrefab: {fileID: 4329187097406044857, guid: 0b184f32231633f4da0d0304b14afade, type: 3}
   configValues:
   - 100
