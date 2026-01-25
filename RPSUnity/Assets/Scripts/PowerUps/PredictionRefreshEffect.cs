@@ -10,12 +10,28 @@ public class PredictionRefreshEffect : PowerUpEffectBase
 
     public override void OnRoomStart()
     {
+        // NEW: Add null check for enemy before applying refresh
+        if (enemy == null || enemy.gameObject == null)
+        {
+            Debug.LogWarning("[PredictionRefreshEffect] Enemy is null or destroyed - removing effect");
+            RemoveEffect();
+            return;
+        }
+
         // Apply the refresh immediately when activated
         ApplyRefresh();
     }
 
     private void ApplyRefresh()
     {
+        // NEW: Double-check enemy still exists
+        if (enemy == null || enemy.gameObject == null)
+        {
+            Debug.LogWarning("[PredictionRefreshEffect] Enemy destroyed during refresh - aborting");
+            RemoveEffect();
+            return;
+        }
+
         // NEW: Instead of always refreshing the enemy, refresh whoever the TARGET is
         // If player owns this effect (normal case), target is the enemy
         // If enemy owns this effect (stolen by Robin Good), target is also the enemy (which is the actual player)
@@ -37,7 +53,7 @@ public class PredictionRefreshEffect : PowerUpEffectBase
             Debug.Log($"[PredictionRefreshEffect] Owner is player, refreshing enemy's signs: {enemy?.name ?? "null"}");
         }
 
-        if (targetToRefresh == null)
+        if (targetToRefresh == null || targetToRefresh.gameObject == null)
         {
             Debug.LogWarning("[PredictionRefreshEffect] No valid target to refresh!");
             RemoveEffect();
@@ -105,6 +121,9 @@ public class PredictionRefreshEffect : PowerUpEffectBase
                 tracker.RemoveActiveEffect(this);
             }
         }
+
+        // CRITICAL: Remove from PowerUpEffectManager to prevent it from being called again
+        PowerUpEffectManager.Instance?.RemoveEffect(this);
     }
 
     public override void Cleanup()
