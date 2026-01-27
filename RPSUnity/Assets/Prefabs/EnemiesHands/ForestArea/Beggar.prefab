@@ -131,3 +131,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   traits:
   - {fileID: 11400000, guid: 9e204194350c39448b0f1024acfe3c74, type: 2}
+  - {fileID: 11400000, guid: bc84944295c16d146be57b797cd8bb06, type: 2}
