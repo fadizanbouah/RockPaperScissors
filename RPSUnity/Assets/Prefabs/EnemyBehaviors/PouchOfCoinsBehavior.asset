@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   traitName: Coins
   description: Mooar coins
-  icon: {fileID: 21300000, guid: 5c04257801f526242af447a3dcee3d7c, type: 3}
+  icon: {fileID: 21300000, guid: ebeeada14dc8b984f9c0d28ca81b3352, type: 3}
   behaviorPrefab: {fileID: 35639224787992936, guid: 50883849b4f38d745bb26aa85a012ba9, type: 3}
   configValues:
-  - 100
+  - 10
