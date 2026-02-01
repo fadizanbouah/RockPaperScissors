@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using TMPro; // Add this
 
 public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 {
@@ -7,8 +8,12 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
     [Tooltip("Maximum favor that can drop (will randomly give 1 to maxFavor)")]
     [SerializeField] private int maxFavor = 3;
 
+    [Header("Visual Effect")]
+    [Tooltip("VFX prefab that plays when favor drops")]
+    [SerializeField] private GameObject favorDropVFXPrefab;
+
     private HandController enemyHand;
-    private bool hasDroppedFavor = false; // Prevent double-drops
+    private bool hasDroppedFavor = false;
 
     public void Initialize(HandController enemy, float[] configValues)
     {
@@ -21,7 +26,6 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 
         Debug.Log($"[PouchOfFavorBehavior] Initialized with max favor drop: {maxFavor}");
 
-        // Subscribe to enemy death to drop favor
         if (enemyHand != null)
         {
             enemyHand.OnDeath += OnEnemyDeath;
@@ -30,14 +34,12 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 
     private void OnEnemyDeath(HandController hand)
     {
-        if (hasDroppedFavor) return; // Safety check
+        if (hasDroppedFavor) return;
 
-        // Roll for random favor amount (1 to maxFavor inclusive)
         int favorAmount = Random.Range(1, maxFavor + 1);
 
         Debug.Log($"[PouchOfFavorBehavior] Enemy defeated! Dropping {favorAmount} favor");
 
-        // Add favor to player
         if (RunProgressManager.Instance != null)
         {
             RunProgressManager.Instance.AddFavor(favorAmount);
@@ -45,24 +47,87 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 
         hasDroppedFavor = true;
 
-        // TODO: Play favor drop animation here later
+        // Play favor drop animation with the amount
+        if (favorDropVFXPrefab != null)
+        {
+            StartCoroutine(PlayFavorDropAnimation(favorAmount));
+        }
+    }
+
+    private IEnumerator PlayFavorDropAnimation(int favorAmount)
+    {
+        if (favorDropVFXPrefab != null && enemyHand != null)
+        {
+            Debug.Log("[PouchOfFavorBehavior] Spawning Favor Drop VFX prefab");
+
+            // Spawn the effect at enemy's position
+            GameObject vfx = Instantiate(favorDropVFXPrefab, enemyHand.transform.position, Quaternion.identity);
+
+            // Find the TextMeshPro component in the VFX
+            TextMeshProUGUI textComponent = vfx.GetComponentInChildren<TextMeshProUGUI>();
+            if (textComponent == null)
+            {
+                // Try finding TextMeshPro (3D version)
+                TextMeshPro textComponent3D = vfx.GetComponentInChildren<TextMeshPro>();
+                if (textComponent3D != null)
+                {
+                    textComponent3D.text = $"+{favorAmount}";
+                    Debug.Log($"[PouchOfFavorBehavior] Set favor text to: +{favorAmount}");
+                }
+            }
+            else
+            {
+                textComponent.text = $"+{favorAmount}";
+                Debug.Log($"[PouchOfFavorBehavior] Set favor text to: +{favorAmount}");
+            }
+
+            // Get the animator from the VFX prefab
+            Animator vfxAnimator = vfx.GetComponent<Animator>();
+
+            if (vfxAnimator != null)
+            {
+                yield return null; // Wait one frame for animator to initialize
+
+                // Wait for the animation to finish
+                AnimatorStateInfo stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
+                float timeout = 3f;
+                float elapsed = 0f;
+
+                while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
+                {
+                    yield return null;
+                    stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
+                    elapsed += Time.deltaTime;
+                }
+
+                if (elapsed >= timeout)
+                {
+                    Debug.LogWarning("[PouchOfFavorBehavior] VFX animation timed out!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[PouchOfFavorBehavior] VFX prefab has no Animator - using fallback delay");
+                yield return new WaitForSeconds(1.5f);
+            }
+
+            // Clean up the VFX
+            Destroy(vfx);
+        }
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
-        // No behavior needed before rounds
         yield return null;
     }
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
-        // No behavior needed after damage
         yield return null;
     }
 
     private void OnDestroy()
     {
-        // Clean up subscription
         if (enemyHand != null)
         {
             enemyHand.OnDeath -= OnEnemyDeath;
