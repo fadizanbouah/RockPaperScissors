@@ -60,8 +60,12 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
         {
             Debug.Log("[PouchOfFavorBehavior] Spawning Favor Drop VFX prefab");
 
-            // Spawn the effect at enemy's position
-            GameObject vfx = Instantiate(favorDropVFXPrefab, enemyHand.transform.position, Quaternion.identity);
+            // Offset the spawn position (adjust values as needed)
+            Vector3 offset = new Vector3(-1f, 0f, 0f);
+            Vector3 spawnPosition = enemyHand.transform.position + offset;
+
+            // Spawn the effect at enemy's position with offset
+            GameObject vfx = Instantiate(favorDropVFXPrefab, spawnPosition, Quaternion.identity);
 
             // Find the TextMeshPro component in the VFX
             TextMeshProUGUI textComponent = vfx.GetComponentInChildren<TextMeshProUGUI>();
@@ -83,7 +87,6 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 
             // Get the animator from the VFX prefab
             Animator vfxAnimator = vfx.GetComponent<Animator>();
-
             if (vfxAnimator != null)
             {
                 yield return null; // Wait one frame for animator to initialize
@@ -92,14 +95,12 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
                 AnimatorStateInfo stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
                 float timeout = 3f;
                 float elapsed = 0f;
-
                 while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
                 {
                     yield return null;
                     stateInfo = vfxAnimator.GetCurrentAnimatorStateInfo(0);
                     elapsed += Time.deltaTime;
                 }
-
                 if (elapsed >= timeout)
                 {
                     Debug.LogWarning("[PouchOfFavorBehavior] VFX animation timed out!");
