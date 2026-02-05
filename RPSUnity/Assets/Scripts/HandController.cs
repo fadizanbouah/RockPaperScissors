@@ -109,9 +109,6 @@ public class HandController : MonoBehaviour
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
 
-    public delegate void TraitAnimationFinishedHandler();
-    public event TraitAnimationFinishedHandler OnTraitAnimationsFinished;
-
     private void Awake()
     {
         // Store base values before any modifications
@@ -865,11 +862,6 @@ public class HandController : MonoBehaviour
     public void OnStealAnimationFinished()
     {
         StealAnimationFinished?.Invoke(this);
-    }
-
-    public void TriggerTraitAnimationsFinished()
-    {
-        OnTraitAnimationsFinished?.Invoke();
     }
 }
 

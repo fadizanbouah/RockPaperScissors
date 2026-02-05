@@ -50,12 +50,7 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
         // Play favor drop animation with the amount
         if (favorDropVFXPrefab != null)
         {
-            StartCoroutine(PlayFavorDropAnimationAndNotify(favorAmount, hand));
-        }
-        else
-        {
-            // No animation, notify immediately
-            hand.TriggerTraitAnimationsFinished();
+            StartCoroutine(PlayFavorDropAnimation(favorAmount));
         }
     }
 
@@ -118,17 +113,6 @@ public class PouchOfFavorBehavior : MonoBehaviour, IEnemyBehavior
 
             // Clean up the VFX
             Destroy(vfx);
-        }
-    }
-
-    private IEnumerator PlayFavorDropAnimationAndNotify(int favorAmount, HandController hand)
-    {
-        yield return StartCoroutine(PlayFavorDropAnimation(favorAmount));
-
-        // Notify that this trait's animation is complete
-        if (hand != null)
-        {
-            hand.TriggerTraitAnimationsFinished();
         }
     }
 
