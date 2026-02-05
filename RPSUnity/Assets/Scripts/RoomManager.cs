@@ -165,8 +165,61 @@ public class RoomManager : MonoBehaviour
         defeatedEnemy.OnDeathAnimationFinished -= HandleDeathAnimationFinished;
         defeatedEnemy.OnDeath -= HandleEnemyDefeat;
 
-        Debug.Log($"{defeatedEnemy.gameObject.name} death animation finished. Checking for next enemy...");
+        Debug.Log($"{defeatedEnemy.gameObject.name} death animation finished. Waiting for trait animations...");
 
+        // NEW: Wait for trait animations to complete
+        StartCoroutine(WaitForTraitAnimationsThenSpawn(defeatedEnemy));
+    }
+
+    private IEnumerator WaitForTraitAnimationsThenSpawn(HandController defeatedEnemy)
+    {
+        // Check if this enemy has any traits with animations
+        EnemyTraits enemyTraits = defeatedEnemy.GetComponent<EnemyTraits>();
+        bool hasAnimatingTraits = false;
+
+        if (enemyTraits != null)
+        {
+            var behaviors = enemyTraits.GetActiveBehaviors();
+            foreach (var behavior in behaviors)
+            {
+                // Check if it's a pouch behavior (you can expand this check as needed)
+                if (behavior is PouchOfFavorBehavior || behavior is PouchOfCoinsBehavior)
+                {
+                    hasAnimatingTraits = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasAnimatingTraits)
+        {
+            bool traitAnimationsComplete = false;
+            HandController.TraitAnimationFinishedHandler callback = () => traitAnimationsComplete = true;
+            defeatedEnemy.OnTraitAnimationsFinished += callback;
+
+            // Wait for trait animations (with timeout for safety)
+            float timeout = 5f;
+            float elapsed = 0f;
+
+            while (!traitAnimationsComplete && elapsed < timeout)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            defeatedEnemy.OnTraitAnimationsFinished -= callback;
+
+            if (elapsed >= timeout)
+            {
+                Debug.LogWarning("[RoomManager] Trait animation timeout - continuing anyway");
+            }
+            else
+            {
+                Debug.Log("[RoomManager] Trait animations completed");
+            }
+        }
+
+        // NOW destroy the enemy GameObject (after animations are done)
         Destroy(defeatedEnemy.gameObject);
         currentEnemy = null;
 
