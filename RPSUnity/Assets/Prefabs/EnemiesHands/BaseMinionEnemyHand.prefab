@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5467760588532861180}
   - component: {fileID: 5396096641448003727}
   m_Layer: 0
-  m_Name: Minion1
+  m_Name: MinionSpawnPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -609,7 +609,7 @@ GameObject:
   - component: {fileID: 2381506674641922747}
   - component: {fileID: 3521903001735818242}
   m_Layer: 0
-  m_Name: Minion3
+  m_Name: MinionSpawnPoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -792,10 +792,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4defc295d09d307449f965eb1e9841ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionSlots:
-  - {fileID: 1922924199672662205}
-  - {fileID: 9156978065280077374}
-  - {fileID: 7180967024332655973}
+  spawnPoints:
+  - {fileID: 5467760588532861180}
+  - {fileID: 100209950395916152}
+  - {fileID: 2381506674641922747}
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 100209950395916152}
   - component: {fileID: 2305108699775105049}
   m_Layer: 0
-  m_Name: Minion2
+  m_Name: MinionSpawnPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

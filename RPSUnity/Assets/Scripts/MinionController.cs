@@ -2,62 +2,73 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Manages minion GameObjects for enemies that have minion support.
-/// Handles visibility and tracking of active minions.
+/// Manages minion prefab spawning and tracking for enemies that have minion support.
+/// Spawns minion prefabs at designated spawn points.
 /// </summary>
 public class MinionController : MonoBehaviour
 {
-    [Header("Minion Configuration")]
-    [Tooltip("Array of minion GameObjects (assign in prefab, up to 3)")]
-    [SerializeField] private GameObject[] minionSlots = new GameObject[3];
+    [Header("Minion Spawn Configuration")]
+    [Tooltip("Transform points where minions will be spawned (up to 3)")]
+    [SerializeField] private Transform[] spawnPoints = new Transform[3];
 
-    private List<GameObject> activeMinions = new List<GameObject>();
+    private List<GameObject> spawnedMinions = new List<GameObject>();
 
     private void Awake()
     {
-        // Just log initialization - minions should already be disabled in prefab
-        Debug.Log($"[MinionController] Initialized with {minionSlots.Length} minion slots");
+        Debug.Log($"[MinionController] Initialized with {spawnPoints.Length} spawn points");
     }
 
     /// <summary>
-    /// Shows the specified number of minions (1-3).
-    /// Enables minions from the array in order.
+    /// Spawns the specified number of minion prefabs at spawn points.
     /// </summary>
-    public void ShowMinions(int count)
+    /// <param name="minionPrefab">The minion prefab to spawn</param>
+    /// <param name="count">Number of minions to spawn (1-3)</param>
+    public void SpawnMinions(GameObject minionPrefab, int count)
     {
-        // Clamp count to valid range
-        count = Mathf.Clamp(count, 0, minionSlots.Length);
-
-        Debug.Log($"[MinionController] Showing {count} minions");
-
-        activeMinions.Clear();
-
-        for (int i = 0; i < minionSlots.Length; i++)
+        if (minionPrefab == null)
         {
-            if (minionSlots[i] != null)
+            Debug.LogError("[MinionController] Minion prefab is null!");
+            return;
+        }
+
+        // Clamp count to valid range
+        count = Mathf.Clamp(count, 0, spawnPoints.Length);
+
+        Debug.Log($"[MinionController] Spawning {count} minions");
+
+        // Clear any existing minions first
+        ClearMinions();
+
+        for (int i = 0; i < count; i++)
+        {
+            if (spawnPoints[i] != null)
             {
-                bool shouldBeActive = i < count;
-                minionSlots[i].SetActive(shouldBeActive);
+                // Spawn minion at spawn point, parent it to this transform
+                GameObject minion = Instantiate(minionPrefab, spawnPoints[i].position, Quaternion.identity, transform);
+                spawnedMinions.Add(minion);
 
-                Debug.Log($"[MinionController] Minion {i} ({minionSlots[i].name}) - SetActive({shouldBeActive}), IsActive: {minionSlots[i].activeSelf}");
-
-                if (shouldBeActive)
+                // Optional: Pass reference to parent enemy
+                MinionBase minionScript = minion.GetComponent<MinionBase>();
+                if (minionScript != null)
                 {
-                    activeMinions.Add(minionSlots[i]);
-                    Debug.Log($"[MinionController] Activated minion: {minionSlots[i].name}");
+                    minionScript.Initialize(GetComponent<HandController>());
                 }
+
+                Debug.Log($"[MinionController] Spawned minion at spawn point {i}: {minion.name}");
             }
         }
 
-        Debug.Log($"[MinionController] Total active minions: {activeMinions.Count}");
+        Debug.Log($"[MinionController] Total spawned minions: {spawnedMinions.Count}");
     }
 
     /// <summary>
-    /// Gets the list of currently active (visible) minions.
+    /// Gets the list of currently spawned minions.
     /// </summary>
     public List<GameObject> GetActiveMinions()
     {
-        return new List<GameObject>(activeMinions); // Return a copy to prevent external modification
+        // Remove any null entries (destroyed minions)
+        spawnedMinions.RemoveAll(m => m == null);
+        return new List<GameObject>(spawnedMinions);
     }
 
     /// <summary>
@@ -65,37 +76,44 @@ public class MinionController : MonoBehaviour
     /// </summary>
     public int GetMinionCount()
     {
-        return activeMinions.Count;
+        spawnedMinions.RemoveAll(m => m == null);
+        return spawnedMinions.Count;
     }
 
     /// <summary>
-    /// Removes a specific minion from the active list and disables it.
+    /// Removes a specific minion from the active list and destroys it.
     /// Useful for behaviors where minions can be destroyed/sacrificed.
     /// </summary>
     public void RemoveMinion(GameObject minion)
     {
-        if (activeMinions.Contains(minion))
+        if (spawnedMinions.Contains(minion))
         {
-            activeMinions.Remove(minion);
-            minion.SetActive(false);
-            Debug.Log($"[MinionController] Removed minion: {minion.name}. Remaining: {activeMinions.Count}");
+            spawnedMinions.Remove(minion);
+            Destroy(minion);
+            Debug.Log($"[MinionController] Removed minion: {minion.name}. Remaining: {spawnedMinions.Count}");
         }
     }
 
     /// <summary>
-    /// Hides all minions.
+    /// Destroys all spawned minions and clears the list.
     /// </summary>
-    public void HideAllMinions()
+    public void ClearMinions()
     {
-        foreach (var minion in minionSlots)
+        foreach (var minion in spawnedMinions)
         {
             if (minion != null)
             {
-                minion.SetActive(false);
+                Destroy(minion);
             }
         }
 
-        activeMinions.Clear();
-        Debug.Log("[MinionController] All minions hidden");
+        spawnedMinions.Clear();
+        Debug.Log("[MinionController] All minions cleared");
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up minions when enemy is destroyed
+        ClearMinions();
     }
 }

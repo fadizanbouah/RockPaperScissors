@@ -27,10 +27,12 @@ public class EnemyTraits : MonoBehaviour
                 {
                     activeBehaviors.Add(behavior);
 
-                    // Initialize with config values if available
-                    if (behavior is IEnemyBehavior enemyBehavior && trait.configValues.Length > 0)
+                    // Initialize if this is an IEnemyBehavior
+                    if (behavior is IEnemyBehavior enemyBehavior)
                     {
-                        enemyBehavior.Initialize(enemyHand, trait.configValues);
+                        // Pass config values if available, otherwise pass empty array
+                        float[] configToPass = trait.configValues.Length > 0 ? trait.configValues : new float[0];
+                        enemyBehavior.Initialize(enemyHand, configToPass);
                     }
 
                     Debug.Log($"[EnemyTraits] Initialized trait: {trait.traitName}");

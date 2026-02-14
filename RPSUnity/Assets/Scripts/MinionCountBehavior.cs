@@ -2,12 +2,15 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Basic minion behavior that configures how many minions appear with the enemy.
-/// This is a foundation behavior - specific minion mechanics should be in separate behaviors.
+/// Spawns minion prefabs with the enemy.
+/// Minion prefab and count are configured via trait data.
 /// </summary>
 public class MinionCountBehavior : MonoBehaviour, IEnemyBehavior
 {
     [Header("Minion Configuration")]
+    [Tooltip("The minion prefab to spawn")]
+    [SerializeField] private GameObject minionPrefab;
+
     [Tooltip("Number of minions to spawn (1-3)")]
     [SerializeField] private int minionCount = 1;
 
@@ -31,10 +34,10 @@ public class MinionCountBehavior : MonoBehaviour, IEnemyBehavior
             minionCount = Mathf.Clamp(Mathf.RoundToInt(configValues[0]), 1, 3);
         }
 
-        Debug.Log($"[MinionCountBehavior] Initialized with {minionCount} minions");
+        Debug.Log($"[MinionCountBehavior] Initialized - will spawn {minionCount} minions");
 
-        // Show the configured number of minions
-        minionController.ShowMinions(minionCount);
+        // Spawn the configured number of minions using the prefab
+        minionController.SpawnMinions(minionPrefab, minionCount);
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
