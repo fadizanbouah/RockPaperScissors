@@ -36,6 +36,13 @@ public class HoundMasterBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
+        // NEW: Don't attack if enemy is already dead
+        if (enemyHand == null || enemyHand.health <= 0)
+        {
+            Debug.Log("[HoundMasterBehavior] Enemy is dead, hounds will not attack");
+            yield break;
+        }
+
         // Only trigger if player didn't already lose this round
         if (result == RoundResult.Win || result == RoundResult.Draw)
         {
