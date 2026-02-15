@@ -32,6 +32,14 @@ PrefabInstance:
       propertyPath: scissorsHandSprite
       value: 
       objectReference: {fileID: 21300000, guid: f858f76c16487db4b8cb0d5ad45aa5cf, type: 3}
+    - target: {fileID: 100209950395916152, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.50000006
+      objectReference: {fileID: 0}
+    - target: {fileID: 100209950395916152, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.000002
+      objectReference: {fileID: 0}
     - target: {fileID: 1100756402324209946, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: traits.Array.size
       value: 2
@@ -40,10 +48,46 @@ PrefabInstance:
       propertyPath: traits.Array.data[1]
       value: 
       objectReference: {fileID: 11400000, guid: 3ef12fd657a4ffd478ef3312050008b4, type: 2}
+    - target: {fileID: 1922924199672662205, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2305108699775105049, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7164ad78d1453d543a4660dccf84f919, type: 3}
+    - target: {fileID: 2381506674641922747, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.5000011
+      objectReference: {fileID: 0}
+    - target: {fileID: 2381506674641922747, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3521903001735818242, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7164ad78d1453d543a4660dccf84f919, type: 3}
     - target: {fileID: 3743721224730466802, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3df18eaafc3cea144ab0af521561824f, type: 2}
+    - target: {fileID: 5396096641448003727, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7164ad78d1453d543a4660dccf84f919, type: 3}
+    - target: {fileID: 5467760588532861180, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 5467760588532861180, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7180967024332655973, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7679948664225929950, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -91,6 +135,10 @@ PrefabInstance:
     - target: {fileID: 8428155265588346663, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_Name
       value: HoundMaster
+      objectReference: {fileID: 0}
+    - target: {fileID: 9156978065280077374, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

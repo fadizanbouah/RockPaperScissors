@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d29361f207a6e04db9cf18fc9e2c562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minionPrefab: {fileID: 1391202263545233063, guid: bc174949832ff4240adfadfe0ede6db1, type: 3}
+  minionPrefab: {fileID: 1908125464322930500, guid: 41f5d09ac07b04a46a976316bea30f9b, type: 3}
   minionCount: 1
