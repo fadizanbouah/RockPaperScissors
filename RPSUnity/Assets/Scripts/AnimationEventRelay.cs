@@ -74,4 +74,14 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnHouseRulesAnimationFinished();
         }
     }
+
+    public void OnDealDamage()
+    {
+        // Forward to parent
+        HoundMinion hound = GetComponentInParent<HoundMinion>();
+        if (hound != null)
+        {
+            hound.OnDealDamage();
+        }
+    }
 }

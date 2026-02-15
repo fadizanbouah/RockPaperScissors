@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4863806095763970648}
   - component: {fileID: 689656838110938044}
   m_Layer: 0
-  m_Name: MinionCountBehavior_Hound
+  m_Name: MinionCountBehavior_1Hound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minionPrefab: {fileID: 1908125464322930500, guid: 41f5d09ac07b04a46a976316bea30f9b, type: 3}
-  minionCount: 1
+  minionCount: 2

@@ -11,7 +11,13 @@ public class MinionBase : MonoBehaviour
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        // Look for Animator in children (since it's on MinionContainer)
+        animator = GetComponentInChildren<Animator>();
+        if (animator == null)
+        {
+            Debug.LogWarning($"[MinionBase] No Animator found on {gameObject.name} or its children!");
+        }
+
         OnMinionAwake();
     }
 
@@ -44,6 +50,10 @@ public class MinionBase : MonoBehaviour
         {
             animator.SetTrigger(triggerName);
             Debug.Log($"[MinionBase] Playing animation: {triggerName}");
+        }
+        else
+        {
+            Debug.LogWarning($"[MinionBase] Cannot play animation '{triggerName}' - no Animator found!");
         }
     }
 
