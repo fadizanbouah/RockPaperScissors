@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Manages minion prefab spawning and tracking for enemies that have minion support.
-/// Spawns minion prefabs at designated spawn points.
-/// </summary>
 public class MinionController : MonoBehaviour
 {
     [Header("Minion Spawn Configuration")]
     [Tooltip("Transform points where minions will be spawned (up to 3)")]
     [SerializeField] private Transform[] spawnPoints = new Transform[3];
+
+    [Header("Rendering")]
+    [Tooltip("Starting Order in Layer value for first minion")]
+    [SerializeField] private int baseOrderInLayer = 0;
+    [Tooltip("Increment Order in Layer for each subsequent minion")]
+    [SerializeField] private int orderInLayerIncrement = 1;
 
     private List<GameObject> spawnedMinions = new List<GameObject>();
 
@@ -18,11 +20,6 @@ public class MinionController : MonoBehaviour
         Debug.Log($"[MinionController] Initialized with {spawnPoints.Length} spawn points");
     }
 
-    /// <summary>
-    /// Spawns the specified number of minion prefabs at spawn points.
-    /// </summary>
-    /// <param name="minionPrefab">The minion prefab to spawn</param>
-    /// <param name="count">Number of minions to spawn (1-3)</param>
     public void SpawnMinions(GameObject minionPrefab, int count)
     {
         if (minionPrefab == null)
@@ -31,23 +28,22 @@ public class MinionController : MonoBehaviour
             return;
         }
 
-        // Clamp count to valid range
         count = Mathf.Clamp(count, 0, spawnPoints.Length);
 
         Debug.Log($"[MinionController] Spawning {count} minions");
 
-        // Clear any existing minions first
         ClearMinions();
 
         for (int i = 0; i < count; i++)
         {
             if (spawnPoints[i] != null)
             {
-                // Spawn minion at spawn point, parent it to this transform
                 GameObject minion = Instantiate(minionPrefab, spawnPoints[i].position, Quaternion.identity, transform);
                 spawnedMinions.Add(minion);
 
-                // Optional: Pass reference to parent enemy
+                // Set Order in Layer based on spawn index
+                SetMinionSortingOrder(minion, i);
+
                 MinionBase minionScript = minion.GetComponent<MinionBase>();
                 if (minionScript != null)
                 {
@@ -61,29 +57,33 @@ public class MinionController : MonoBehaviour
         Debug.Log($"[MinionController] Total spawned minions: {spawnedMinions.Count}");
     }
 
-    /// <summary>
-    /// Gets the list of currently spawned minions.
-    /// </summary>
+    private void SetMinionSortingOrder(GameObject minion, int spawnIndex)
+    {
+        // Calculate order based on spawn index
+        int orderInLayer = baseOrderInLayer + (spawnIndex * orderInLayerIncrement);
+
+        // Find all SpriteRenderers in the minion (including children)
+        SpriteRenderer[] renderers = minion.GetComponentsInChildren<SpriteRenderer>();
+
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            renderer.sortingOrder = orderInLayer;
+            Debug.Log($"[MinionController] Set {renderer.gameObject.name} Order in Layer to {orderInLayer}");
+        }
+    }
+
     public List<GameObject> GetActiveMinions()
     {
-        // Remove any null entries (destroyed minions)
         spawnedMinions.RemoveAll(m => m == null);
         return new List<GameObject>(spawnedMinions);
     }
 
-    /// <summary>
-    /// Gets the count of currently active minions.
-    /// </summary>
     public int GetMinionCount()
     {
         spawnedMinions.RemoveAll(m => m == null);
         return spawnedMinions.Count;
     }
 
-    /// <summary>
-    /// Removes a specific minion from the active list and destroys it.
-    /// Useful for behaviors where minions can be destroyed/sacrificed.
-    /// </summary>
     public void RemoveMinion(GameObject minion)
     {
         if (spawnedMinions.Contains(minion))
@@ -94,9 +94,6 @@ public class MinionController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Destroys all spawned minions and clears the list.
-    /// </summary>
     public void ClearMinions()
     {
         foreach (var minion in spawnedMinions)
@@ -113,7 +110,6 @@ public class MinionController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Clean up minions when enemy is destroyed
         ClearMinions();
     }
 }

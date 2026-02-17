@@ -72,6 +72,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3df18eaafc3cea144ab0af521561824f, type: 2}
+    - target: {fileID: 4546097170834969166, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: baseOrderInLayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5396096641448003727, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_Sprite
       value: 

@@ -796,6 +796,8 @@ MonoBehaviour:
   - {fileID: 5467760588532861180}
   - {fileID: 100209950395916152}
   - {fileID: 2381506674641922747}
+  baseOrderInLayer: 0
+  orderInLayerIncrement: 1
 --- !u!1 &8532900606797542106
 GameObject:
   m_ObjectHideFlags: 0
