@@ -57,9 +57,12 @@ public class HoundMinion : MinionBase
 
         if (parentEnemy != null)
         {
-            int damage = Mathf.RoundToInt(parentEnemy.maxHealth * damagePercent);
+            // Calculate average damage from rock, paper, scissors
+            float averageDamage = (parentEnemy.rockDamage + parentEnemy.paperDamage + parentEnemy.scissorsDamage) / 3f;
+            int damage = Mathf.RoundToInt(averageDamage * damagePercent);
+
             targetPlayer.TakeDamage(damage);
-            Debug.Log($"[HoundMinion] Dealt {damage} damage to player");
+            Debug.Log($"[HoundMinion] Dealt {damage} damage to player (based on average damage: {averageDamage})");
         }
     }
 }
