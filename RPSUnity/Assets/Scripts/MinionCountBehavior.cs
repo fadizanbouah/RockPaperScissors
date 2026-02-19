@@ -3,16 +3,13 @@ using UnityEngine;
 
 /// <summary>
 /// Spawns minion prefabs with the enemy.
-/// Minion prefab and count are configured via trait data.
+/// Supports spawning different minion types at each spawn point.
 /// </summary>
 public class MinionCountBehavior : MonoBehaviour, IEnemyBehavior
 {
     [Header("Minion Configuration")]
-    [Tooltip("The minion prefab to spawn")]
-    [SerializeField] private GameObject minionPrefab;
-
-    [Tooltip("Number of minions to spawn (1-3)")]
-    [SerializeField] private int minionCount = 1;
+    [Tooltip("Minion prefabs to spawn (one per spawn point, up to 3)")]
+    [SerializeField] private GameObject[] minionPrefabs = new GameObject[3];
 
     private MinionController minionController;
     private HandController enemyHand;
@@ -28,16 +25,10 @@ public class MinionCountBehavior : MonoBehaviour, IEnemyBehavior
             return;
         }
 
-        // Get minion count from config (configValues[0])
-        if (configValues != null && configValues.Length > 0)
-        {
-            minionCount = Mathf.Clamp(Mathf.RoundToInt(configValues[0]), 1, 3);
-        }
+        Debug.Log($"[MinionCountBehavior] Initialized with {minionPrefabs.Length} minion slots");
 
-        Debug.Log($"[MinionCountBehavior] Initialized - will spawn {minionCount} minions");
-
-        // Spawn the configured number of minions using the prefab
-        minionController.SpawnMinions(minionPrefab, minionCount);
+        // Spawn the configured minions
+        minionController.SpawnMinionsMultiType(minionPrefabs);
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)

@@ -24,6 +24,9 @@ public class MinionController : MonoBehaviour
         Debug.Log($"[MinionController] Initialized with {spawnPoints.Length} spawn points");
     }
 
+    /// <summary>
+    /// Spawns the same minion prefab multiple times (original method).
+    /// </summary>
     public void SpawnMinions(GameObject minionPrefab, int count)
     {
         if (minionPrefab == null)
@@ -42,63 +45,94 @@ public class MinionController : MonoBehaviour
         {
             if (spawnPoints[i] != null)
             {
-                GameObject minion = Instantiate(minionPrefab, spawnPoints[i].position, Quaternion.identity, transform);
-                spawnedMinions.Add(minion);
-
-                // Set Order in Layer based on spawn index
-                SetMinionSortingOrder(minion, i);
-
-                // Offset animation timing for natural look
-                OffsetMinionAnimation(minion);
-
-                MinionBase minionScript = minion.GetComponent<MinionBase>();
-                if (minionScript != null)
-                {
-                    minionScript.Initialize(GetComponent<HandController>());
-                }
-
-                Debug.Log($"[MinionController] Spawned minion at spawn point {i}: {minion.name}");
+                SpawnMinionAtIndex(minionPrefab, i);
             }
         }
 
         Debug.Log($"[MinionController] Total spawned minions: {spawnedMinions.Count}");
     }
 
+    /// <summary>
+    /// Spawns different minion prefabs at each spawn point (new method).
+    /// Pass an array where each element is the prefab for that spawn point.
+    /// Null elements are skipped.
+    /// </summary>
+    public void SpawnMinionsMultiType(GameObject[] minionPrefabs)
+    {
+        if (minionPrefabs == null || minionPrefabs.Length == 0)
+        {
+            Debug.LogError("[MinionController] Minion prefabs array is null or empty!");
+            return;
+        }
+
+        Debug.Log($"[MinionController] Spawning multi-type minions from array of {minionPrefabs.Length}");
+
+        ClearMinions();
+
+        int maxIndex = Mathf.Min(minionPrefabs.Length, spawnPoints.Length);
+
+        for (int i = 0; i < maxIndex; i++)
+        {
+            // Skip null prefabs (allows for gaps)
+            if (minionPrefabs[i] != null && spawnPoints[i] != null)
+            {
+                SpawnMinionAtIndex(minionPrefabs[i], i);
+            }
+            else if (minionPrefabs[i] == null)
+            {
+                Debug.Log($"[MinionController] Skipping spawn point {i} (no prefab assigned)");
+            }
+        }
+
+        Debug.Log($"[MinionController] Total spawned minions: {spawnedMinions.Count}");
+    }
+
+    /// <summary>
+    /// Internal helper to spawn a single minion at a specific spawn point index.
+    /// </summary>
+    private void SpawnMinionAtIndex(GameObject minionPrefab, int index)
+    {
+        GameObject minion = Instantiate(minionPrefab, spawnPoints[index].position, Quaternion.identity, transform);
+        spawnedMinions.Add(minion);
+
+        // Set Order in Layer based on spawn index
+        SetMinionSortingOrder(minion, index);
+
+        // Offset animation timing for natural look
+        OffsetMinionAnimation(minion);
+
+        MinionBase minionScript = minion.GetComponent<MinionBase>();
+        if (minionScript != null)
+        {
+            minionScript.Initialize(GetComponent<HandController>());
+        }
+
+        Debug.Log($"[MinionController] Spawned {minionPrefab.name} at spawn point {index}");
+    }
+
     private void SetMinionSortingOrder(GameObject minion, int spawnIndex)
     {
-        // Calculate order based on spawn index
         int orderInLayer = baseOrderInLayer + (spawnIndex * orderInLayerIncrement);
 
-        // Find all SpriteRenderers in the minion (including children)
         SpriteRenderer[] renderers = minion.GetComponentsInChildren<SpriteRenderer>();
 
         foreach (SpriteRenderer renderer in renderers)
         {
             renderer.sortingOrder = orderInLayer;
-            Debug.Log($"[MinionController] Set {renderer.gameObject.name} Order in Layer to {orderInLayer}");
         }
     }
 
     private void OffsetMinionAnimation(GameObject minion)
     {
-        // Find animator in children (MinionContainer)
         Animator animator = minion.GetComponentInChildren<Animator>();
 
         if (animator != null)
         {
-            // Generate random offset within range (0 to animationOffsetRange)
             float randomOffset = Random.Range(0f, animationOffsetRange);
-
-            // Play the current state at the random offset
-            // This starts the idle animation at a different point in the loop
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             animator.Play(stateInfo.fullPathHash, 0, randomOffset);
 
             Debug.Log($"[MinionController] Offset minion animation by {randomOffset:F2}");
-        }
-        else
-        {
-            Debug.LogWarning($"[MinionController] No Animator found on {minion.name} for animation offset");
         }
     }
 

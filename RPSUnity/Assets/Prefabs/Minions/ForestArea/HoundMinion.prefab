@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: ce3e64258dea4e64bad92ba73aa6fde9, type: 2}
+    - target: {fileID: 6024722877442239582, guid: bc174949832ff4240adfadfe0ede6db1, type: 3}
+      propertyPath: attackChance
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7991483005080978924, guid: bc174949832ff4240adfadfe0ede6db1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
