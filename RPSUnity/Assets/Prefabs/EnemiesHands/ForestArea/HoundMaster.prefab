@@ -17,8 +17,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: rockDamage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: paperDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: baseMaxHealth
-      value: 100
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: scissorsDamage
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: paperHandSprite

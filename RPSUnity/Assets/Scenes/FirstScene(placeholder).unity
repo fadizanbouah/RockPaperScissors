@@ -2716,6 +2716,8 @@ MonoBehaviour:
   roomPools:
   - {fileID: 11400000, guid: 11ef8cabbd3ca784589fc8c25e891e9e, type: 2}
   - {fileID: 11400000, guid: af111d69eb1ba1b4db76274bdcfba440, type: 2}
+  - {fileID: 11400000, guid: 54fb7b3e05fbad643ac11bf67e21a8d1, type: 2}
+  - {fileID: 11400000, guid: 93b3092c09ff1b34594122eafa093c23, type: 2}
   roomBackground: {fileID: 1378774852}
   enemySpawnPoint: {fileID: 1317680167}
   rockPaperScissorsGame: {fileID: 218203640}
@@ -6594,13 +6596,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2056081959}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.5, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1035648966}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2093103460
 GameObject:
   m_ObjectHideFlags: 0
