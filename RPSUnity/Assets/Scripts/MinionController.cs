@@ -13,6 +13,10 @@ public class MinionController : MonoBehaviour
     [Tooltip("Increment Order in Layer for each subsequent minion")]
     [SerializeField] private int orderInLayerIncrement = 1;
 
+    [Header("Animation")]
+    [Tooltip("Random offset range for idle animation start times (0-1, where 1 = full animation loop)")]
+    [SerializeField] private float animationOffsetRange = 1f;
+
     private List<GameObject> spawnedMinions = new List<GameObject>();
 
     private void Awake()
@@ -44,6 +48,9 @@ public class MinionController : MonoBehaviour
                 // Set Order in Layer based on spawn index
                 SetMinionSortingOrder(minion, i);
 
+                // Offset animation timing for natural look
+                OffsetMinionAnimation(minion);
+
                 MinionBase minionScript = minion.GetComponent<MinionBase>();
                 if (minionScript != null)
                 {
@@ -69,6 +76,29 @@ public class MinionController : MonoBehaviour
         {
             renderer.sortingOrder = orderInLayer;
             Debug.Log($"[MinionController] Set {renderer.gameObject.name} Order in Layer to {orderInLayer}");
+        }
+    }
+
+    private void OffsetMinionAnimation(GameObject minion)
+    {
+        // Find animator in children (MinionContainer)
+        Animator animator = minion.GetComponentInChildren<Animator>();
+
+        if (animator != null)
+        {
+            // Generate random offset within range (0 to animationOffsetRange)
+            float randomOffset = Random.Range(0f, animationOffsetRange);
+
+            // Play the current state at the random offset
+            // This starts the idle animation at a different point in the loop
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            animator.Play(stateInfo.fullPathHash, 0, randomOffset);
+
+            Debug.Log($"[MinionController] Offset minion animation by {randomOffset:F2}");
+        }
+        else
+        {
+            Debug.LogWarning($"[MinionController] No Animator found on {minion.name} for animation offset");
         }
     }
 
