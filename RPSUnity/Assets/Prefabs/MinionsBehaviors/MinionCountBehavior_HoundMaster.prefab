@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4863806095763970648}
   - component: {fileID: 689656838110938044}
   m_Layer: 0
-  m_Name: MinionCountBehavior_1Hound
+  m_Name: MinionCountBehavior_HoundMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
