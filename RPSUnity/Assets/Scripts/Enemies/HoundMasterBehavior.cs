@@ -6,26 +6,14 @@ public class HoundMasterBehavior : MonoBehaviour, IEnemyBehavior
     private MinionController minionController;
     private HandController enemyHand;
 
-    private void Awake()
-    {
-        Debug.Log("[HoundMasterBehavior] Awake called");
-    }
-
     public void Initialize(HandController enemy, float[] configValues)
     {
         enemyHand = enemy;
-
-        Debug.Log($"[HoundMasterBehavior] Initialize called with enemy: {enemy.name}");
-
         minionController = enemy.GetComponent<MinionController>();
 
         if (minionController == null)
         {
             Debug.LogError($"[HoundMasterBehavior] ERROR: No MinionController found on {enemy.name}!");
-        }
-        else
-        {
-            Debug.Log($"[HoundMasterBehavior] MinionController found successfully");
         }
 
         Debug.Log("[HoundMasterBehavior] Initialized");
@@ -33,8 +21,6 @@ public class HoundMasterBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
-        Debug.Log($"[HoundMasterBehavior] OnAfterDamageResolved called. Result: {result}");
-
         if (minionController == null)
         {
             Debug.LogError("[HoundMasterBehavior] ERROR: minionController is NULL in OnAfterDamageResolved!");
@@ -48,29 +34,25 @@ public class HoundMasterBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Hounds attack regardless of round result (win/lose/draw)
+        // NOTE: Hounds attack even if Cheat Death triggered this round
+        // This is intentional - Cheat Death saves you but doesn't prevent the hounds from attacking
+        // Adds strategic depth: even with Cheat Death, facing HoundMaster is risky
+
         var minions = minionController.GetActiveMinions();
 
         Debug.Log($"[HoundMasterBehavior] {minions.Count} hounds will attempt to attack");
 
-        // Each hound tries to attack sequentially
         foreach (var minionObj in minions)
         {
             if (minionObj == null)
             {
-                Debug.LogWarning("[HoundMasterBehavior] Minion object is null, skipping");
                 continue;
             }
 
             HoundMinion hound = minionObj.GetComponent<HoundMinion>();
             if (hound != null)
             {
-                Debug.Log($"[HoundMasterBehavior] Triggering attack for: {minionObj.name}");
                 yield return hound.TryAttack(player);
-            }
-            else
-            {
-                Debug.LogWarning($"[HoundMasterBehavior] No HoundMinion component found on {minionObj.name}");
             }
         }
     }
