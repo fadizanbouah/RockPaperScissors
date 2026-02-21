@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: HoundMasterBehavior
   m_EditorClassIdentifier: 
   traitName: Hound Master
-  description: Hounds have a chance to attack
-  icon: {fileID: 21300000, guid: 974ba5467aac41e41bb706b7ea9c5375, type: 3}
+  description: Each round, hounds may attack to help their master. Animal cruelty
+    not tolerated!
+  icon: {fileID: 21300000, guid: 36f7b0bc1f4a7074c9fd8d4f902ececa, type: 3}
   behaviorPrefab: {fileID: 2442137858151302973, guid: 48f9d0475d3e57f42a162953b3f233d9, type: 3}
   configValues: []
