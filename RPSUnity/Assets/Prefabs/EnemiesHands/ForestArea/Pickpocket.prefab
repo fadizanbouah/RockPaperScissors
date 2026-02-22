@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7606419620985750837
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 82116e0623278f34fb990231bb664438, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: defaultHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 13156bc2e182df749a57f9b8900473b7, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f387416d17a24ef4e8ec81f9baab4322, type: 3}
+    - target: {fileID: 3743721224730466802, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: cf5dfe4c3cf3d44459e8d0f5d222c937, type: 2}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679948664225929950, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7813983361860719102, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 13156bc2e182df749a57f9b8900473b7, type: 3}
+    - target: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Name
+      value: Pickpocket
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
