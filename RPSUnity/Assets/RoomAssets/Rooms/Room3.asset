@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Room3
   m_EditorClassIdentifier: 
   roomName: Room3
-  backgroundImage: {fileID: 21300000, guid: 152ef8fd5cc0bd04daa68244b8690e88, type: 3}
+  backgroundImage: {fileID: 21300000, guid: 16a43ed6f634bb443acb17366c79f689, type: 3}
   enemyPrefabs:
-  - {fileID: 4690570568020390453, guid: fc9894e51cf3183438654f0af68e29d4, type: 3}
+  - {fileID: 4690570568020390453, guid: ba2a47b88ebc7144085537f48c18da21, type: 3}
   weight: 1
