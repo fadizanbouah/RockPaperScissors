@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: scissorsHandSprite
       value: 
       objectReference: {fileID: 21300000, guid: 78935b995016cc4478bc71a4bb197c8f, type: 3}
+    - target: {fileID: 2808071577791077731, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 78935b995016cc4478bc71a4bb197c8f, type: 3}
     - target: {fileID: 3743721224730466802, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Controller
       value: 
@@ -72,6 +76,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Murderer
       objectReference: {fileID: 0}
+    - target: {fileID: 8667604372682234236, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6a4d26c686baa9d4c9d03dfa7e777676, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

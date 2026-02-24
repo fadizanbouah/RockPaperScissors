@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.58
       objectReference: {fileID: 0}
+    - target: {fileID: 2942623868608217195, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f858f76c16487db4b8cb0d5ad45aa5cf, type: 3}
     - target: {fileID: 3521903001735818242, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -148,6 +152,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 445819af6f868b6418b6d60b67224eb2, type: 3}
+    - target: {fileID: 8167859385482668902, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 98c9f39a0c0b42e438d21b2aa68c8bde, type: 3}
     - target: {fileID: 8428155265588346663, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: m_Name
       value: HoundMaster
