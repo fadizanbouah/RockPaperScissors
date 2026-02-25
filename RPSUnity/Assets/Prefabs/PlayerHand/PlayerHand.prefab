@@ -12,6 +12,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerHand
       objectReference: {fileID: 0}
+    - target: {fileID: 1513101565752354875, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8a596f23bc6069443b67268ca0fad099, type: 3}
+    - target: {fileID: 3448269513531930035, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 909fbc7a151dbbb44a9eeeba1f7bb85a, type: 3}
+    - target: {fileID: 7448360978216978555, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: db5cb60515a8e854ea4e111173ca23cb, type: 3}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -26,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalRotation.x
@@ -38,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -50,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8474882966461745861, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: health
@@ -100,6 +112,18 @@ PrefabInstance:
       propertyPath: scissorsDamage
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: paperHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 909fbc7a151dbbb44a9eeeba1f7bb85a, type: 3}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: defaultHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: db5cb60515a8e854ea4e111173ca23cb, type: 3}
+    - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
+      propertyPath: scissorsHandSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8a596f23bc6069443b67268ca0fad099, type: 3}
     - target: {fileID: 8489421513858283839, guid: b226ef463c9960640b966f898c0475c9, type: 3}
       propertyPath: critDamageMultiplier
       value: 1.25
