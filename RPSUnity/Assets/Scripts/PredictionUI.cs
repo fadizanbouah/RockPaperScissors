@@ -338,26 +338,28 @@ public class PredictionUI : MonoBehaviour
 
     private Sprite GetSpriteForSign(string sign)
     {
-        // Use enemy's hand sprites if available, otherwise fall back to defaults
+        Debug.Log($"[PredictionUI] GetSpriteForSign called for: {sign}");
+
+        // Try to get custom prediction sprite from current enemy first
         if (currentEnemy != null)
         {
-            return sign switch
+            Sprite customSprite = currentEnemy.GetPredictionSpriteForSign(sign);
+            Debug.Log($"[PredictionUI] Got sprite from enemy: {(customSprite != null ? customSprite.name : "null")}");
+            if (customSprite != null)
             {
-                "Rock" => currentEnemy.defaultHandSprite,
-                "Paper" => currentEnemy.paperHandSprite,
-                "Scissors" => currentEnemy.scissorsHandSprite,
-                _ => null
-            };
+                return customSprite;
+            }
         }
 
-        // Fallback to inspector-assigned sprites if enemy reference is lost
-        return sign switch
+        // Fallback to default sprites
+        Debug.Log($"[PredictionUI] Using fallback sprite for {sign}");
+        switch (sign)
         {
-            "Rock" => rockSprite,
-            "Paper" => paperSprite,
-            "Scissors" => scissorsSprite,
-            _ => null
-        };
+            case "Rock": return rockSprite;
+            case "Paper": return paperSprite;
+            case "Scissors": return scissorsSprite;
+            default: return null;
+        }
     }
 
     private void ShuffleList<T>(List<T> list)

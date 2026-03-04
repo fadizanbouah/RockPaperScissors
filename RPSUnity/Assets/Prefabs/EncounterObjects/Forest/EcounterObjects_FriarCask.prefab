@@ -81,9 +81,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 0e110f493b8cb4b4486b14f33c27cd9a, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: predictionRockSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8f94ebc42cb5d1b44b758df069ad0c35, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: usesPredictionSystem
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: predictionPaperSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0efa4efae5d27624cbc8207186d5706b, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: predictionScissorsSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 73dcdb69281166f4693b6ed52d8205dc, type: 3}
     - target: {fileID: 2233016788039138312, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_IsActive
       value: 0

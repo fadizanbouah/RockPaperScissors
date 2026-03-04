@@ -48,6 +48,12 @@ public class HandController : MonoBehaviour
 
     public bool isPlayer = false;
 
+    [Header("Prediction UI Sprites (Optional)")]
+    [Tooltip("Custom sprites for prediction UI. If not set, uses regular hand sprites.")]
+    public Sprite predictionRockSprite;
+    public Sprite predictionPaperSprite;
+    public Sprite predictionScissorsSprite;
+
     [Header("Combat Text")]
     public GameObject combatTextPrefab;
     public GameObject combatTextCritPrefab;
@@ -862,6 +868,75 @@ public class HandController : MonoBehaviour
     public void OnStealAnimationFinished()
     {
         StealAnimationFinished?.Invoke(this);
+    }
+
+    public Sprite GetPredictionSpriteForSign(string sign)
+    {
+        Sprite result = null;
+
+        // If custom prediction sprites are assigned, use those
+        switch (sign)
+        {
+            case "Rock":
+                if (predictionRockSprite != null)
+                {
+                    Debug.Log($"[HandController] Using custom prediction rock sprite");
+                    return predictionRockSprite;
+                }
+                result = GetSpriteFromHandObject("RockHand");
+                Debug.Log($"[HandController] Getting rock sprite from GameObject: {(result != null ? result.name : "null")}");
+                return result;
+            case "Paper":
+                if (predictionPaperSprite != null)
+                {
+                    Debug.Log($"[HandController] Using custom prediction paper sprite");
+                    return predictionPaperSprite;
+                }
+                result = GetSpriteFromHandObject("PaperHand");
+                return result;
+            case "Scissors":
+                if (predictionScissorsSprite != null)
+                {
+                    Debug.Log($"[HandController] Using custom prediction scissors sprite");
+                    return predictionScissorsSprite;
+                }
+                result = GetSpriteFromHandObject("ScissorsHand");
+                return result;
+            default:
+                return null;
+        }
+    }
+
+    private Sprite GetSpriteFromHandObject(string handName)
+    {
+        // Map the sign name to the actual GameObject name
+        string gameObjectName = "";
+        switch (handName)
+        {
+            case "RockHand":
+                gameObjectName = "EnemyHandRock";
+                break;
+            case "PaperHand":
+                gameObjectName = "EnemyHandPaper";
+                break;
+            case "ScissorsHand":
+                gameObjectName = "EnemyHandScissors";
+                break;
+        }
+
+        // Find the hand GameObject by name in children
+        Transform handTransform = transform.Find("EnemyHandContainer/" + gameObjectName);
+        if (handTransform != null)
+        {
+            SpriteRenderer sr = handTransform.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                return sr.sprite;
+            }
+        }
+
+        Debug.LogWarning($"[HandController] Could not find sprite for {handName} (looking for {gameObjectName})");
+        return null;
     }
 }
 
