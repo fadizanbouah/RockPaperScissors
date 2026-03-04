@@ -61,9 +61,19 @@ public class HealingBehavior : MonoBehaviour, IEnemyBehavior
 
         Debug.Log($"[HealingBehavior] Healed player for {actualHealed} HP ({healPercentage}% of {player.maxHealth})");
 
-        hasHealed = true;
+        // NEW: Show floating heal text
+        if (actualHealed > 0 && player.combatTextPrefab != null)
+        {
+            GameObject instance = Instantiate(player.combatTextPrefab, player.transform.position, Quaternion.identity);
+            var textComponent = instance.GetComponentInChildren<TMPro.TMP_Text>();
+            if (textComponent != null)
+            {
+                textComponent.text = "+" + actualHealed.ToString();
+                textComponent.color = Color.green; // Green for healing
+            }
+        }
 
-        // TODO: Play healing VFX/animation here if you want
+        hasHealed = true;
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
