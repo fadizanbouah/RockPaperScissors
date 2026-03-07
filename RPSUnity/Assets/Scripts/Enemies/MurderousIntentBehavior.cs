@@ -11,7 +11,6 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
     [SerializeField] private float damagePercent = 100f; // Percentage of average damage to deal
 
     private HandController thisEnemy;
-    private HandController player;
 
     // Track which thresholds have been triggered
     private bool triggered75 = false;
@@ -34,13 +33,6 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         Debug.Log($"[MurderousIntent] Initialized with {damagePercent}% damage on thresholds");
-
-        // Get player reference
-        player = PowerUpEffectManager.Instance?.GetPlayer();
-        if (player == null)
-        {
-            Debug.LogError("[MurderousIntent] Could not find player!");
-        }
     }
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
@@ -55,25 +47,25 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
         {
             triggered75 = true;
             Debug.Log("[MurderousIntent] 75% threshold triggered!");
-            yield return TriggerAttack();
+            yield return TriggerAttack(player);
         }
         else if (!triggered50 && hpPercent <= THRESHOLD_50)
         {
             triggered50 = true;
             Debug.Log("[MurderousIntent] 50% threshold triggered!");
-            yield return TriggerAttack();
+            yield return TriggerAttack(player);
         }
         else if (!triggered25 && hpPercent <= THRESHOLD_25)
         {
             triggered25 = true;
             Debug.Log("[MurderousIntent] 25% threshold triggered!");
-            yield return TriggerAttack();
+            yield return TriggerAttack(player);
         }
 
         yield return null;
     }
 
-    private IEnumerator TriggerAttack()
+    private IEnumerator TriggerAttack(HandController player)
     {
         if (player == null)
         {
@@ -91,6 +83,8 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
         player.TakeDamage(attackDamage, thisEnemy);
 
         // Note: Combat text is shown by TakeDamage itself, and dodge animation plays if dodged
+
+        yield return null;
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
