@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: KnightPaperAnimation
+  m_Name: GuardScissorsAnimation
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,9 +21,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
+      value: {fileID: 21300000, guid: cc867d7eb9d867d4a96f0e0d2ea460d1, type: 3}
     - time: 0.75
-      value: {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
+      value: {fileID: 21300000, guid: cc867d7eb9d867d4a96f0e0d2ea460d1, type: 3}
     attribute: m_Sprite
     path: EnemyHand
     classID: 212
@@ -46,8 +46,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
-    - {fileID: 21300000, guid: 20d1df425e0327941ba3092a23509a66, type: 3}
+    - {fileID: 21300000, guid: cc867d7eb9d867d4a96f0e0d2ea460d1, type: 3}
+    - {fileID: 21300000, guid: cc867d7eb9d867d4a96f0e0d2ea460d1, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
