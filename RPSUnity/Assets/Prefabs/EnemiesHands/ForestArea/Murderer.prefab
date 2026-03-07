@@ -9,6 +9,22 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: rockDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: baseMaxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: paperHandSprite
       value: 
       objectReference: {fileID: 21300000, guid: 6a4d26c686baa9d4c9d03dfa7e777676, type: 3}
@@ -83,5 +99,27 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6919423971126824528}
   m_SourcePrefab: {fileID: 100100000, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+--- !u!1 &4015093218270786677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8428155265588346663, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+  m_PrefabInstance: {fileID: 4849999172707224402}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6919423971126824528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4015093218270786677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f47d418b86976594e8505a9b6b213c6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  traits:
+  - {fileID: 11400000, guid: 67e8c07ba9b6b064c91c5d72bd0d1edf, type: 2}
