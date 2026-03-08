@@ -35,18 +35,6 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
             damagePercent = configValues[0];
         }
 
-        // Register with AnimationEventRelay so it can call us back
-        AnimationEventRelay relay = thisEnemy.GetComponentInChildren<AnimationEventRelay>();
-        if (relay != null)
-        {
-            relay.RegisterMurderousIntent(this);
-            Debug.Log("[MurderousIntent] Registered with AnimationEventRelay");
-        }
-        else
-        {
-            Debug.LogError("[MurderousIntent] AnimationEventRelay not found!");
-        }
-
         Debug.Log($"[MurderousIntent] Initialized with {damagePercent}% damage on thresholds");
     }
 
@@ -92,7 +80,7 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
 
         Debug.Log($"[MurderousIntent] Attacking for {attackDamage} damage");
 
-        // Cache for AnimationEvent callback
+        // Cache for event callbacks
         targetPlayer = player;
         shouldDealDamage = true;
 
@@ -103,14 +91,27 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
             Debug.Log("[MurderousIntent] Playing MurderousAttack animation");
             enemyAnimator.SetTrigger("MurderousAttack");
 
-            // Wait for animation to finish via event
-            bool animationFinished = false;
-            HandController.MurderousAttackFinishedHandler callback = (hand) => animationFinished = true;
-            thisEnemy.MurderousAttackFinished += callback;
+            // Subscribe to hit event (for damage timing)
+            bool hitReceived = false;
+            HandController.MurderousAttackHitHandler hitCallback = (hand) =>
+            {
+                hitReceived = true;
+                OnMurderousAttack();
+            };
+            thisEnemy.MurderousAttackHit += hitCallback;
 
+            // Subscribe to finished event (for animation completion)
+            bool animationFinished = false;
+            HandController.MurderousAttackFinishedHandler finishedCallback = (hand) => animationFinished = true;
+            thisEnemy.MurderousAttackFinished += finishedCallback;
+
+            // Wait for animation to complete
             yield return new WaitUntil(() => animationFinished);
 
-            thisEnemy.MurderousAttackFinished -= callback;
+            // Unsubscribe
+            thisEnemy.MurderousAttackHit -= hitCallback;
+            thisEnemy.MurderousAttackFinished -= finishedCallback;
+
             Debug.Log("[MurderousIntent] Animation finished");
         }
         else
@@ -122,8 +123,8 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
         yield return null;
     }
 
-    // Called by AnimationEvent at the moment of impact
-    public void OnMurderousAttack()
+    // Called when the hit event fires
+    private void OnMurderousAttack()
     {
         Debug.Log($"[MurderousIntent] OnMurderousAttack called! shouldDealDamage: {shouldDealDamage}, targetPlayer: {(targetPlayer != null ? targetPlayer.name : "null")}");
 

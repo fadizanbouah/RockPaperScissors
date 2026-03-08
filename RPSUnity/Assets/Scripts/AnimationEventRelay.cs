@@ -3,7 +3,6 @@ using UnityEngine;
 public class AnimationEventRelay : MonoBehaviour
 {
     private HandController handController;
-    private MurderousIntentBehavior murderousIntent;
 
     private void Awake()
     {
@@ -86,24 +85,14 @@ public class AnimationEventRelay : MonoBehaviour
         }
     }
 
-    public void RegisterMurderousIntent(MurderousIntentBehavior behavior)
-    {
-        murderousIntent = behavior;
-        Debug.Log("[AnimationEventRelay] MurderousIntentBehavior registered");
-    }
-
     // Called mid-animation when attack hits
     public void TriggerMurderousAttackHit()
     {
         Debug.Log("[AnimationEventRelay] TriggerMurderousAttackHit called!");
 
-        if (murderousIntent != null)
+        if (handController != null)
         {
-            murderousIntent.OnMurderousAttack();
-        }
-        else
-        {
-            Debug.LogWarning("[AnimationEventRelay] MurderousIntentBehavior not registered!");
+            handController.OnMurderousAttackHit();
         }
     }
 

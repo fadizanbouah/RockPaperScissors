@@ -115,6 +115,9 @@ public class HandController : MonoBehaviour
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
 
+    public delegate void MurderousAttackHitHandler(HandController hand);
+    public event MurderousAttackHitHandler MurderousAttackHit;
+
     public delegate void MurderousAttackFinishedHandler(HandController hand);
     public event MurderousAttackFinishedHandler MurderousAttackFinished;
 
@@ -871,6 +874,12 @@ public class HandController : MonoBehaviour
     public void OnStealAnimationFinished()
     {
         StealAnimationFinished?.Invoke(this);
+    }
+
+    public void OnMurderousAttackHit()
+    {
+        Debug.Log($"[HandController] {gameObject.name} murderous attack hit!");
+        MurderousAttackHit?.Invoke(this);
     }
 
     public void OnMurderousAttackFinished()
