@@ -115,6 +115,9 @@ public class HandController : MonoBehaviour
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
 
+    public delegate void MurderousAttackFinishedHandler(HandController hand);
+    public event MurderousAttackFinishedHandler MurderousAttackFinished;
+
     private void Awake()
     {
         // Store base values before any modifications
@@ -868,6 +871,12 @@ public class HandController : MonoBehaviour
     public void OnStealAnimationFinished()
     {
         StealAnimationFinished?.Invoke(this);
+    }
+
+    public void OnMurderousAttackFinished()
+    {
+        Debug.Log($"[HandController] {gameObject.name} murderous attack animation finished!");
+        MurderousAttackFinished?.Invoke(this);
     }
 
     public Sprite GetPredictionSpriteForSign(string sign)

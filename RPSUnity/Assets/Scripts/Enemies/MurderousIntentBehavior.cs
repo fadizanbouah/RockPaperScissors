@@ -8,9 +8,13 @@ using UnityEngine;
 public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
 {
     [Header("Configuration")]
-    [SerializeField] private float damagePercent = 100f; // Percentage of average damage to deal
+    [SerializeField] private float damagePercent = 100f;
 
     private HandController thisEnemy;
+
+    private int attackDamage;
+    private HandController targetPlayer;
+    private bool shouldDealDamage;
 
     // Track which thresholds have been triggered
     private bool triggered75 = false;
@@ -26,10 +30,21 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
     {
         thisEnemy = enemy;
 
-        // Get damage percentage from config if provided
         if (configValues != null && configValues.Length > 0)
         {
             damagePercent = configValues[0];
+        }
+
+        // Register with AnimationEventRelay so it can call us back
+        AnimationEventRelay relay = thisEnemy.GetComponentInChildren<AnimationEventRelay>();
+        if (relay != null)
+        {
+            relay.RegisterMurderousIntent(this);
+            Debug.Log("[MurderousIntent] Registered with AnimationEventRelay");
+        }
+        else
+        {
+            Debug.LogError("[MurderousIntent] AnimationEventRelay not found!");
         }
 
         Debug.Log($"[MurderousIntent] Initialized with {damagePercent}% damage on thresholds");
@@ -37,12 +52,10 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
-        // Check HP thresholds after damage is dealt to enemy
         float hpPercent = (float)thisEnemy.health / (float)thisEnemy.maxHealth;
 
         Debug.Log($"[MurderousIntent] Enemy HP: {thisEnemy.health}/{thisEnemy.maxHealth} ({hpPercent * 100}%)");
 
-        // Check each threshold (from highest to lowest to avoid double-triggering)
         if (!triggered75 && hpPercent <= THRESHOLD_75)
         {
             triggered75 = true;
@@ -73,18 +86,61 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Calculate average damage
+        // Calculate damage
         float averageDamage = (thisEnemy.rockDamage + thisEnemy.paperDamage + thisEnemy.scissorsDamage) / 3f;
-        int attackDamage = Mathf.RoundToInt(averageDamage * (damagePercent / 100f));
+        attackDamage = Mathf.RoundToInt(averageDamage * (damagePercent / 100f));
 
-        Debug.Log($"[MurderousIntent] Attacking for {attackDamage} damage (average: {averageDamage}, percent: {damagePercent}%)");
+        Debug.Log($"[MurderousIntent] Attacking for {attackDamage} damage");
 
-        // Apply damage (dodge is handled inside TakeDamage automatically)
-        player.TakeDamage(attackDamage, thisEnemy);
+        // Cache for AnimationEvent callback
+        targetPlayer = player;
+        shouldDealDamage = true;
 
-        // Note: Combat text is shown by TakeDamage itself, and dodge animation plays if dodged
+        // Trigger animation
+        Animator enemyAnimator = thisEnemy.GetComponentInChildren<Animator>();
+        if (enemyAnimator != null && enemyAnimator.HasParameter("MurderousAttack"))
+        {
+            Debug.Log("[MurderousIntent] Playing MurderousAttack animation");
+            enemyAnimator.SetTrigger("MurderousAttack");
+
+            // Wait for animation to finish via event
+            bool animationFinished = false;
+            HandController.MurderousAttackFinishedHandler callback = (hand) => animationFinished = true;
+            thisEnemy.MurderousAttackFinished += callback;
+
+            yield return new WaitUntil(() => animationFinished);
+
+            thisEnemy.MurderousAttackFinished -= callback;
+            Debug.Log("[MurderousIntent] Animation finished");
+        }
+        else
+        {
+            Debug.LogWarning("[MurderousIntent] No MurderousAttack parameter - using fallback");
+            yield return new WaitForSeconds(1.0f);
+        }
 
         yield return null;
+    }
+
+    // Called by AnimationEvent at the moment of impact
+    public void OnMurderousAttack()
+    {
+        Debug.Log($"[MurderousIntent] OnMurderousAttack called! shouldDealDamage: {shouldDealDamage}, targetPlayer: {(targetPlayer != null ? targetPlayer.name : "null")}");
+
+        if (!shouldDealDamage || targetPlayer == null)
+        {
+            Debug.LogWarning("[MurderousIntent] OnMurderousAttack called but no valid target!");
+            return;
+        }
+
+        Debug.Log($"[MurderousIntent] Dealing {attackDamage} damage to player");
+        targetPlayer.TakeDamage(attackDamage, thisEnemy);
+
+        // Clear cache after use
+        targetPlayer = null;
+        shouldDealDamage = false;
+
+        Debug.Log("[MurderousIntent] Damage dealt, cache cleared");
     }
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)

@@ -3,6 +3,7 @@ using UnityEngine;
 public class AnimationEventRelay : MonoBehaviour
 {
     private HandController handController;
+    private MurderousIntentBehavior murderousIntent;
 
     private void Awake()
     {
@@ -82,6 +83,38 @@ public class AnimationEventRelay : MonoBehaviour
         if (hound != null)
         {
             hound.OnDealDamage();
+        }
+    }
+
+    public void RegisterMurderousIntent(MurderousIntentBehavior behavior)
+    {
+        murderousIntent = behavior;
+        Debug.Log("[AnimationEventRelay] MurderousIntentBehavior registered");
+    }
+
+    // Called mid-animation when attack hits
+    public void TriggerMurderousAttackHit()
+    {
+        Debug.Log("[AnimationEventRelay] TriggerMurderousAttackHit called!");
+
+        if (murderousIntent != null)
+        {
+            murderousIntent.OnMurderousAttack();
+        }
+        else
+        {
+            Debug.LogWarning("[AnimationEventRelay] MurderousIntentBehavior not registered!");
+        }
+    }
+
+    // Called at end of animation
+    public void TriggerMurderousAttackFinished()
+    {
+        Debug.Log("[AnimationEventRelay] TriggerMurderousAttackFinished called!");
+
+        if (handController != null)
+        {
+            handController.OnMurderousAttackFinished();
         }
     }
 }

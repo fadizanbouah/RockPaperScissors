@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305668139e80a4740b6215a47e5bbfbf, type: 3}
   m_Name: MurderousIntentBehavior
   m_EditorClassIdentifier: 
-  traitName: Tst
-  description: testst
-  icon: {fileID: 21300000, guid: 974ba5467aac41e41bb706b7ea9c5375, type: 3}
+  traitName: Murderous Intent
+  description: At 75%, 50% and 25% becomes murderous
+  icon: {fileID: 21300000, guid: 951cc8e3b0aa86d4582838223d9a5954, type: 3}
   behaviorPrefab: {fileID: 603710612612622449, guid: 6d5693bf1c7519b48afbb9debc93ae9f, type: 3}
   configValues: []
