@@ -7,10 +7,6 @@ public class HoundMinion : MinionBase
     [SerializeField] private float attackChance = 0.2f; // 20%
     [SerializeField] private float damagePercent = 0.5f; // 50% of parent's damage
 
-    [Header("Animation Timing")]
-    [Tooltip("Total duration of attack animation in seconds")]
-    [SerializeField] private float attackAnimationDuration = 2.5f;
-
     private HandController targetPlayer;
     private bool shouldDealDamage;
 
@@ -33,10 +29,28 @@ public class HoundMinion : MinionBase
             // Trigger attack animation
             PlayAnimation("Attack");
 
-            // Wait for full attack animation to complete
-            yield return new WaitForSeconds(attackAnimationDuration);
+            // Subscribe to hit event (for damage timing)
+            bool hitReceived = false;
+            HandController.HoundAttackHitHandler hitCallback = (hand) =>
+            {
+                hitReceived = true;
+                OnDealDamage();
+            };
+            parentEnemy.HoundAttackHit += hitCallback;
 
-            // Animation should automatically transition back to Idle via Animator
+            // Subscribe to finished event (for animation completion)
+            bool attackFinished = false;
+            HandController.HoundAttackFinishedHandler finishedCallback = (hand) => attackFinished = true;
+            parentEnemy.HoundAttackFinished += finishedCallback;
+
+            // Wait for attack animation to complete
+            yield return new WaitUntil(() => attackFinished);
+
+            // Unsubscribe
+            parentEnemy.HoundAttackHit -= hitCallback;
+            parentEnemy.HoundAttackFinished -= finishedCallback;
+
+            Debug.Log("[HoundMinion] Attack animation finished");
 
             targetPlayer = null;
             shouldDealDamage = false;
@@ -47,7 +61,7 @@ public class HoundMinion : MinionBase
         }
     }
 
-    public void OnDealDamage()
+    private void OnDealDamage()
     {
         if (!shouldDealDamage || targetPlayer == null)
         {
@@ -61,7 +75,7 @@ public class HoundMinion : MinionBase
             float averageDamage = (parentEnemy.rockDamage + parentEnemy.paperDamage + parentEnemy.scissorsDamage) / 3f;
             int damage = Mathf.RoundToInt(averageDamage * damagePercent);
 
-            targetPlayer.TakeDamage(damage);
+            targetPlayer.TakeDamage(damage, parentEnemy);
             Debug.Log($"[HoundMinion] Dealt {damage} damage to player (based on average damage: {averageDamage})");
         }
     }

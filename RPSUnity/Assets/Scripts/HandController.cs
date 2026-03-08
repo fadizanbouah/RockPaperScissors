@@ -115,6 +115,12 @@ public class HandController : MonoBehaviour
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
 
+    public delegate void HoundAttackHitHandler(HandController hand);
+    public event HoundAttackHitHandler HoundAttackHit;
+
+    public delegate void HoundAttackFinishedHandler(HandController hand);
+    public event HoundAttackFinishedHandler HoundAttackFinished;
+
     public delegate void MurderousAttackHitHandler(HandController hand);
     public event MurderousAttackHitHandler MurderousAttackHit;
 
@@ -886,6 +892,18 @@ public class HandController : MonoBehaviour
     {
         Debug.Log($"[HandController] {gameObject.name} murderous attack animation finished!");
         MurderousAttackFinished?.Invoke(this);
+    }
+
+    public void OnHoundAttackHit()
+    {
+        Debug.Log($"[HandController] {gameObject.name} hound attack hit!");
+        HoundAttackHit?.Invoke(this);
+    }
+
+    public void OnHoundAttackFinished()
+    {
+        Debug.Log($"[HandController] {gameObject.name} hound attack finished!");
+        HoundAttackFinished?.Invoke(this);
     }
 
     public Sprite GetPredictionSpriteForSign(string sign)

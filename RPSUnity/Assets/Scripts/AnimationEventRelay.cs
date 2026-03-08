@@ -75,13 +75,23 @@ public class AnimationEventRelay : MonoBehaviour
         }
     }
 
-    public void OnDealDamage()
+    public void TriggerHoundAttackHit()
     {
-        // Forward to parent
-        HoundMinion hound = GetComponentInParent<HoundMinion>();
-        if (hound != null)
+        Debug.Log("[AnimationEventRelay] TriggerHoundAttackHit called!");
+
+        if (handController != null)
         {
-            hound.OnDealDamage();
+            handController.OnHoundAttackHit();
+        }
+    }
+
+    public void TriggerHoundAttackFinished()
+    {
+        Debug.Log("[AnimationEventRelay] TriggerHoundAttackFinished called!");
+
+        if (handController != null)
+        {
+            handController.OnHoundAttackFinished();
         }
     }
 
