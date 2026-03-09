@@ -40,6 +40,13 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
+        // Check if enemy is dead before checking thresholds
+        if (thisEnemy == null || thisEnemy.CurrentHealth <= 0)
+        {
+            Debug.Log("[MurderousIntent] Enemy is dead - skipping threshold check");
+            yield break;
+        }
+
         float hpPercent = (float)thisEnemy.health / (float)thisEnemy.maxHealth;
 
         Debug.Log($"[MurderousIntent] Enemy HP: {thisEnemy.health}/{thisEnemy.maxHealth} ({hpPercent * 100}%)");
