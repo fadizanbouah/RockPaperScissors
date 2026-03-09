@@ -51,19 +51,22 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
 
         Debug.Log($"[MurderousIntent] Enemy HP: {thisEnemy.health}/{thisEnemy.maxHealth} ({hpPercent * 100}%)");
 
+        // Check ALL thresholds and trigger attacks for each one crossed
         if (!triggered75 && hpPercent <= THRESHOLD_75)
         {
             triggered75 = true;
             Debug.Log("[MurderousIntent] 75% threshold triggered!");
             yield return TriggerAttack(player);
         }
-        else if (!triggered50 && hpPercent <= THRESHOLD_50)
+
+        if (!triggered50 && hpPercent <= THRESHOLD_50)
         {
             triggered50 = true;
             Debug.Log("[MurderousIntent] 50% threshold triggered!");
             yield return TriggerAttack(player);
         }
-        else if (!triggered25 && hpPercent <= THRESHOLD_25)
+
+        if (!triggered25 && hpPercent <= THRESHOLD_25)
         {
             triggered25 = true;
             Debug.Log("[MurderousIntent] 25% threshold triggered!");
