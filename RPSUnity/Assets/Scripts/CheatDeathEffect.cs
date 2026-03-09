@@ -6,6 +6,7 @@ public class CheatDeathEffect : PowerUpEffectBase
     [SerializeField] private float healthRestorePercentage = 20f; // 20% of max health
 
     private static bool hasBeenUsed = false;
+    private int pendingRestoreAmount = 0; // Cache the heal amount
 
     public override void Initialize(PowerUpData data, HandController player, HandController enemy)
     {
@@ -57,12 +58,11 @@ public class CheatDeathEffect : PowerUpEffectBase
         // Unsubscribe IMMEDIATELY since it's one-time use
         player.OnCheatDeathCheck -= OnCheatDeathCheck;
 
-        // Calculate and restore health
-        int restoreAmount = Mathf.RoundToInt(player.maxHealth * (healthRestorePercentage / 100f));
-        restoreAmount = Mathf.Max(restoreAmount, 1); // At least 1 HP
+        // Calculate heal amount but DON'T apply yet - wait for animation event
+        pendingRestoreAmount = Mathf.RoundToInt(player.maxHealth * (healthRestorePercentage / 100f));
+        pendingRestoreAmount = Mathf.Max(pendingRestoreAmount, 1); // At least 1 HP
 
-        player.health = restoreAmount;
-        // Don't update health bar here - TakeDamage will do it
+        Debug.Log($"[CheatDeathEffect] Will restore {pendingRestoreAmount} HP when animation triggers");
 
         // Play the CheatDeath animation
         if (player.handAnimator != null && player.handAnimator.HasParameter("CheatDeath"))
@@ -71,10 +71,11 @@ public class CheatDeathEffect : PowerUpEffectBase
             Debug.Log("[CheatDeathEffect] Playing CheatDeath animation");
         }
 
+        // Subscribe to heal event (mid-animation)
+        player.CheatDeathHeal += OnCheatDeathHeal;
+
         // Subscribe to animation finished event to clean up
         player.CheatDeathAnimationFinished += OnCheatDeathAnimationComplete;
-
-        Debug.Log($"[CheatDeathEffect] Player saved with {restoreAmount} HP ({healthRestorePercentage}% of {player.maxHealth})");
 
         // Remove icon from PlayerCombatTracker since it's been used
         PlayerCombatTracker tracker = Object.FindObjectOfType<PlayerCombatTracker>();
@@ -105,6 +106,23 @@ public class CheatDeathEffect : PowerUpEffectBase
         return true; // Tell TakeDamage that we handled it
     }
 
+    private void OnCheatDeathHeal(HandController hand)
+    {
+        Debug.Log($"[CheatDeathEffect] Heal event triggered! Restoring {pendingRestoreAmount} HP");
+
+        // Apply the heal NOW (timed with animation)
+        player.health = pendingRestoreAmount;
+        player.UpdateHealthBar();
+
+        // Unsubscribe from heal event
+        if (player != null)
+        {
+            player.CheatDeathHeal -= OnCheatDeathHeal;
+        }
+
+        Debug.Log($"[CheatDeathEffect] Player healed to {player.health} HP");
+    }
+
     private void OnCheatDeathAnimationComplete(HandController hand)
     {
         Debug.Log("[CheatDeathEffect] CheatDeath animation complete");
@@ -125,6 +143,7 @@ public class CheatDeathEffect : PowerUpEffectBase
         if (player != null)
         {
             player.OnCheatDeathCheck -= OnCheatDeathCheck;
+            player.CheatDeathHeal -= OnCheatDeathHeal;
             player.CheatDeathAnimationFinished -= OnCheatDeathAnimationComplete;
         }
 

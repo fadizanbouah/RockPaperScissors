@@ -106,11 +106,14 @@ public class HandController : MonoBehaviour
     public delegate void CheatDeathAnimationFinishedHandler(HandController hand);
     public event CheatDeathAnimationFinishedHandler CheatDeathAnimationFinished;
 
-    public delegate void StealAnimationFinishedHandler(HandController hand);
-    public event StealAnimationFinishedHandler StealAnimationFinished;
-
     public delegate bool CheatDeathCheckHandler(HandController hand);
     public event CheatDeathCheckHandler OnCheatDeathCheck;
+
+    public delegate void CheatDeathHealHandler(HandController hand);
+    public event CheatDeathHealHandler CheatDeathHeal;
+
+    public delegate void StealAnimationFinishedHandler(HandController hand);
+    public event StealAnimationFinishedHandler StealAnimationFinished;
 
     public delegate void HouseRulesAnimationFinishedHandler(HandController hand);
     public event HouseRulesAnimationFinishedHandler HouseRulesAnimationFinished;
@@ -576,6 +579,12 @@ public class HandController : MonoBehaviour
         // IMPORTANT: Also trigger HitAnimationFinished so the game flow continues
         // This makes CheatDeath animation work the same as Hit animation for game flow
         HitAnimationFinished?.Invoke(this);
+    }
+
+    public void OnCheatDeathHeal()
+    {
+        Debug.Log($"[HandController] {gameObject.name} cheat death heal triggered!");
+        CheatDeathHeal?.Invoke(this);
     }
 
     public void OnHouseRulesAnimationFinished()

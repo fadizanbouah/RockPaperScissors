@@ -59,6 +59,16 @@ public class AnimationEventRelay : MonoBehaviour
         }
     }
 
+    public void TriggerCheatDeathHeal()
+    {
+        Debug.Log("[AnimationEventRelay] TriggerCheatDeathHeal called!");
+
+        if (handController != null)
+        {
+            handController.OnCheatDeathHeal();
+        }
+    }
+
     public void TriggerStealAnimationFinished()
     {
         if (handController != null)

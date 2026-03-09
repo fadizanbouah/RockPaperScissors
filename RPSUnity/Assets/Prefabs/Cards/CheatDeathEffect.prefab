@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4745781963940772651}
   - component: {fileID: 6251713829867774092}
   m_Layer: 0
-  m_Name: CheadDeathEffect
+  m_Name: CheatDeathEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
