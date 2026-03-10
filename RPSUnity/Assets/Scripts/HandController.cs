@@ -631,6 +631,24 @@ public class HandController : MonoBehaviour
         Debug.Log($"[HandController] Generated new sequence for {gameObject.name}: {string.Join(", ", currentSequence)}. Index reset to 0.");
     }
 
+    // Public getters for behaviors that need to access sequence info
+    public List<string> GetRemainingSequence()
+    {
+        List<string> remaining = new List<string>();
+
+        if (predeterminedSequence == null)
+        {
+            return remaining;
+        }
+
+        for (int i = currentSequenceIndex; i < predeterminedSequence.Count; i++)
+        {
+            remaining.Add(predeterminedSequence[i]);
+        }
+
+        return remaining;
+    }
+
     private bool IsSequenceValid(List<string> sequence)
     {
         if (sequence.Count < 2) return true;
@@ -952,7 +970,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private Sprite GetSpriteFromHandObject(string handName)
+    public Sprite GetSpriteFromHandObject(string handName)
     {
         // Map the sign name to the actual GameObject name
         string gameObjectName = "";
