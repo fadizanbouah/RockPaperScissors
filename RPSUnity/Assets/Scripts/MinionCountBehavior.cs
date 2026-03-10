@@ -31,6 +31,11 @@ public class MinionCountBehavior : MonoBehaviour, IEnemyBehavior
         minionController.SpawnMinionsMultiType(minionPrefabs);
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         yield return null;

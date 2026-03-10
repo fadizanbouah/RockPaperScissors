@@ -39,6 +39,11 @@ public class HouseRuleBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log($"[HouseRuleBehavior] Initialized with {requiredConsecutiveSigns} consecutive signs required, dealing {damagePercent}% damage");
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         // Store player reference for later use

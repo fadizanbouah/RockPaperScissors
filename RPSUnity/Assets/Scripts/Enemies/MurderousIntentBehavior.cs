@@ -38,6 +38,11 @@ public class MurderousIntentBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log($"[MurderousIntent] Initialized with {damagePercent}% damage on thresholds");
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
         // Check if enemy is dead before checking thresholds

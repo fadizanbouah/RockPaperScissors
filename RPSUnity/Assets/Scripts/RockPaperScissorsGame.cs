@@ -349,6 +349,23 @@ public class RockPaperScissorsGame : MonoBehaviour
             predictionUI.RefreshIfNeeded();
         }
 
+        // Execute enemy behaviors for idle state start
+        if (enemyHandController != null)
+        {
+            EnemyTraits enemyTraits = enemyHandController.GetComponent<EnemyTraits>();
+            if (enemyTraits != null)
+            {
+                var behaviors = enemyTraits.GetActiveBehaviors();
+                foreach (var behavior in behaviors)
+                {
+                    if (behavior is IEnemyBehavior enemyBehavior)
+                    {
+                        StartCoroutine(enemyBehavior.OnIdleStateEntered());
+                    }
+                }
+            }
+        }
+
         AllowPlayerInput();
     }
 

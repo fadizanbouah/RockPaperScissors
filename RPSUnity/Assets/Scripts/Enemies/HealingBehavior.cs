@@ -76,6 +76,11 @@ public class HealingBehavior : MonoBehaviour, IEnemyBehavior
         hasHealed = true;
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         yield return null;

@@ -44,6 +44,11 @@ public class RobinGoodBehavior : MonoBehaviour, IEnemyBehavior
         stolenEffects.Clear();
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         // No longer doing anything before round resolves - stealing moved to after damage

@@ -37,6 +37,11 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log($"[HardenBehavior] Initialized - Activates at {hpThresholdPercent}% HP ({hpThreshold} HP), {damageReductionPercent}% damage reduction");
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         yield return StartCoroutine(CheckHardenActivation());

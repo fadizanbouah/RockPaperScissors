@@ -35,7 +35,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log($"[MindTricksBehavior] Initialized with {triggerChance}% trigger chance, {damageModifierPercent}% damage modifier");
     }
 
-    public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
+    public IEnumerator OnIdleStateEntered()
     {
         // Clean up any existing bubble from previous round
         if (currentBubble != null)
@@ -83,6 +83,12 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             Debug.Log($"[MindTricksBehavior] Mind Tricks did not trigger (rolled {roll} >= {triggerChance})");
         }
 
+        yield return null;
+    }
+
+    public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
+    {
+        // Mind Tricks now triggers in OnIdleStateEntered instead
         yield return null;
     }
 

@@ -50,6 +50,11 @@ public class PouchOfCoinsBehavior : MonoBehaviour, IEnemyBehavior
         // TODO: Play coin drop animation here later
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
         // No behavior needed before rounds

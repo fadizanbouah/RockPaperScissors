@@ -19,6 +19,11 @@ public class HoundMasterBehavior : MonoBehaviour, IEnemyBehavior
         Debug.Log("[HoundMasterBehavior] Initialized");
     }
 
+    public IEnumerator OnIdleStateEntered()
+    {
+        yield break; // No action needed
+    }
+
     public IEnumerator OnAfterDamageResolved(HandController player, string playerChoice, string enemyChoice, RoundResult result)
     {
         if (minionController == null)
