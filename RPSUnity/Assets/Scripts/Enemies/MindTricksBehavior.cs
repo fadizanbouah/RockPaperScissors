@@ -193,31 +193,39 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
 
     private int CalculateBonusDamage(string playerChoice)
     {
-        // Calculate bonus damage based on what the player used
-        int baseDamage = 0;
+        // Get player reference
+        HandController player = PowerUpEffectManager.Instance?.GetPlayer();
+        if (player == null)
+        {
+            Debug.LogWarning("[MindTricksBehavior] Cannot calculate bonus - player is null!");
+            return 0;
+        }
 
+        // Get damage for the specific sign the player used
+        int baseDamage = 0;
         switch (playerChoice)
         {
             case "Rock":
-                baseDamage = thisEnemy.rockDamage;
+                baseDamage = player.rockDamage;
                 break;
             case "Paper":
-                baseDamage = thisEnemy.paperDamage;
+                baseDamage = player.paperDamage;
                 break;
             case "Scissors":
-                baseDamage = thisEnemy.scissorsDamage;
+                baseDamage = player.scissorsDamage;
                 break;
         }
 
         int bonus = Mathf.RoundToInt(baseDamage * (damageModifierPercent / 100f));
+
+        Debug.Log($"[MindTricksBehavior] Bonus damage calc: Player {playerChoice} damage {baseDamage} × {damageModifierPercent}% = {bonus}");
         return bonus;
     }
 
     private int CalculatePenaltyDamage(string enemyChoice)
     {
-        // Calculate penalty damage based on what the enemy used
+        // Get damage for the specific sign the enemy used
         int baseDamage = 0;
-
         switch (enemyChoice)
         {
             case "Rock":
@@ -232,6 +240,8 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         int penalty = Mathf.RoundToInt(baseDamage * (damageModifierPercent / 100f));
+
+        Debug.Log($"[MindTricksBehavior] Penalty damage calc: Enemy {enemyChoice} damage {baseDamage} × {damageModifierPercent}% = {penalty}");
         return penalty;
     }
 
