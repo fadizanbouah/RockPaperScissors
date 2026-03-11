@@ -99,14 +99,14 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Determine if player countered or fell for the bluff
+        // Determine what sign counters and loses to the bluff
         string counterSign = GetCounterSign(bluffSign);
         string losesSign = GetLosesSign(bluffSign);
 
-        if (playerChoice == counterSign)
+        // Check if player countered the bluff AND won the round
+        if (playerChoice == counterSign && result == RoundResult.Win)
         {
-            // Player countered the bluff - BONUS damage to enemy
-            Debug.Log($"[MindTricksBehavior] Player countered the bluff! Bonus damage to enemy.");
+            Debug.Log($"[MindTricksBehavior] Player countered the bluff ({bluffSign}) AND won! Bonus damage to enemy.");
 
             int bonusDamage = CalculateBonusDamage(playerChoice);
             if (bonusDamage > 0)
@@ -115,10 +115,10 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.Log($"[MindTricksBehavior] Dealt {bonusDamage} bonus damage to enemy");
             }
         }
-        else if (playerChoice == losesSign)
+        // Check if player fell for the bluff AND lost the round
+        else if (playerChoice == losesSign && result == RoundResult.Lose)
         {
-            // Player fell for the bluff - EXTRA damage to player
-            Debug.Log($"[MindTricksBehavior] Player fell for the bluff! Extra damage to player.");
+            Debug.Log($"[MindTricksBehavior] Player fell for the bluff ({bluffSign}) AND lost! Extra damage to player.");
 
             int penaltyDamage = CalculatePenaltyDamage(enemyChoice);
             if (penaltyDamage > 0)
@@ -129,8 +129,8 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
         }
         else
         {
-            // Tie - no modifier
-            Debug.Log($"[MindTricksBehavior] Player tied with bluff - no modifier");
+            // No modifier applied
+            Debug.Log($"[MindTricksBehavior] No modifier - Player: {playerChoice}, Bluff: {bluffSign}, Result: {result}");
         }
 
         // Clean up bubble
