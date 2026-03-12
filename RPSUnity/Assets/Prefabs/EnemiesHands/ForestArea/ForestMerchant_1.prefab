@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: da38a28005325e944ae3eef976210575, type: 3}
     - target: {fileID: 2863953019351338761, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Name
-      value: ForestMerchant_1Container
+      value: EnemyHandContainer
       objectReference: {fileID: 0}
     - target: {fileID: 3743721224730466802, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: m_Controller

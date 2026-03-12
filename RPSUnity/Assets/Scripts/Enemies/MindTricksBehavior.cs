@@ -133,12 +133,8 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             Debug.Log($"[MindTricksBehavior] No modifier - Player: {playerChoice}, Bluff: {bluffSign}, Result: {result}");
         }
 
-        // Clean up bubble
-        if (currentBubble != null)
-        {
-            Destroy(currentBubble);
-            currentBubble = null;
-        }
+        // Bubble already destroyed after animation in ShowThoughtBubble()
+        // No cleanup needed here
 
         mindTricksActive = false;
 
@@ -187,8 +183,41 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.LogWarning("[MindTricksBehavior] Sign sprite is null!");
         }
 
-        // Wait a moment for bubble to appear
-        yield return new WaitForSeconds(0.3f);
+        // Wait for animation to finish (same pattern as Harden)
+        Animator bubbleAnimator = currentBubble.GetComponent<Animator>();
+
+        if (bubbleAnimator != null)
+        {
+            // Wait one frame for animator to initialize
+            yield return null;
+
+            // Wait for the animation to finish
+            AnimatorStateInfo stateInfo = bubbleAnimator.GetCurrentAnimatorStateInfo(0);
+            float timeout = 3f;
+            float elapsed = 0f;
+
+            while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
+            {
+                yield return null;
+                stateInfo = bubbleAnimator.GetCurrentAnimatorStateInfo(0);
+                elapsed += Time.deltaTime;
+            }
+
+            if (elapsed >= timeout)
+            {
+                Debug.LogWarning("[MindTricksBehavior] Bubble animation timed out!");
+            }
+        }
+        else
+        {
+            // No animator found, just wait a bit
+            Debug.LogWarning("[MindTricksBehavior] Bubble prefab has no Animator - using fallback delay");
+            yield return new WaitForSeconds(1f);
+        }
+
+        // Clean up the bubble (same as Harden)
+        Destroy(currentBubble);
+        currentBubble = null;
     }
 
     private int CalculateBonusDamage(string playerChoice)

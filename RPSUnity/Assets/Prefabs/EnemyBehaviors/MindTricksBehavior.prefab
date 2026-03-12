@@ -47,4 +47,4 @@ MonoBehaviour:
   triggerChance: 100
   damageModifierPercent: 30
   thoughtBubblePrefab: {fileID: 2102428017533164403, guid: 4913ba81f6662b743aa9ba359815346b, type: 3}
-  bubbleOffset: {x: 0, y: 2, z: 0}
+  bubbleOffset: {x: -2, y: 2, z: 0}
