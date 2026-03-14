@@ -309,7 +309,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         scissorsButton.interactable = false;
     }
 
-    private void AllowPlayerInput()
+    public void AllowPlayerInput()
     {
         if (currentSubstate == GameSubstate.Idle && enemyHandController != null)
         {
@@ -332,6 +332,21 @@ public class RockPaperScissorsGame : MonoBehaviour
         }
     }
 
+    public void BlockPlayerInput()
+    {
+        rockButton.interactable = false;
+        paperButton.interactable = false;
+        scissorsButton.interactable = false;
+
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+        {
+            spawner.SetAllCardsInteractable(false);
+        }
+
+        Debug.Log("[RockPaperScissorsGame] Player input blocked");
+    }
+
     private void EnterIdleState()
     {
         SetSubstate(GameSubstate.Idle);
@@ -349,7 +364,10 @@ public class RockPaperScissorsGame : MonoBehaviour
             predictionUI.RefreshIfNeeded();
         }
 
-        // Execute enemy behaviors for idle state start
+        // ENABLE INPUT FIRST
+        AllowPlayerInput();
+
+        // NEW: Execute enemy behaviors for idle state start (AFTER enabling input)
         if (enemyHandController != null)
         {
             EnemyTraits enemyTraits = enemyHandController.GetComponent<EnemyTraits>();
@@ -365,8 +383,6 @@ public class RockPaperScissorsGame : MonoBehaviour
                 }
             }
         }
-
-        AllowPlayerInput();
     }
 
     public void EnterPowerUpActivationState(System.Action unusedCallback, GameObject cardGO)

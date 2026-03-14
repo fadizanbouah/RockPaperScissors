@@ -73,8 +73,21 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             bluffSign = availableSigns[Random.Range(0, availableSigns.Count)];
             Debug.Log($"[MindTricksBehavior] Showing bluff sign: {bluffSign}");
 
-            // Show thought bubble
+            // BLOCK INPUT before animation
+            RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
+            if (gameManager != null)
+            {
+                gameManager.BlockPlayerInput();
+            }
+
+            // Show thought bubble (waits for animation)
             yield return ShowThoughtBubble(bluffSign);
+
+            // RE-ENABLE INPUT after animation
+            if (gameManager != null)
+            {
+                gameManager.AllowPlayerInput();
+            }
 
             mindTricksActive = true;
         }
