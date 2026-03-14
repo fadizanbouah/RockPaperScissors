@@ -17,7 +17,7 @@ MonoBehaviour:
 
     Take 30% of enemy
     base damage if being bluffed.'
-  icon: {fileID: 21300000, guid: 73ae465b6ca4e9548b026120841602d8, type: 3}
+  icon: {fileID: 21300000, guid: 8669c2ab25b56ca4bab02c27412cf8ce, type: 3}
   behaviorPrefab: {fileID: 3659152428546840207, guid: a294d833caec64047960c0e2be205f7a, type: 3}
   configValues:
   - 30
