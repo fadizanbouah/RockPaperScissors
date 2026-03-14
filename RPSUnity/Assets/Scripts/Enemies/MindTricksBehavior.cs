@@ -112,9 +112,8 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        // Determine what sign counters and loses to the bluff
+        // Determine what sign counters the bluff
         string counterSign = GetCounterSign(bluffSign);
-        string losesSign = GetLosesSign(bluffSign);
 
         // Check if player countered the bluff AND won the round
         if (playerChoice == counterSign && result == RoundResult.Win)
@@ -128,10 +127,10 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
                 Debug.Log($"[MindTricksBehavior] Dealt {bonusDamage} bonus damage to enemy");
             }
         }
-        // Check if player fell for the bluff AND lost the round
-        else if (playerChoice == losesSign && result == RoundResult.Lose)
+        // Check if player lost the round (regardless of what they played)
+        else if (result == RoundResult.Lose)
         {
-            Debug.Log($"[MindTricksBehavior] Player fell for the bluff ({bluffSign}) AND lost! Extra damage to player.");
+            Debug.Log($"[MindTricksBehavior] Player lost during Mind Tricks! Extra damage to player.");
 
             int penaltyDamage = CalculatePenaltyDamage(enemyChoice);
             if (penaltyDamage > 0)
