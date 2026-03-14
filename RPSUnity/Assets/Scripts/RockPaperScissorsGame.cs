@@ -611,4 +611,48 @@ public class RockPaperScissorsGame : MonoBehaviour
     {
         return currentSubstate != GameSubstate.Idle;
     }
+
+    public void LockPlayerSign(string sign)
+    {
+        switch (sign)
+        {
+            case "Rock":
+                rockButton.interactable = false;
+                Debug.Log("[RockPaperScissorsGame] Rock button locked");
+                break;
+            case "Paper":
+                paperButton.interactable = false;
+                Debug.Log("[RockPaperScissorsGame] Paper button locked");
+                break;
+            case "Scissors":
+                scissorsButton.interactable = false;
+                Debug.Log("[RockPaperScissorsGame] Scissors button locked");
+                break;
+        }
+    }
+
+    public void UnlockPlayerSign(string sign)
+    {
+        // Only unlock if we're in idle state
+        if (currentSubstate != GameSubstate.Idle)
+        {
+            return;
+        }
+
+        switch (sign)
+        {
+            case "Rock":
+                rockButton.interactable = true;
+                Debug.Log("[RockPaperScissorsGame] Rock button unlocked");
+                break;
+            case "Paper":
+                paperButton.interactable = true;
+                Debug.Log("[RockPaperScissorsGame] Paper button unlocked");
+                break;
+            case "Scissors":
+                scissorsButton.interactable = true;
+                Debug.Log("[RockPaperScissorsGame] Scissors button unlocked");
+                break;
+        }
+    }
 }
