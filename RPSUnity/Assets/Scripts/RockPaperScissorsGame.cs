@@ -655,4 +655,20 @@ public class RockPaperScissorsGame : MonoBehaviour
                 break;
         }
     }
+
+    public Transform GetButtonTransform(string sign)
+    {
+        switch (sign)
+        {
+            case "Rock":
+                return rockButton.transform;
+            case "Paper":
+                return paperButton.transform;
+            case "Scissors":
+                return scissorsButton.transform;
+            default:
+                Debug.LogWarning($"[RockPaperScissorsGame] Unknown sign: {sign}");
+                return null;
+        }
+    }
 }

@@ -7,10 +7,11 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
     [SerializeField] private int triggerEveryXRounds = 3; // Lock triggers every X rounds
     [SerializeField] private int lockDuration = 1; // Lock lasts for Y rounds
 
-    [Header("Visual (Optional - Future)")]
-    [SerializeField] private GameObject lockVFXPrefab; // Animation prefab for lock
+    [Header("Visual")]
+    [SerializeField] private GameObject lockVFXPrefab; // Assign VFX prefab here
 
     private HandController thisEnemy;
+    private GameObject currentLockVFX; // Track the spawned VFX
     private int roundCounter = 0; // Counts up to triggerEveryXRounds
     private int lockRoundsRemaining = 0; // Counts down when lock is active
     private string lockedSign = ""; // Which sign is currently locked
@@ -46,9 +47,19 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
             if (gameManager != null)
             {
                 gameManager.LockPlayerSign(lockedSign);
-            }
 
-            // TODO: Show lock VFX on button (future implementation)
+                // Spawn lock VFX on the button
+                if (lockVFXPrefab != null)
+                {
+                    Transform buttonTransform = gameManager.GetButtonTransform(lockedSign);
+                    if (buttonTransform != null)
+                    {
+                        currentLockVFX = Instantiate(lockVFXPrefab, buttonTransform.position, Quaternion.identity);
+                        currentLockVFX.transform.SetParent(buttonTransform);
+                        Debug.Log($"[UnderArrestBehavior] Spawned lock VFX on {lockedSign} button");
+                    }
+                }
+            }
         }
 
         yield return null;
@@ -90,6 +101,13 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
             {
                 Debug.Log($"[UnderArrestBehavior] Lock expired! Unlocking {lockedSign}");
 
+                // Destroy lock VFX
+                if (currentLockVFX != null)
+                {
+                    Destroy(currentLockVFX);
+                    currentLockVFX = null;
+                }
+
                 // Unlock the sign
                 RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
                 if (gameManager != null)
@@ -107,9 +125,15 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnPostDeath(HandController enemy)
     {
-        // Unlock sign if enemy dies while lock is active
+        // Unlock sign and destroy VFX if enemy dies while lock is active
         if (isLockActive && !string.IsNullOrEmpty(lockedSign))
         {
+            if (currentLockVFX != null)
+            {
+                Destroy(currentLockVFX);
+                currentLockVFX = null;
+            }
+
             RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
             if (gameManager != null)
             {
@@ -122,7 +146,13 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
 
     private void OnDestroy()
     {
-        // Cleanup: unlock sign if still locked
+        // Cleanup: destroy VFX and unlock sign if still locked
+        if (currentLockVFX != null)
+        {
+            Destroy(currentLockVFX);
+            currentLockVFX = null;
+        }
+
         if (isLockActive && !string.IsNullOrEmpty(lockedSign))
         {
             RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();

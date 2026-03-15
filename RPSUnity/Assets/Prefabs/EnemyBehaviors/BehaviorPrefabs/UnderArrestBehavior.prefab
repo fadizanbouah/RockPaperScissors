@@ -46,4 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   triggerEveryXRounds: 3
   lockDuration: 1
-  lockVFXPrefab: {fileID: 0}
+  lockVFXPrefab: {fileID: 1676333407063852821, guid: 161f066b217c17946a156bee0adc3238, type: 3}
