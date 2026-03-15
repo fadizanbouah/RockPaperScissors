@@ -639,19 +639,29 @@ public class RockPaperScissorsGame : MonoBehaviour
             return;
         }
 
+        // Safety check: ensure buttons exist
         switch (sign)
         {
             case "Rock":
-                rockButton.interactable = true;
-                Debug.Log("[RockPaperScissorsGame] Rock button unlocked");
+                if (rockButton != null)
+                {
+                    rockButton.interactable = true;
+                    Debug.Log("[RockPaperScissorsGame] Rock button unlocked");
+                }
                 break;
             case "Paper":
-                paperButton.interactable = true;
-                Debug.Log("[RockPaperScissorsGame] Paper button unlocked");
+                if (paperButton != null)
+                {
+                    paperButton.interactable = true;
+                    Debug.Log("[RockPaperScissorsGame] Paper button unlocked");
+                }
                 break;
             case "Scissors":
-                scissorsButton.interactable = true;
-                Debug.Log("[RockPaperScissorsGame] Scissors button unlocked");
+                if (scissorsButton != null)
+                {
+                    scissorsButton.interactable = true;
+                    Debug.Log("[RockPaperScissorsGame] Scissors button unlocked");
+                }
                 break;
         }
     }

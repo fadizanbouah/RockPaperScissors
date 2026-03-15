@@ -156,7 +156,8 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         if (isLockActive && !string.IsNullOrEmpty(lockedSign))
         {
             RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
-            if (gameManager != null)
+            // Only unlock if game manager still exists (not destroyed during Unity shutdown)
+            if (gameManager != null && gameManager.gameObject != null)
             {
                 gameManager.UnlockPlayerSign(lockedSign);
             }
