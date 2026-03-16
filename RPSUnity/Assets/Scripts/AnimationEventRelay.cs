@@ -126,4 +126,13 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnMurderousAttackFinished();
         }
     }
+
+    public void TriggerThrowCuffsFinished()
+    {
+        Debug.Log("[AnimationEventRelay] ThrowCuffs animation finished!");
+        if (handController != null)
+        {
+            handController.OnThrowCuffsAnimationFinished();
+        }
+    }
 }

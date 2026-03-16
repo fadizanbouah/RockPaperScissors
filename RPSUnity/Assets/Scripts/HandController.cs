@@ -130,6 +130,8 @@ public class HandController : MonoBehaviour
     public delegate void MurderousAttackFinishedHandler(HandController hand);
     public event MurderousAttackFinishedHandler MurderousAttackFinished;
 
+    public event System.Action OnThrowCuffsFinished;
+
     private void Awake()
     {
         // Store base values before any modifications
@@ -1000,6 +1002,12 @@ public class HandController : MonoBehaviour
 
         Debug.LogWarning($"[HandController] Could not find sprite for {handName} (looking for {gameObjectName})");
         return null;
+    }
+
+    public void OnThrowCuffsAnimationFinished()
+    {
+        Debug.Log("[HandController] ThrowCuffs animation finished!");
+        OnThrowCuffsFinished?.Invoke();
     }
 }
 

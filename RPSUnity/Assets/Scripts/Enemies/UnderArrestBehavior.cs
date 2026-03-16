@@ -8,14 +8,18 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
     [SerializeField] private int lockDuration = 1; // Lock lasts for Y rounds
 
     [Header("Visual")]
-    [SerializeField] private GameObject lockVFXPrefab; // Assign VFX prefab here
+    [SerializeField] private GameObject lockVFXPrefab; // Animation prefab for lock
+    [SerializeField] private string throwAnimationTrigger = "ThrowCuffs"; // Animator trigger name
 
     private HandController thisEnemy;
-    private GameObject currentLockVFX; // Track the spawned VFX
     private int roundCounter = 0; // Counts up to triggerEveryXRounds
     private int lockRoundsRemaining = 0; // Counts down when lock is active
     private string lockedSign = ""; // Which sign is currently locked
     private bool isLockActive = false;
+    private GameObject currentLockVFX;
+
+    // Animation event tracking
+    private bool throwAnimationFinished = false;
 
     public void Initialize(HandController enemy, float[] configValues)
     {
@@ -33,6 +37,13 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         Debug.Log($"[UnderArrestBehavior] Initialized - Lock every {triggerEveryXRounds} rounds for {lockDuration} rounds");
+
+        // Register for animation events through HandController
+        if (thisEnemy != null)
+        {
+            thisEnemy.OnThrowCuffsFinished += OnThrowAnimationFinished;
+            Debug.Log("[UnderArrestBehavior] Registered for ThrowCuffs animation events");
+        }
     }
 
     public IEnumerator OnIdleStateEntered()
@@ -42,7 +53,34 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         {
             Debug.Log($"[UnderArrestBehavior] Applying lock to {lockedSign}");
 
-            // Disable the locked button
+            // STEP 1: Play enemy throw animation
+            if (thisEnemy != null && thisEnemy.handAnimator != null && !string.IsNullOrEmpty(throwAnimationTrigger))
+            {
+                Debug.Log($"[UnderArrestBehavior] Playing throw animation: {throwAnimationTrigger}");
+                throwAnimationFinished = false;
+                thisEnemy.handAnimator.SetTrigger(throwAnimationTrigger);
+
+                // Wait for animation to finish with timeout
+                float timeout = 3f;
+                float elapsed = 0f;
+
+                while (!throwAnimationFinished && elapsed < timeout)
+                {
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+
+                if (elapsed >= timeout)
+                {
+                    Debug.LogWarning("[UnderArrestBehavior] Throw animation timed out!");
+                }
+                else
+                {
+                    Debug.Log("[UnderArrestBehavior] Throw animation completed");
+                }
+            }
+
+            // STEP 2: Disable the locked button and spawn VFX
             RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
             if (gameManager != null)
             {
@@ -54,8 +92,19 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
                     Transform buttonTransform = gameManager.GetButtonTransform(lockedSign);
                     if (buttonTransform != null)
                     {
-                        currentLockVFX = Instantiate(lockVFXPrefab, buttonTransform.position, Quaternion.identity);
-                        currentLockVFX.transform.SetParent(buttonTransform);
+                        currentLockVFX = Instantiate(lockVFXPrefab, buttonTransform);
+
+                        RectTransform vfxRect = currentLockVFX.GetComponent<RectTransform>();
+                        if (vfxRect != null)
+                        {
+                            vfxRect.anchoredPosition = Vector2.zero;
+                            vfxRect.localScale = Vector3.one;
+                        }
+                        else
+                        {
+                            currentLockVFX.transform.localScale = Vector3.one;
+                        }
+
                         Debug.Log($"[UnderArrestBehavior] Spawned lock VFX on {lockedSign} button");
                     }
                 }
@@ -144,8 +193,20 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         yield break;
     }
 
+    private void OnThrowAnimationFinished()
+    {
+        throwAnimationFinished = true;
+        Debug.Log("[UnderArrestBehavior] Throw animation event received");
+    }
+
     private void OnDestroy()
     {
+        // Unregister from animation events
+        if (thisEnemy != null)
+        {
+            thisEnemy.OnThrowCuffsFinished -= OnThrowAnimationFinished;
+        }
+
         // Cleanup: destroy VFX and unlock sign if still locked
         if (currentLockVFX != null)
         {
@@ -156,7 +217,7 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         if (isLockActive && !string.IsNullOrEmpty(lockedSign))
         {
             RockPaperScissorsGame gameManager = FindObjectOfType<RockPaperScissorsGame>();
-            // Only unlock if game manager still exists (not destroyed during Unity shutdown)
+            // Only unlock if game manager still exists
             if (gameManager != null && gameManager.gameObject != null)
             {
                 gameManager.UnlockPlayerSign(lockedSign);
