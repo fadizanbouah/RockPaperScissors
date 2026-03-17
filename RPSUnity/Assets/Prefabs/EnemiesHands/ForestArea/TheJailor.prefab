@@ -13,12 +13,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: enemyName
+      value: The Jailor
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: maxHealth
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: rockDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperDamage
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: baseMaxHealth
-      value: 2000
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsDamage
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: paperHandSprite

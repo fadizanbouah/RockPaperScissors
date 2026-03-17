@@ -13,6 +13,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
+      propertyPath: enemyName
+      value: Hound Master
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: a4227eaab899df7409aaceffc637d5d3, type: 3}
       propertyPath: maxHealth
       value: 0
       objectReference: {fileID: 0}

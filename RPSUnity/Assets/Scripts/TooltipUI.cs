@@ -8,7 +8,7 @@ public class TooltipUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private RectTransform backgroundRect;
-    [SerializeField] private Vector2 padding = new Vector2(20f, 20f);
+    [SerializeField] private Vector2 padding = new Vector2(60f, 60f);
     [SerializeField] private Vector2 offset = new Vector2(10f, 10f);
 
     private RectTransform rectTransform;

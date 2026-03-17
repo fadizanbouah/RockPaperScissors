@@ -1,9 +1,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class HandController : MonoBehaviour
 {
+    [Header("Enemy Info")]
+    [SerializeField] private string enemyName = "Enemy"; // Configurable enemy name
+    [SerializeField] private TextMeshProUGUI enemyNameText; // Reference to the EnemyName text object
+
     [Header("Base Stats")]
     public int baseMaxHealth = 30;
     // Keep baseDamage for backward compatibility, but hide it
@@ -152,7 +157,14 @@ public class HandController : MonoBehaviour
         ApplyUpgrades();
         handSpriteRenderer.sprite = defaultHandSprite;
         UpdateHealthBar();
-        // Remove the sequence generation from here
+
+        // Set enemy name if text component exists
+        if (enemyNameText != null && !string.IsNullOrEmpty(enemyName))
+        {
+            enemyNameText.text = enemyName;
+            Debug.Log($"[HandController] Set enemy name to: {enemyName}");
+        }
+
     }
 
     private void ApplyUpgrades()
