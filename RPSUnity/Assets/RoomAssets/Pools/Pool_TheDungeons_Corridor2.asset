@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44fe0cf7cc6eea840bcb2eb476ebc242, type: 3}
-  m_Name: Pool4
+  m_Name: Pool_TheDungeons_Corridor2
   m_EditorClassIdentifier: 
   rooms:
-  - {fileID: 11400000, guid: 10a3951ed9e2f1743a6ba7874b3f29ef, type: 2}
+  - {fileID: 11400000, guid: 0811d6d8157661d4faccc389c7c1b62d, type: 2}
