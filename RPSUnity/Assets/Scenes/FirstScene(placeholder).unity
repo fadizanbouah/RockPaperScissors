@@ -2713,13 +2713,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbcfbd136eb1f4647a36c357e1ff5ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomPools:
-  - {fileID: 11400000, guid: 11ef8cabbd3ca784589fc8c25e891e9e, type: 2}
-  - {fileID: 11400000, guid: af111d69eb1ba1b4db76274bdcfba440, type: 2}
-  - {fileID: 11400000, guid: 54fb7b3e05fbad643ac11bf67e21a8d1, type: 2}
-  - {fileID: 11400000, guid: 93b3092c09ff1b34594122eafa093c23, type: 2}
-  - {fileID: 11400000, guid: e65c26f0286ff6c46a923747bd8f76c1, type: 2}
-  - {fileID: 11400000, guid: 3a587b8bec2276e4d98711d4ff38fc44, type: 2}
+  areas:
+  - {fileID: 11400000, guid: afad63e9de779fe4d96ca0bb96c8eba9, type: 2}
+  - {fileID: 11400000, guid: ce4ebdd612625a445868dfd2804f8d58, type: 2}
   roomBackground: {fileID: 1378774852}
   enemySpawnPoint: {fileID: 1317680167}
   rockPaperScissorsGame: {fileID: 218203640}
@@ -4113,6 +4109,8 @@ MonoBehaviour:
   acquiredPowerUps: []
   persistentPowerUps: []
   acquiredUniquePowerUps: []
+  currentAreaIndex: 0
+  currentPoolIndexInArea: 0
 --- !u!4 &1232882487
 Transform:
   m_ObjectHideFlags: 0

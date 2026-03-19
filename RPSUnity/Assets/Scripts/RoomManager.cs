@@ -6,16 +6,21 @@ public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance { get; private set; }
 
-    [SerializeField] private List<RoomPool> roomPools; // List of pools in sequence
+    [Header("Areas")]
+    [SerializeField] private List<AreaData> areas; // NEW: List of areas instead of flat pool list
+
     [SerializeField] private SpriteRenderer roomBackground;
     [SerializeField] private Transform enemySpawnPoint;
-    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame; // Reference to game logic
+    [SerializeField] private RockPaperScissorsGame rockPaperScissorsGame;
     [SerializeField] private GameObject roomClearedTextObject;
     [SerializeField] private GameObject powerUpPanelObject;
 
     public event System.Action OnEnemySpawned;
 
-    private int currentPoolIndex = 0; // Track current pool in sequence
+    // NEW: Track current area and pool within area
+    private int currentAreaIndex = 0;
+    private int currentPoolIndexInArea = 0;
+
     private RoomData currentRoom;
     private int currentEnemyIndex = 0;
     private HandController currentEnemy;
@@ -34,9 +39,9 @@ public class RoomManager : MonoBehaviour
 
     private void Start()
     {
-        if (roomPools.Count == 0)
+        if (areas.Count == 0)
         {
-            Debug.LogError("No RoomPools assigned! Cannot start the game.");
+            Debug.LogError("No Areas assigned! Cannot start the game.");
             return;
         }
     }
@@ -46,7 +51,7 @@ public class RoomManager : MonoBehaviour
         Debug.Log("[RoomManager] Starting new room sequence. Resetting run progress...");
         RunProgressManager.Instance.ResetRun();
 
-        // NEW: Clear enemy combat tracker for new run
+        // Clear enemy combat tracker for new run
         EnemyCombatTracker enemyTracker = FindObjectOfType<EnemyCombatTracker>();
         if (enemyTracker != null)
         {
@@ -55,7 +60,10 @@ public class RoomManager : MonoBehaviour
             Debug.Log("[RoomManager] Cleared EnemyCombatTracker for new run");
         }
 
-        currentPoolIndex = 0;
+        // NEW: Reset area and pool tracking
+        currentAreaIndex = 0;
+        currentPoolIndexInArea = 0;
+
         SelectNextRoom();
     }
 
@@ -64,10 +72,12 @@ public class RoomManager : MonoBehaviour
         Debug.Log($"Loading Room: {room.roomName}");
         currentRoom = room;
         currentEnemyIndex = 0;
+
         if (roomBackground != null)
         {
             roomBackground.sprite = room.backgroundImage;
         }
+
         ApplyPersistentPowerUps();
         PowerUpEffectManager.Instance?.TriggerRoomStart();
 
@@ -104,30 +114,24 @@ public class RoomManager : MonoBehaviour
             GameStateManager.Instance.BeginRoomTransition();
             return;
         }
+
         if (currentEnemy != null)
         {
             Destroy(currentEnemy.gameObject);
             currentEnemy = null;
         }
+
         GameObject enemyInstance = Instantiate(currentRoom.enemyPrefabs[currentEnemyIndex], enemySpawnPoint.position, enemySpawnPoint.rotation);
         currentEnemy = enemyInstance.GetComponent<HandController>();
+
         if (currentEnemy != null)
         {
             currentEnemy.OnDeath += HandleEnemyDefeat;
             currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
+
             GameStateManager.Instance.UpdateEnemy(currentEnemy);
             rockPaperScissorsGame?.UpdateEnemyReference(currentEnemy);
-
-            // REMOVED: This redundant call to SetupPrediction
-            // The prediction UI is already set up in RockPaperScissorsGame.InitializeGame()
-            // which is called by GameStateManager.UpdateEnemy() above
-
-            // PredictionUI predictionUI = FindObjectOfType<PredictionUI>();
-            // if (predictionUI != null)
-            // {
-            //     predictionUI.SetupPrediction(currentEnemy);
-            // }
 
             // Update the enemy combat tracker
             EnemyCombatTracker enemyTracker = FindObjectOfType<EnemyCombatTracker>();
@@ -150,6 +154,7 @@ public class RoomManager : MonoBehaviour
         {
             Debug.LogError("Spawned enemy does not have a HandController script!");
         }
+
         currentEnemyIndex++;
     }
 
@@ -173,8 +178,6 @@ public class RoomManager : MonoBehaviour
         if (currentEnemyIndex >= currentRoom.enemyPrefabs.Count)
         {
             Debug.Log("[RoomManager] All enemies defeated in this room.");
-
-            // Removed calls to RemoveRoomScopedEffects because those power-ups are deleted
 
             if (rockPaperScissorsGame != null && rockPaperScissorsGame.roomClearedTextObject != null)
             {
@@ -200,30 +203,90 @@ public class RoomManager : MonoBehaviour
 
     public void SelectNextRoom()
     {
-        if (roomPools.Count == 0)
+        // NEW: Check if we have any areas
+        if (areas.Count == 0)
         {
-            Debug.LogError("No RoomPools assigned! Cannot load next room.");
+            Debug.LogError("No Areas assigned! Cannot load next room.");
             return;
         }
 
-        RoomPool currentPool = roomPools[currentPoolIndex];
+        // NEW: Get current area
+        AreaData currentArea = areas[currentAreaIndex];
+
+        if (currentArea == null || currentArea.roomPools.Count == 0)
+        {
+            Debug.LogError($"Area at index {currentAreaIndex} has no room pools!");
+            return;
+        }
+
+        // NEW: Get current pool from current area
+        RoomPool currentPool = currentArea.roomPools[currentPoolIndexInArea];
 
         if (currentPool == null || currentPool.rooms.Count == 0)
         {
-            Debug.LogError($"RoomPool at index {currentPoolIndex} is empty or missing!");
+            Debug.LogError($"RoomPool at index {currentPoolIndexInArea} in area '{currentArea.areaName}' is empty!");
             return;
         }
 
-        currentRoom = currentPool.rooms[Random.Range(0, currentPool.rooms.Count)];
-        Debug.Log($"Next Room Selected: {currentRoom.roomName}");
+        // Select random room from pool
+        currentRoom = currentPool.GetRandomRoom();
+        Debug.Log($"[RoomManager] Area: {currentArea.areaName} | Pool: {currentPoolIndexInArea + 1}/{currentArea.roomPools.Count} | Room: {currentRoom.roomName}");
 
         LoadRoom(currentRoom);
-        currentPoolIndex = (currentPoolIndex + 1) % roomPools.Count;
+
+        // NEW: Advance to next pool
+        AdvanceToNextPool();
+    }
+
+    // NEW: Handle pool/area progression
+    private void AdvanceToNextPool()
+    {
+        AreaData currentArea = areas[currentAreaIndex];
+
+        currentPoolIndexInArea++;
+
+        // Check if we've finished all pools in this area
+        if (currentPoolIndexInArea >= currentArea.roomPools.Count)
+        {
+            Debug.Log($"[RoomManager] Completed area: {currentArea.areaName}");
+
+            // Move to next area
+            currentAreaIndex++;
+            currentPoolIndexInArea = 0;
+
+            // Check if we've finished all areas
+            if (currentAreaIndex >= areas.Count)
+            {
+                Debug.Log("[RoomManager] All areas completed! Looping back to first area.");
+                currentAreaIndex = 0; // Loop back (or you could trigger victory screen)
+            }
+            else
+            {
+                Debug.Log($"[RoomManager] Advancing to new area: {areas[currentAreaIndex].areaName}");
+                // TODO: Trigger area transition cinematic here
+            }
+        }
     }
 
     public HandController GetCurrentEnemy()
     {
         return currentEnemy;
+    }
+
+    // NEW: Expose current area data
+    public AreaData GetCurrentArea()
+    {
+        if (currentAreaIndex >= 0 && currentAreaIndex < areas.Count)
+        {
+            return areas[currentAreaIndex];
+        }
+        return null;
+    }
+
+    // NEW: Get pool depth within current area
+    public int GetPoolDepthInCurrentArea()
+    {
+        return currentPoolIndexInArea;
     }
 
     public void OnRoomClearedAnimationFinished()
@@ -234,17 +297,17 @@ public class RoomManager : MonoBehaviour
             Debug.Log("[RoomManager] Setting roomClearedTextObject to inactive: " + roomClearedTextObject.name);
             roomClearedTextObject.SetActive(false);
         }
+
         if (powerUpPanelObject != null)
         {
             Debug.Log("[RoomManager] Activating powerUpPanelObject: " + powerUpPanelObject.name);
             powerUpPanelObject.SetActive(true);
 
-            // Populate power-up cards for both tabs
             PowerUpCardSpawner spawner = powerUpPanelObject.GetComponent<PowerUpCardSpawner>();
             if (spawner != null)
             {
-                spawner.PopulatePowerUpPanel(); // Populates passive tab
-                spawner.PopulateActiveTab();    // Populates active tab
+                spawner.PopulatePowerUpPanel();
+                spawner.PopulateActiveTab();
                 Debug.Log("[RoomManager] Populated both passive and active power-up tabs");
             }
             else
@@ -274,7 +337,6 @@ public class RoomManager : MonoBehaviour
     {
         PassivePowerUpHandler.ApplyAllPersistentPowerUps();
 
-        // Update the passive tracker UI
         PassivePowerUpTracker tracker = FindObjectOfType<PassivePowerUpTracker>();
         if (tracker != null)
         {

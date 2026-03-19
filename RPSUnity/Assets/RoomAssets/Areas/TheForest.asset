@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccac3400e870ea24eb3a2d4c38e473a8, type: 3}
+  m_Name: TheForest
+  m_EditorClassIdentifier: 
+  areaName: The Forest
+  roomPools:
+  - {fileID: 11400000, guid: 11ef8cabbd3ca784589fc8c25e891e9e, type: 2}
+  - {fileID: 11400000, guid: af111d69eb1ba1b4db76274bdcfba440, type: 2}
+  - {fileID: 11400000, guid: 54fb7b3e05fbad643ac11bf67e21a8d1, type: 2}
+  scalingPercentPerPool: 5
+  areaMusic: {fileID: 0}
+  areaCinematicPrefab: {fileID: 0}

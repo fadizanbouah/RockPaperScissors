@@ -15,6 +15,5 @@ MonoBehaviour:
   roomName: Healing Room
   backgroundImage: {fileID: 21300000, guid: 8c27cc2ada4b4194f9480ffdcfdefdd9, type: 3}
   enemyPrefabs:
-  - {fileID: 2270003680840728939, guid: 0d9b85158b3748a4f8e07911830de908, type: 3}
-  - {fileID: 3780563925321656133, guid: 1a2503d92d4429c4f97e8be9b55d736a, type: 3}
+  - {fileID: 5174254258944274410, guid: af0f806ff76a9ef4c9f8b66cdd91c61e, type: 3}
   weight: 1

@@ -27,6 +27,10 @@ public class RunProgressManager : MonoBehaviour
     [Header("Blocked PowerUps")]
     private List<PowerUpData> blockedPowerUps = new List<PowerUpData>();
 
+    [Header("Progression Tracking")]
+    public int currentAreaIndex = 0;
+    public int currentPoolIndexInArea = 0;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -65,6 +69,11 @@ public class RunProgressManager : MonoBehaviour
     {
         Debug.Log("[RunProgressManager] ===== RESET RUN CALLED =====");
         Debug.Log($"[RunProgressManager] BEFORE RESET - persistentPowerUps count: {persistentPowerUps.Count}");
+
+        // Reset progression tracking
+        currentAreaIndex = 0;
+        currentPoolIndexInArea = 0;
+        Debug.Log("[RunProgressManager] Reset area and pool progression");
 
         favor = 0;
         acquiredPowerUps.Clear();
@@ -299,5 +308,23 @@ public class RunProgressManager : MonoBehaviour
     public bool IsPowerUpBlocked(PowerUpData data)
     {
         return blockedPowerUps.Contains(data);
+    }
+
+    // Area/Pool progression helpers
+    public void UpdateProgression(int areaIndex, int poolIndex)
+    {
+        currentAreaIndex = areaIndex;
+        currentPoolIndexInArea = poolIndex;
+        Debug.Log($"[RunProgressManager] Updated progression: Area {areaIndex}, Pool {poolIndex}");
+    }
+
+    public int GetCurrentAreaIndex()
+    {
+        return currentAreaIndex;
+    }
+
+    public int GetCurrentPoolDepth()
+    {
+        return currentPoolIndexInArea;
     }
 }
