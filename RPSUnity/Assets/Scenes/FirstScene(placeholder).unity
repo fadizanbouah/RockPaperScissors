@@ -2715,7 +2715,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areas:
   - {fileID: 11400000, guid: afad63e9de779fe4d96ca0bb96c8eba9, type: 2}
-  - {fileID: 11400000, guid: ce4ebdd612625a445868dfd2804f8d58, type: 2}
   roomBackground: {fileID: 1378774852}
   enemySpawnPoint: {fileID: 1317680167}
   rockPaperScissorsGame: {fileID: 218203640}
