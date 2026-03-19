@@ -167,6 +167,36 @@ public class HandController : MonoBehaviour
 
     }
 
+    public void PreInitialize(AreaData area, int poolDepth)
+    {
+        // This runs BEFORE Start(), so we scale the base values that ApplyUpgrades will use
+        if (!isPlayer && area != null)
+        {
+            float multiplier = 1f + (poolDepth * (area.scalingPercentPerPool / 100f));
+
+            Debug.Log($"[HandController] PreInitialize scaling for {gameObject.name} | Area: {area.areaName} | Pool: {poolDepth} | Multiplier: {multiplier:F2}x");
+
+            // Scale base health (what ApplyUpgrades uses)
+            int originalBaseHealth = baseMaxHealth;
+            baseMaxHealth = Mathf.RoundToInt(baseMaxHealth * multiplier);
+
+            // Scale damage values (these are used directly, not modified by ApplyUpgrades for enemies)
+            int originalRock = rockDamage;
+            int originalPaper = paperDamage;
+            int originalScissors = scissorsDamage;
+
+            rockDamage = Mathf.RoundToInt(rockDamage * multiplier);
+            paperDamage = Mathf.RoundToInt(paperDamage * multiplier);
+            scissorsDamage = Mathf.RoundToInt(scissorsDamage * multiplier);
+
+            Debug.Log($"[HandController] Scaled stats:");
+            Debug.Log($"  Base HP: {originalBaseHealth} -> {baseMaxHealth}");
+            Debug.Log($"  Rock: {originalRock} -> {rockDamage}");
+            Debug.Log($"  Paper: {originalPaper} -> {paperDamage}");
+            Debug.Log($"  Scissors: {originalScissors} -> {scissorsDamage}");
+        }
+    }
+
     private void ApplyUpgrades()
     {
         if (isPlayer)

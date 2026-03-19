@@ -24,6 +24,7 @@ public class RoomManager : MonoBehaviour
     private RoomData currentRoom;
     private int currentEnemyIndex = 0;
     private HandController currentEnemy;
+    private int poolDepthForCurrentRoom = 0;
 
     private void Awake()
     {
@@ -126,6 +127,10 @@ public class RoomManager : MonoBehaviour
 
         if (currentEnemy != null)
         {
+            // CRITICAL: Scale stats IMMEDIATELY after instantiation, BEFORE Start() runs
+            AreaData currentArea = GetCurrentArea();
+            currentEnemy.PreInitialize(currentArea, poolDepthForCurrentRoom);
+
             currentEnemy.OnDeath += HandleEnemyDefeat;
             currentEnemy.OnDeathAnimationFinished += HandleDeathAnimationFinished;
             Debug.Log($"Spawned enemy: {currentRoom.enemyPrefabs[currentEnemyIndex].name}");
@@ -228,17 +233,20 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
+        // Store the pool depth BEFORE advancing (this is what enemies in this room will use)
+        poolDepthForCurrentRoom = currentPoolIndexInArea;
+
         // Select random room from pool
         currentRoom = currentPool.GetRandomRoom();
         Debug.Log($"[RoomManager] Area: {currentArea.areaName} | Pool: {currentPoolIndexInArea + 1}/{currentArea.roomPools.Count} | Room: {currentRoom.roomName}");
 
         LoadRoom(currentRoom);
 
-        // NEW: Advance to next pool
+        // Advance to next pool
         AdvanceToNextPool();
     }
 
-    // NEW: Handle pool/area progression
+    // Handle pool/area progression
     private void AdvanceToNextPool()
     {
         AreaData currentArea = areas[currentAreaIndex];
