@@ -15,8 +15,7 @@ public class HandController : MonoBehaviour
     [HideInInspector]
     public int baseDamage = 10;
 
-    [Header("Sign-Specific Damage")]
-    [Tooltip("Used for Player prefab only")]
+    [Header("Sign-Specific Damage - Player prefab only")]
     public int rockDamage = 10;
     public int paperDamage = 10;
     public int scissorsDamage = 10;
@@ -25,8 +24,7 @@ public class HandController : MonoBehaviour
     [HideInInspector] public int basePaperDamage;
     [HideInInspector] public int baseScissorsDamage;
 
-    [Header("Stat Ranges (for randomization)")]
-    [Tooltip("Used for Enemy prefabs only")]
+    [Header("Stat Ranges - Enemy prefabs only")]
     [SerializeField] private int rockDamageMin = 10;
     [SerializeField] private int rockDamageMax = 10;
     [SerializeField] private int paperDamageMin = 10;
