@@ -15,7 +15,6 @@ MonoBehaviour:
   roomName: Prison Cell
   backgroundImage: {fileID: 21300000, guid: e056cd965e708214895b2cb4a3b36136, type: 3}
   enemyPrefabs:
-  - {fileID: 2743520040306356377, guid: e515ef0fbcd163a48b3ceac4612ceff3, type: 3}
   - {fileID: 2270003680840728939, guid: 0d9b85158b3748a4f8e07911830de908, type: 3}
   - {fileID: 3780563925321656133, guid: 1a2503d92d4429c4f97e8be9b55d736a, type: 3}
   weight: 1

@@ -16,6 +16,7 @@ public class HandController : MonoBehaviour
     public int baseDamage = 10;
 
     [Header("Sign-Specific Damage")]
+    [Tooltip("Used for Player prefab only")]
     public int rockDamage = 10;
     public int paperDamage = 10;
     public int scissorsDamage = 10;
@@ -23,6 +24,17 @@ public class HandController : MonoBehaviour
     [HideInInspector] public int baseRockDamage;
     [HideInInspector] public int basePaperDamage;
     [HideInInspector] public int baseScissorsDamage;
+
+    [Header("Stat Ranges (for randomization)")]
+    [Tooltip("Used for Enemy prefabs only")]
+    [SerializeField] private int rockDamageMin = 10;
+    [SerializeField] private int rockDamageMax = 10;
+    [SerializeField] private int paperDamageMin = 10;
+    [SerializeField] private int paperDamageMax = 10;
+    [SerializeField] private int scissorsDamageMin = 10;
+    [SerializeField] private int scissorsDamageMax = 10;
+    [SerializeField] private int baseMaxHealthMin = 100;
+    [SerializeField] private int baseMaxHealthMax = 100;
 
     [Header("Runtime Stats")]
     public int health;
@@ -169,31 +181,44 @@ public class HandController : MonoBehaviour
 
     public void PreInitialize(AreaData area, int poolDepth)
     {
-        // This runs BEFORE Start(), so we scale the base values that ApplyUpgrades will use
-        if (!isPlayer && area != null)
+        // This runs BEFORE Start()
+        if (!isPlayer)
         {
-            float multiplier = 1f + (poolDepth * (area.scalingPercentPerPool / 100f));
+            // STEP 1: Randomize base stats from min/max ranges
+            baseMaxHealth = Random.Range(baseMaxHealthMin, baseMaxHealthMax + 1);
+            rockDamage = Random.Range(rockDamageMin, rockDamageMax + 1);
+            paperDamage = Random.Range(paperDamageMin, paperDamageMax + 1);
+            scissorsDamage = Random.Range(scissorsDamageMin, scissorsDamageMax + 1);
 
-            Debug.Log($"[HandController] PreInitialize scaling for {gameObject.name} | Area: {area.areaName} | Pool: {poolDepth} | Multiplier: {multiplier:F2}x");
+            Debug.Log($"[HandController] Randomized base stats for {gameObject.name}:");
+            Debug.Log($"  Base HP: {baseMaxHealth} (from {baseMaxHealthMin}-{baseMaxHealthMax})");
+            Debug.Log($"  Rock: {rockDamage} (from {rockDamageMin}-{rockDamageMax})");
+            Debug.Log($"  Paper: {paperDamage} (from {paperDamageMin}-{paperDamageMax})");
+            Debug.Log($"  Scissors: {scissorsDamage} (from {scissorsDamageMin}-{scissorsDamageMax})");
 
-            // Scale base health (what ApplyUpgrades uses)
-            int originalBaseHealth = baseMaxHealth;
-            baseMaxHealth = Mathf.RoundToInt(baseMaxHealth * multiplier);
+            // STEP 2: Apply area scaling on top of randomized values (if area data exists)
+            if (area != null)
+            {
+                float multiplier = 1f + (poolDepth * (area.scalingPercentPerPool / 100f));
 
-            // Scale damage values (these are used directly, not modified by ApplyUpgrades for enemies)
-            int originalRock = rockDamage;
-            int originalPaper = paperDamage;
-            int originalScissors = scissorsDamage;
+                Debug.Log($"[HandController] Applying area scaling | Area: {area.areaName} | Pool: {poolDepth} | Multiplier: {multiplier:F2}x");
 
-            rockDamage = Mathf.RoundToInt(rockDamage * multiplier);
-            paperDamage = Mathf.RoundToInt(paperDamage * multiplier);
-            scissorsDamage = Mathf.RoundToInt(scissorsDamage * multiplier);
+                int preScaleHealth = baseMaxHealth;
+                int preScaleRock = rockDamage;
+                int preScalePaper = paperDamage;
+                int preScaleScissors = scissorsDamage;
 
-            Debug.Log($"[HandController] Scaled stats:");
-            Debug.Log($"  Base HP: {originalBaseHealth} -> {baseMaxHealth}");
-            Debug.Log($"  Rock: {originalRock} -> {rockDamage}");
-            Debug.Log($"  Paper: {originalPaper} -> {paperDamage}");
-            Debug.Log($"  Scissors: {originalScissors} -> {scissorsDamage}");
+                baseMaxHealth = Mathf.RoundToInt(baseMaxHealth * multiplier);
+                rockDamage = Mathf.RoundToInt(rockDamage * multiplier);
+                paperDamage = Mathf.RoundToInt(paperDamage * multiplier);
+                scissorsDamage = Mathf.RoundToInt(scissorsDamage * multiplier);
+
+                Debug.Log($"[HandController] After scaling:");
+                Debug.Log($"  Base HP: {preScaleHealth} -> {baseMaxHealth}");
+                Debug.Log($"  Rock: {preScaleRock} -> {rockDamage}");
+                Debug.Log($"  Paper: {preScalePaper} -> {paperDamage}");
+                Debug.Log($"  Scissors: {preScaleScissors} -> {scissorsDamage}");
+            }
         }
     }
 
