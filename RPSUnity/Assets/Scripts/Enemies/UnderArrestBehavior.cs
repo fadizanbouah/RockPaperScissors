@@ -130,9 +130,8 @@ public class UnderArrestBehavior : MonoBehaviour, IEnemyBehavior
         {
             Debug.Log("[UnderArrestBehavior] Lock threshold reached! Preparing lock for next round");
 
-            // Pick random sign to lock
-            string[] signs = { "Rock", "Paper", "Scissors" };
-            lockedSign = signs[Random.Range(0, signs.Length)];
+            // Lock the player's last-used sign instead of random
+            lockedSign = playerChoice;
 
             isLockActive = true;
             lockRoundsRemaining = lockDuration;
