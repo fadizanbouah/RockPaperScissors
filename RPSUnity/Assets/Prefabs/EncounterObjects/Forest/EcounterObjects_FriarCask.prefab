@@ -37,6 +37,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: rockDamageMax
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: rockDamageMin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: shuffleAfter1
       value: 0
       objectReference: {fileID: 0}
@@ -57,6 +65,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperDamageMax
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: paperDamageMin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: scissorsDamage
       value: 1
       objectReference: {fileID: 0}
@@ -73,9 +89,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 2705656c8825f5c4fa9ae66153af4d06, type: 3}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: baseMaxHealthMax
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: baseMaxHealthMin
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: defaultHandSprite
       value: 
       objectReference: {fileID: 21300000, guid: 8a85bbc72204ba14788000076a90a39d, type: 3}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsDamageMax
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
+      propertyPath: scissorsDamageMin
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -3137686536588065982, guid: 88ae6c56908493c40bedfa8a62cea601, type: 3}
       propertyPath: scissorsHandSprite
       value: 

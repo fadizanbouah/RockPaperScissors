@@ -16,4 +16,5 @@ MonoBehaviour:
   description: At 75%, 50% and 25% becomes murderous
   icon: {fileID: 21300000, guid: 951cc8e3b0aa86d4582838223d9a5954, type: 3}
   behaviorPrefab: {fileID: 603710612612622449, guid: 6d5693bf1c7519b48afbb9debc93ae9f, type: 3}
-  configValues: []
+  configValues:
+  - 50
