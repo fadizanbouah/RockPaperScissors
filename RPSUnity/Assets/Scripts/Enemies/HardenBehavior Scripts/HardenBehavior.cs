@@ -16,7 +16,6 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
 
     private HandController enemyHand;
     private bool isHardened = false;
-    private float hpThreshold;
     private HardenEffect activeEffect;
 
     public void Initialize(HandController enemy, float[] configValues)
@@ -32,9 +31,8 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
                 damageReductionPercent = configValues[1];
         }
 
-        hpThreshold = enemyHand.maxHealth * (hpThresholdPercent / 100f);
-
-        Debug.Log($"[HardenBehavior] Initialized - Activates at {hpThresholdPercent}% HP ({hpThreshold} HP), {damageReductionPercent}% damage reduction");
+        // UPDATED: Just log the percentage, not the actual threshold (since maxHealth may change)
+        Debug.Log($"[HardenBehavior] Initialized - Activates at {hpThresholdPercent}% HP, {damageReductionPercent}% damage reduction");
     }
 
     public IEnumerator OnIdleStateEntered()
@@ -59,10 +57,13 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
             yield break;
         }
 
-        bool shouldBeHardened = enemyHand.CurrentHealth <= hpThreshold;
+        // Calculate threshold dynamically based on current maxHealth
+        float dynamicThreshold = enemyHand.maxHealth * (hpThresholdPercent / 100f);
+        bool shouldBeHardened = enemyHand.CurrentHealth <= dynamicThreshold;
 
         if (shouldBeHardened && !isHardened)
         {
+            Debug.Log($"[HardenBehavior] Threshold check: Current HP {enemyHand.CurrentHealth} <= {dynamicThreshold} ({hpThresholdPercent}% of {enemyHand.maxHealth})");
             yield return StartCoroutine(ActivateHarden());
         }
     }
@@ -165,6 +166,6 @@ public class HardenBehavior : MonoBehaviour, IEnemyBehavior
     }
 
     public bool IsHardened() => isHardened;
-    public float GetCurrentThreshold() => hpThreshold;
+    public float GetCurrentThreshold() => enemyHand != null ? enemyHand.maxHealth * (hpThresholdPercent / 100f) : 0f;
     public float GetThresholdPercent() => hpThresholdPercent;
 }
