@@ -15,8 +15,7 @@ public class AreaData : ScriptableObject
     [Tooltip("Percentage increase per pool depth within this area (e.g., 5 = 5% per pool)")]
     public float scalingPercentPerPool = 5f;
 
-    [Header("Optional: Future Features")]
-    [Tooltip("Background music for this area")]
+    [Header("Audio")]
     public AudioClip areaMusic;
 
     [Tooltip("Cinematic to play when entering this area")]

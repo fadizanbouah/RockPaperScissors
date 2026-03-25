@@ -26,8 +26,17 @@ public class MainMenu : MonoBehaviour
     [Header("Coin Display")]
     [SerializeField] private TextMeshProUGUI coinText;
 
+    [Header("Audio")] // NEW
+    [SerializeField] private AudioClip mainMenuMusic; // NEW
+
     private void Start()
     {
+        // NEW: Play main menu music
+        if (AudioManager.Instance != null && mainMenuMusic != null)
+        {
+            AudioManager.Instance.PlayAreaMusic(mainMenuMusic);
+        }
+
         InitializeSettings();
         UpdateCoinDisplay();
         ShowMainMenu();
@@ -101,13 +110,21 @@ public class MainMenu : MonoBehaviour
     private void SetMusicVolume(float volume)
     {
         PlayerPrefs.SetFloat("MusicVolume", volume);
-        // Add your audio manager implementation here
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetMusicVolume(volume);
+        }
     }
 
     private void SetSFXVolume(float volume)
     {
         PlayerPrefs.SetFloat("SFXVolume", volume);
-        // Add your audio manager implementation here
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetSFXVolume(volume);
+        }
     }
 
     private void SetFullscreen(bool isFullscreen)

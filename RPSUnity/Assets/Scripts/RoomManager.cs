@@ -208,14 +208,14 @@ public class RoomManager : MonoBehaviour
 
     public void SelectNextRoom()
     {
-        // NEW: Check if we have any areas
+        // Check if we have any areas
         if (areas.Count == 0)
         {
             Debug.LogError("No Areas assigned! Cannot load next room.");
             return;
         }
 
-        // NEW: Get current area
+        // Get current area
         AreaData currentArea = areas[currentAreaIndex];
 
         if (currentArea == null || currentArea.roomPools.Count == 0)
@@ -224,7 +224,7 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        // NEW: Get current pool from current area
+        // Get current pool from current area
         RoomPool currentPool = currentArea.roomPools[currentPoolIndexInArea];
 
         if (currentPool == null || currentPool.rooms.Count == 0)
@@ -239,6 +239,12 @@ public class RoomManager : MonoBehaviour
         // Select random room from pool
         currentRoom = currentPool.GetRandomRoom();
         Debug.Log($"[RoomManager] Area: {currentArea.areaName} | Pool: {currentPoolIndexInArea + 1}/{currentArea.roomPools.Count} | Room: {currentRoom.roomName}");
+
+        // Play area music if AudioManager exists
+        if (AudioManager.Instance != null && currentArea.areaMusic != null)
+        {
+            AudioManager.Instance.PlayAreaMusic(currentArea.areaMusic);
+        }
 
         LoadRoom(currentRoom);
 

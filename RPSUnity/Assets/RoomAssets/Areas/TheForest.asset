@@ -21,5 +21,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e65c26f0286ff6c46a923747bd8f76c1, type: 2}
   - {fileID: 11400000, guid: 3a587b8bec2276e4d98711d4ff38fc44, type: 2}
   scalingPercentPerPool: 5
-  areaMusic: {fileID: 0}
+  areaMusic: {fileID: 8300000, guid: 968b9d46267b6ae49b272b6006c1737c, type: 3}
   areaCinematicPrefab: {fileID: 0}
