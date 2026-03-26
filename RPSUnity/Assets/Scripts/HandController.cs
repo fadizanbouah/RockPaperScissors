@@ -594,7 +594,11 @@ public class HandController : MonoBehaviour
     {
         if (isDying) return;
 
-        if (playerChoice == "Paper")
+        if (playerChoice == "Rock")
+        {
+            handAnimator.SetTrigger("ChooseRock");
+        }
+        else if (playerChoice == "Paper")
         {
             handAnimator.SetTrigger("ChoosePaper");
         }
