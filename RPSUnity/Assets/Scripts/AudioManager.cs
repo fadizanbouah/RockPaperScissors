@@ -16,6 +16,17 @@ public class AudioManager : MonoBehaviour
     [Header("SFX Settings")]
     [SerializeField] private float sfxVolume = 1f;
 
+    [Header("Sound Library")] // NEW
+    [SerializeField] private NamedSound[] soundLibrary;
+
+    [System.Serializable]
+    public class NamedSound
+    {
+        public string soundName;
+        public AudioClip clip;
+        [Range(0f, 1f)] public float volume = 1f;
+    }
+
     private Coroutine crossfadeCoroutine;
 
     private void Awake()
@@ -89,6 +100,28 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, volumeScale * sfxVolume); // multiply by sfxVolume
     }
 
+    // Play a sound from the library by name (for animation events)
+    public void PlaySoundByName(string soundName)
+    {
+        if (string.IsNullOrEmpty(soundName))
+        {
+            Debug.LogWarning("[AudioManager] PlaySoundByName called with empty sound name!");
+            return;
+        }
+
+        NamedSound sound = System.Array.Find(soundLibrary, s => s.soundName == soundName);
+
+        if (sound != null && sound.clip != null)
+        {
+            PlaySFX(sound.clip, sound.volume);
+            Debug.Log($"[AudioManager] Playing sound: {soundName}");
+        }
+        else
+        {
+            Debug.LogWarning($"[AudioManager] Sound '{soundName}' not found in library!");
+        }
+    }
+
     public void SetMusicVolume(float volume)
     {
         musicVolume = Mathf.Clamp01(volume);
@@ -98,7 +131,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void SetSFXVolume(float volume) // NEW METHOD
+    public void SetSFXVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
         if (sfxSource != null)

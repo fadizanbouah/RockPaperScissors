@@ -135,4 +135,16 @@ public class AnimationEventRelay : MonoBehaviour
             handController.OnThrowCuffsAnimationFinished();
         }
     }
+
+    public void PlaySound(string soundName)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySoundByName(soundName);
+        }
+        else
+        {
+            Debug.LogWarning("[AnimationEventRelay] AudioManager not found! Cannot play sound: " + soundName);
+        }
+    }
 }

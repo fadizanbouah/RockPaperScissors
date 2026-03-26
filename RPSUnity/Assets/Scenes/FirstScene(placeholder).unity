@@ -5596,9 +5596,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1575547705}
   sfxSource: {fileID: 1575547704}
-  musicVolume: 0.7
+  musicVolume: 0.5
   crossfadeDuration: 1.5
   sfxVolume: 1
+  soundLibrary:
+  - soundName: SignReveal
+    clip: {fileID: 8300000, guid: 17833e76600141a43a649b47f9f5c2b1, type: 3}
+    volume: 0.8
 --- !u!4 &1575547707
 Transform:
   m_ObjectHideFlags: 0
