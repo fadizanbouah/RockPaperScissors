@@ -5596,12 +5596,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1575547705}
   sfxSource: {fileID: 1575547704}
-  musicVolume: 0.5
+  musicVolume: 0.1
   crossfadeDuration: 1.5
   sfxVolume: 1
   soundLibrary:
   - soundName: SignReveal
-    clip: {fileID: 8300000, guid: 17833e76600141a43a649b47f9f5c2b1, type: 3}
+    clip: {fileID: 8300000, guid: ff858068f3084794d86710edf2370eb4, type: 3}
+    volume: 0.8
+  - soundName: HitSound
+    clip: {fileID: 8300000, guid: 17bbdefc55aa6734cb4000fcaf9258a1, type: 3}
+    volume: 0.8
+  - soundName: DeathSound
+    clip: {fileID: 8300000, guid: 2a566680d775a9147afac2103e6e1e22, type: 3}
     volume: 0.8
 --- !u!4 &1575547707
 Transform:
