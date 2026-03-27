@@ -103,11 +103,11 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
-        // Clear the drag state immediately
-        eventData.pointerDrag = null;
-
         // Delay the reset until AFTER EventSystem processes this frame
         StartCoroutine(ResetCardsNextFrame());
+
+        // Clear the drag state immediately
+        eventData.pointerDrag = null;
 
         // Always hide the activation zone visual when drag ends
         CardActivationZone zone = FindObjectOfType<CardActivationZone>();
@@ -121,11 +121,12 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             if (PowerUpUsageTracker.Instance != null && !PowerUpUsageTracker.Instance.CanUsePowerUp())
             {
                 Debug.Log("[PowerUpCardDrag] Cannot activate - power-up already used this round!");
+                StartCoroutine(ResetCardsNextFrame()); // Reset when returning to hand
                 StartCoroutine(SmoothReturnToOriginalPosition());
                 return;
             }
 
-            // NEW: Check if this is a Double Use card and if one is already active
+            // Check if this is a Double Use card and if one is already active
             PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
             PowerUpData powerUpData = display?.GetPowerUpData();
 
@@ -134,6 +135,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 if (IsDoubleUseEffectActive())
                 {
                     Debug.Log("[PowerUpCardDrag] Cannot activate - Double Use effect already active!");
+                    StartCoroutine(ResetCardsNextFrame()); // Reset when returning to hand
                     StartCoroutine(SmoothReturnToOriginalPosition());
                     return;
                 }
@@ -146,6 +148,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 DisableInteraction();
                 BeginActivationSequence(zone.activationAnimationTarget.position);
 
+                // NEW: Reset OTHER cards, but NOT this one since it's being activated
+                StartCoroutine(ResetCardsNextFrame());
+
                 // Trigger transition to PowerUpActivation substate
                 zone.BeginPowerUpActivation(gameObject);
                 return;
@@ -153,42 +158,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
+        StartCoroutine(ResetCardsNextFrame()); // Reset when returning to hand
         StartCoroutine(SmoothReturnToOriginalPosition());
-    }
-
-    private void ResetAllOtherCardsHoverState()
-    {
-        // Reset all cards to canonical positions
-        FanLayout fanLayout = GetComponentInParent<FanLayout>();
-        if (fanLayout != null)
-        {
-            fanLayout.ResetAllCardsToCanonicalPositions();
-        }
-
-        // Force reset button states on all sibling cards
-        if (transform.parent != null)
-        {
-            foreach (Transform child in transform.parent)
-            {
-                if (child == transform) continue; // Skip ourselves
-
-                // Send pointer exit event
-                ExecuteEvents.Execute(child.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerExitHandler);
-
-                // Force button state refresh
-                Button button = child.GetComponent<Button>();
-                if (button != null && button.targetGraphic != null)
-                {
-                    // Disable and re-enable to force state reset
-                    bool wasInteractable = button.interactable;
-                    button.interactable = false;
-                    button.interactable = wasInteractable;
-
-                    // Directly set color to normal
-                    button.targetGraphic.color = button.colors.normalColor;
-                }
-            }
-        }
     }
 
     private void DisableAllOtherPowerUpCards()
@@ -328,7 +299,36 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Wait for EventSystem to finish processing
         yield return null;
 
-        // NOW reset the cards
-        ResetAllOtherCardsHoverState();
+        // Store reference to this card so we can skip it
+        Transform thisCard = transform;
+
+        // Reset all OTHER cards (not this one)
+        if (transform.parent != null)
+        {
+            foreach (Transform child in transform.parent)
+            {
+                if (child == thisCard) continue; // Skip the card that was just dragged
+
+                // Send pointer exit event
+                ExecuteEvents.Execute(child.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerExitHandler);
+
+                // Force button state refresh
+                Button button = child.GetComponent<Button>();
+                if (button != null && button.targetGraphic != null)
+                {
+                    bool wasInteractable = button.interactable;
+                    button.interactable = false;
+                    button.interactable = wasInteractable;
+                    button.targetGraphic.color = button.colors.normalColor;
+                }
+
+                // Reset position via PowerUpCardDisplay
+                PowerUpCardDisplay display = child.GetComponent<PowerUpCardDisplay>();
+                if (display != null)
+                {
+                    display.ResetToFanPosition();
+                }
+            }
+        }
     }
 }
