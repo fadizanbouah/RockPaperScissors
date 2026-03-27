@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -102,11 +103,11 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
-        // NEW: Reset all other cards to canonical positions
-        ResetAllOtherCardsHoverState();
-
         // Clear the drag state immediately
         eventData.pointerDrag = null;
+
+        // Delay the reset until AFTER EventSystem processes this frame
+        StartCoroutine(ResetCardsNextFrame());
 
         // Always hide the activation zone visual when drag ends
         CardActivationZone zone = FindObjectOfType<CardActivationZone>();
@@ -157,11 +158,36 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private void ResetAllOtherCardsHoverState()
     {
-        // Simply tell FanLayout to reset all cards to canonical positions
+        // Reset all cards to canonical positions
         FanLayout fanLayout = GetComponentInParent<FanLayout>();
         if (fanLayout != null)
         {
             fanLayout.ResetAllCardsToCanonicalPositions();
+        }
+
+        // Force reset button states on all sibling cards
+        if (transform.parent != null)
+        {
+            foreach (Transform child in transform.parent)
+            {
+                if (child == transform) continue; // Skip ourselves
+
+                // Send pointer exit event
+                ExecuteEvents.Execute(child.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerExitHandler);
+
+                // Force button state refresh
+                Button button = child.GetComponent<Button>();
+                if (button != null && button.targetGraphic != null)
+                {
+                    // Disable and re-enable to force state reset
+                    bool wasInteractable = button.interactable;
+                    button.interactable = false;
+                    button.interactable = wasInteractable;
+
+                    // Directly set color to normal
+                    button.targetGraphic.color = button.colors.normalColor;
+                }
+            }
         }
     }
 
@@ -295,5 +321,14 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             }
         }
         return false;
+    }
+
+    private IEnumerator ResetCardsNextFrame()
+    {
+        // Wait for EventSystem to finish processing
+        yield return null;
+
+        // NOW reset the cards
+        ResetAllOtherCardsHoverState();
     }
 }
