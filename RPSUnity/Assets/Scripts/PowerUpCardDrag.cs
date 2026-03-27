@@ -102,6 +102,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
+        // NEW: Reset all other cards to canonical positions
+        ResetAllOtherCardsHoverState();
+
         // Clear the drag state immediately
         eventData.pointerDrag = null;
 
@@ -150,6 +153,16 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         Debug.Log("[PowerUpCardDrag] Drop not over activation zone. Returning to hand.");
         StartCoroutine(SmoothReturnToOriginalPosition());
+    }
+
+    private void ResetAllOtherCardsHoverState()
+    {
+        // Simply tell FanLayout to reset all cards to canonical positions
+        FanLayout fanLayout = GetComponentInParent<FanLayout>();
+        if (fanLayout != null)
+        {
+            fanLayout.ResetAllCardsToCanonicalPositions();
+        }
     }
 
     private void DisableAllOtherPowerUpCards()
@@ -209,14 +222,13 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         float time = 0f;
         Vector2 start = rectTransform.anchoredPosition;
 
-        // Get the stored fan position from the card display
-        PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
+        // UPDATED: Get the canonical position from FanLayout
+        FanLayout fanLayout = GetComponentInParent<FanLayout>();
         Vector2 targetPosition = originalAnchoredPosition;
 
-        if (display != null)
+        if (fanLayout != null)
         {
-            // Use the fan layout position if available
-            Vector3 fanPos = display.GetStoredFanPosition();
+            Vector3 fanPos = fanLayout.GetCanonicalPosition(transform);
             targetPosition = new Vector2(fanPos.x, fanPos.y);
         }
 
@@ -236,6 +248,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         // Reset rotation and scale as well
+        PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
         if (display != null)
         {
             display.ResetToFanPosition();

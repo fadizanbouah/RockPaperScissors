@@ -41,9 +41,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     private bool isGameplayCard = false;
     private int displayLevel = 0; // Track what level this card is showing
 
-    private Vector3 originalLocalPosition; // Stores the fan layout position
-    private Quaternion originalRotation;   // Stores the fan layout rotation
-
     public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {
         data = newData;
@@ -216,10 +213,13 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (isGameplayCard)
         {
-            if (Mathf.Approximately(originalLocalPosition.y, 0f))
-                originalLocalPosition = transform.localPosition;
-
-            transform.localPosition = originalLocalPosition + Vector3.up * 20f;
+            // Get canonical position from FanLayout
+            FanLayout fanLayout = GetComponentInParent<FanLayout>();
+            if (fanLayout != null)
+            {
+                Vector3 basePosition = fanLayout.GetCanonicalPosition(transform);
+                transform.localPosition = basePosition + Vector3.up * 20f;
+            }
         }
     }
 
@@ -227,7 +227,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isGameplayCard)
         {
-            transform.localPosition = originalLocalPosition;
+            ResetToFanPosition();
         }
     }
 
@@ -287,24 +287,21 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void ResetToFanPosition()
     {
-        transform.localPosition = originalLocalPosition;
-        transform.localRotation = originalRotation;
+        FanLayout fanLayout = GetComponentInParent<FanLayout>();
+        if (fanLayout != null)
+        {
+            fanLayout.ResetCardToCanonicalPosition(transform);
+        }
     }
 
     public void ResetHoverPosition()
     {
-        transform.localPosition = originalLocalPosition;
+        ResetToFanPosition();
     }
 
     public bool IsGameplayCard()
     {
         return isGameplayCard;
-    }
-
-    public void StoreFanLayoutState(Vector3 position, Quaternion rotation)
-    {
-        originalLocalPosition = position;
-        originalRotation = rotation;
     }
 
     public PowerUpData GetPowerUpData()
@@ -376,7 +373,12 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public Vector3 GetStoredFanPosition()
     {
-        return originalLocalPosition;
+        FanLayout fanLayout = GetComponentInParent<FanLayout>();
+        if (fanLayout != null)
+        {
+            return fanLayout.GetCanonicalPosition(transform);
+        }
+        return Vector3.zero;
     }
 
     public void PlaySoldOutAnimation()
@@ -495,9 +497,9 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
 
         // Ensure we're not in hover state
-        if (isGameplayCard && originalLocalPosition != Vector3.zero)
+        if (isGameplayCard)
         {
-            transform.localPosition = originalLocalPosition;
+            ResetToFanPosition();
         }
     }
 
