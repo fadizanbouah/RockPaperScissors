@@ -69,10 +69,11 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             {
                 zone.ShowVisual();
             }
-
-            // Straighten the card by resetting rotation
-            transform.localRotation = Quaternion.identity;
         }
+
+        // NEW: Straighten the card AFTER all other operations
+        transform.localRotation = Quaternion.identity;
+        transform.localEulerAngles = Vector3.zero; // Extra safety
     }
 
     private void NotifyCardUsed()
@@ -184,6 +185,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (!isDraggable) return;
 
         Debug.Log("[PowerUpCardDrag] Begin activation sequence at " + targetPosition);
+
+        // NEW: Ensure card is straight before animation
+        transform.localRotation = Quaternion.identity;
         transform.position = targetPosition;
 
         Animator animator = GetComponentInChildren<Animator>();
@@ -196,8 +200,6 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             Debug.LogWarning("Animator not found on PowerUpCard or its children!");
         }
-
-        // Logic for applying power-up effect has been moved to RockPaperScissorsGame (PowerUpActivation substate)
     }
 
     private IEnumerator SmoothReturnToOriginalPosition()
