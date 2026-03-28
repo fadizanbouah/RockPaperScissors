@@ -226,38 +226,46 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         float duration = 0.15f;
         float time = 0f;
-        Vector2 start = rectTransform.anchoredPosition;
 
-        // UPDATED: Get the canonical position from FanLayout
+        // NEW: Use local position instead of anchored position
+        Vector3 start = transform.localPosition;
+
+        // Get the canonical position from FanLayout
         FanLayout fanLayout = GetComponentInParent<FanLayout>();
-        Vector2 targetPosition = originalAnchoredPosition;
+        Vector3 targetPosition = start;
 
         if (fanLayout != null)
         {
-            Vector3 fanPos = fanLayout.GetCanonicalPosition(transform);
-            targetPosition = new Vector2(fanPos.x, fanPos.y);
+            targetPosition = fanLayout.GetCanonicalPosition(transform);
+
+            // Also get canonical rotation
+            Quaternion targetRotation = fanLayout.GetCanonicalRotation(transform);
+            Quaternion startRotation = transform.localRotation;
+
+            // Animate both position and rotation
+            while (time < duration)
+            {
+                if (transform == null) break; // Safety check
+
+                float t = time / duration;
+                transform.localPosition = Vector3.Lerp(start, targetPosition, t);
+                transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, t);
+
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            // Ensure we end at exact target
+            if (transform != null)
+            {
+                transform.localPosition = targetPosition;
+                transform.localRotation = targetRotation;
+            }
         }
-
-        while (time < duration)
+        else
         {
-            if (rectTransform == null) break; // Safety check
-
-            rectTransform.anchoredPosition = Vector2.Lerp(start, targetPosition, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure we end at the exact target position
-        if (rectTransform != null)
-        {
-            rectTransform.anchoredPosition = targetPosition;
-        }
-
-        // Reset rotation and scale as well
-        PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
-        if (display != null)
-        {
-            display.ResetToFanPosition();
+            // Fallback: just wait the duration
+            yield return new WaitForSeconds(duration);
         }
 
         // IMPORTANT: Restore the original sibling index (layer order)
