@@ -209,6 +209,8 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        Debug.Log($"[Hover] Card: {gameObject.name}, Sibling Index: {transform.GetSiblingIndex()}");
+
         Button button = GetComponent<Button>();
         if (button != null && !button.interactable) return;
 

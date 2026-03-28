@@ -4319,7 +4319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6d2ef601b1a8214288ca3235dd708c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angleRange: 6
+  angleRange: 0
   spacing: 60
   animationDuration: 0.3
 --- !u!224 &1266799863 stripped

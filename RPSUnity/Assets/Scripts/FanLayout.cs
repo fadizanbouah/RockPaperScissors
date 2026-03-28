@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class FanLayout : MonoBehaviour
 {
-    [SerializeField] private float angleRange = 30f;
+    [SerializeField] private float angleRange = 1000f;
     [SerializeField] private float spacing = 150f;
     [SerializeField] private float animationDuration = 0.3f;
 
