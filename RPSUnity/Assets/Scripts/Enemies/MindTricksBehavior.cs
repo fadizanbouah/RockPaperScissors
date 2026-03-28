@@ -16,6 +16,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
     private GameObject currentBubble;
     private string bluffSign; // The sign shown in the bubble
     private bool mindTricksActive = false;
+    private bool _hasPlayedAtLeastOneRound = false;
 
     public void Initialize(HandController enemy, float[] configValues)
     {
@@ -45,6 +46,12 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
         }
 
         mindTricksActive = false;
+
+        // Don't trigger until the player has played at least one round
+        if (!_hasPlayedAtLeastOneRound)
+        {
+            yield break;
+        }
 
         // Roll to see if Mind Tricks triggers
         float roll = Random.Range(0f, 100f);
@@ -101,7 +108,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
 
     public IEnumerator OnBeforeRoundResolves(HandController player, string playerChoice, string enemyChoice)
     {
-        // Mind Tricks now triggers in OnIdleStateEntered instead
+        _hasPlayedAtLeastOneRound = true;
         yield return null;
     }
 
@@ -276,7 +283,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
 
         int bonus = Mathf.RoundToInt(baseDamage * (damageModifierPercent / 100f));
 
-        Debug.Log($"[MindTricksBehavior] Bonus damage calc: Player {playerChoice} damage {baseDamage} × {damageModifierPercent}% = {bonus}");
+        Debug.Log($"[MindTricksBehavior] Bonus damage calc: Player {playerChoice} damage {baseDamage} ï¿½ {damageModifierPercent}% = {bonus}");
         return bonus;
     }
 
@@ -299,7 +306,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
 
         int penalty = Mathf.RoundToInt(baseDamage * (damageModifierPercent / 100f));
 
-        Debug.Log($"[MindTricksBehavior] Penalty damage calc: Enemy {enemyChoice} damage {baseDamage} × {damageModifierPercent}% = {penalty}");
+        Debug.Log($"[MindTricksBehavior] Penalty damage calc: Enemy {enemyChoice} damage {baseDamage} ï¿½ {damageModifierPercent}% = {penalty}");
         return penalty;
     }
 
