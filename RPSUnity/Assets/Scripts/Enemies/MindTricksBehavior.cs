@@ -197,11 +197,17 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
 
         // Wait for animation to finish (same pattern as Harden)
         Animator bubbleAnimator = currentBubble.GetComponent<Animator>();
-
         if (bubbleAnimator != null)
         {
             // Wait one frame for animator to initialize
             yield return null;
+
+            // NEW: Check if animator still exists after waiting
+            if (bubbleAnimator == null || currentBubble == null)
+            {
+                Debug.Log("[MindTricksBehavior] Bubble destroyed during initialization");
+                yield break;
+            }
 
             // Wait for the animation to finish
             AnimatorStateInfo stateInfo = bubbleAnimator.GetCurrentAnimatorStateInfo(0);
@@ -211,6 +217,14 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             while (stateInfo.normalizedTime < 1.0f && elapsed < timeout)
             {
                 yield return null;
+
+                // NEW: Check if animator still exists before accessing it
+                if (bubbleAnimator == null || currentBubble == null)
+                {
+                    Debug.Log("[MindTricksBehavior] Bubble destroyed during animation");
+                    yield break;
+                }
+
                 stateInfo = bubbleAnimator.GetCurrentAnimatorStateInfo(0);
                 elapsed += Time.deltaTime;
             }
@@ -227,9 +241,12 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             yield return new WaitForSeconds(1f);
         }
 
-        // Clean up the bubble (same as Harden)
-        Destroy(currentBubble);
-        currentBubble = null;
+        // Clean up the bubble (with null check)
+        if (currentBubble != null)
+        {
+            Destroy(currentBubble);
+            currentBubble = null;
+        }
     }
 
     private int CalculateBonusDamage(string playerChoice)
