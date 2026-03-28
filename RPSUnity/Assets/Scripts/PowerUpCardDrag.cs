@@ -43,6 +43,12 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!isDraggable) return;
 
+        // Reset hover state first (which restores proper sibling index)
+        if (cardDisplay != null)
+        {
+            cardDisplay.OnPointerExit(null); // Force exit hover state
+        }
+
         // Store the original sibling index (layer order)
         originalSiblingIndex = transform.GetSiblingIndex();
 
