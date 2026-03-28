@@ -266,7 +266,7 @@ public class MindTricksBehavior : MonoBehaviour, IEnemyBehavior
             return 0;
         }
 
-        // Get damage for the specific sign the player used
+        // Get damage for the specific sign the player usedd
         int baseDamage = 0;
         switch (playerChoice)
         {

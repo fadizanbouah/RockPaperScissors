@@ -121,11 +121,33 @@ public class FanLayout : MonoBehaviour
         _hoveredCard = null;
         _pendingUnspread = null;
 
-        // Restore natural left-to-right sibling order before animating back,
-        // so rendering is correct once cards are back in their original positions
+        // Restore natural left-to-right sibling order before snapping back
         RestoreNaturalSiblingOrder();
 
-        RefreshLayout();
+        // Snap instantly — no ease when hover ends, only drag-return uses an ease
+        SnapToLayout();
+    }
+
+    // Instantly repositions all non-hovered, non-dragged cards to their canonical positions.
+    // Used when hover ends so there is no easing animation on un-spread.
+    private void SnapToLayout()
+    {
+        if (_runningAnimation != null) { StopCoroutine(_runningAnimation); _runningAnimation = null; }
+
+        CleanupDictionaries();
+        RecalculateCanonicalPositions();
+
+        int childCount = transform.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child == null || child == _hoveredCard || child == _draggedCard) continue;
+            if (canonicalPositions.ContainsKey(child))
+            {
+                child.localPosition = canonicalPositions[child];
+                child.localRotation = canonicalRotations[child];
+            }
+        }
     }
 
     // Returns the natural (left-to-right) sibling index for a card, based on canonical X order.

@@ -77,10 +77,12 @@ public class PowerUpCardSpawnerGameplay : MonoBehaviour
         }
     }
 
-    public void SetAllCardsInteractable(bool isInteractable)
+    public void SetAllCardsInteractable(bool isInteractable, GameObject except = null)
     {
         foreach (Transform child in cardContainer)
         {
+            if (except != null && child.gameObject == except) continue;
+
             CanvasGroup cg = child.GetComponent<CanvasGroup>();
             if (cg != null)
             {

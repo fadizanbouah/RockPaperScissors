@@ -40,7 +40,6 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     private PowerUpPanelManager panelManager; // only needed in PowerUpPanel context
     private bool isGameplayCard = false;
     private int displayLevel = 0; // Track what level this card is showing
-    private int hoverOriginalSiblingIndex = -1; // Track layer order during hover
 
     public void SetData(PowerUpData newData, int currentFavor, PowerUpPanelManager manager = null, bool isGameplay = false)
     {

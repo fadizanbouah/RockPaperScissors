@@ -184,7 +184,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
         if (spawner != null)
         {
-            spawner.SetAllCardsInteractable(false);
+            // Pass this card as the exception so it stays interactable while others are locked
+            spawner.SetAllCardsInteractable(false, gameObject);
         }
     }
 
