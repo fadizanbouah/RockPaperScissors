@@ -176,7 +176,10 @@ public class FanLayout : MonoBehaviour
             float angle = startAngle + angleStep * i;
             float xOffset = spacing * (i - middleIndex);
 
-            positions[i] = new Vector3(xOffset, 0f, 0f);
+            // FIXED: Reverse the calculation so rightmost is highest
+            float yOffset = -(count - 1 - i) * 3f; // Rightmost (highest index) = 0, leftmost = lowest
+
+            positions[i] = new Vector3(xOffset, yOffset, 0f);
             rotations[i] = Quaternion.Euler(0f, 0f, -angle);
         }
     }
