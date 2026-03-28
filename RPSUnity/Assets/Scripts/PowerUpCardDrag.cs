@@ -224,10 +224,10 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             eventSystem.enabled = false;
         }
 
-        float duration = 0.15f;
+        float duration = 0.5f; // Slower for testing
         float time = 0f;
 
-        // NEW: Use local position instead of anchored position
+        // Use local position instead of anchored position
         Vector3 start = transform.localPosition;
 
         // Get the canonical position from FanLayout
@@ -248,6 +248,8 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 if (transform == null) break; // Safety check
 
                 float t = time / duration;
+                t = 1f - Mathf.Pow(1f - t, 3f); // CHANGED: Cubic ease-out (slows at end)
+
                 transform.localPosition = Vector3.Lerp(start, targetPosition, t);
                 transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, t);
 
