@@ -4322,6 +4322,7 @@ MonoBehaviour:
   angleRange: 2
   spacing: 60
   animationDuration: 0.3
+  hoverSpacingMultiplier: 2.5
 --- !u!224 &1266799863 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 407607275354961651, guid: aef90c2d2e7c8964f8c052e9c867e177, type: 3}
