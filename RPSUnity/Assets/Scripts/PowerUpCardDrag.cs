@@ -185,6 +185,15 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
+    private void RestoreAllCards()
+    {
+        PowerUpCardSpawnerGameplay spawner = FindObjectOfType<PowerUpCardSpawnerGameplay>();
+        if (spawner != null)
+        {
+            spawner.SetAllCardsInteractable(true);
+        }
+    }
+
     public void DisableInteraction()
     {
         canvasGroup.blocksRaycasts = false;
@@ -288,6 +297,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Re-enable interactions after animation completes
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
+
+        // Re-enable all other cards now that this card is back in the hand
+        RestoreAllCards();
     }
 
     private bool IsDoubleUsePowerUp(PowerUpData data)
@@ -365,6 +377,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         // Straighten the card when pressed
         transform.localRotation = Quaternion.identity;
+
+        // Lock all other cards while this one is being interacted with
+        DisableAllOtherPowerUpCards();
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -373,7 +388,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         isPressed = false;
 
-        // If we're not dragging (just a click), restore fan rotation
+        // If we're not dragging (just a click), restore fan rotation and unlock all cards
         if (eventData.dragging == false)
         {
             PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
@@ -381,6 +396,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             {
                 display.ResetToFanPosition();
             }
+
+            // Re-enable all cards since no drag occurred
+            RestoreAllCards();
         }
     }
 }
