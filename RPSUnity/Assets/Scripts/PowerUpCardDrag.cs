@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     [Tooltip("Should this card be draggable? Set true only for gameplay cards.")]
     public bool isDraggable = false;
@@ -14,6 +14,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private PowerUpCardDisplay cardDisplay;
     private FanLayout fanLayout;
     private int originalSiblingIndex;
+    private bool isPressed = false;
 
     private RectTransform activationZoneRect;
 
@@ -98,6 +99,12 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         rectTransform.anchoredPosition += eventData.delta / transform.root.GetComponent<Canvas>().scaleFactor;
+
+        // NEW: Ensure card stays straight while dragging
+        if (isPressed)
+        {
+            transform.localRotation = Quaternion.identity;
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -330,6 +337,33 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 {
                     display.ResetToFanPosition();
                 }
+            }
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!isDraggable) return;
+
+        isPressed = true;
+
+        // Straighten the card when pressed
+        transform.localRotation = Quaternion.identity;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (!isDraggable) return;
+
+        isPressed = false;
+
+        // If we're not dragging (just a click), restore fan rotation
+        if (eventData.dragging == false)
+        {
+            PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
+            if (display != null)
+            {
+                display.ResetToFanPosition();
             }
         }
     }
