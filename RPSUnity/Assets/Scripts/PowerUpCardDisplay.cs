@@ -216,18 +216,17 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (isGameplayCard)
         {
-            // Store original sibling index before changing it
-            hoverOriginalSiblingIndex = transform.GetSiblingIndex();
-
-            // Move to front
-            transform.SetAsLastSibling();
-
-            // Get canonical position from FanLayout
             FanLayout fanLayout = GetComponentInParent<FanLayout>();
             if (fanLayout != null)
             {
+                // OnHoverEnter: spreads the fan instantly (no animation) and calls SetAsLastSibling
+                // on this card — all other cards are already snapped to their new positions before
+                // the sibling reorder happens, preventing phantom hover events.
+                fanLayout.OnHoverEnter(transform);
+
+                // Apply lift on top of the new (spread) canonical position
                 Vector3 basePosition = fanLayout.GetCanonicalPosition(transform);
-                transform.localPosition = basePosition + Vector3.up * 50f; // Adjust this value!
+                transform.localPosition = basePosition + Vector3.up * 50f;
             }
         }
     }
@@ -236,14 +235,18 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isGameplayCard)
         {
-            // Restore original sibling index (layer order)
-            if (hoverOriginalSiblingIndex >= 0)
+            // Notify fan to unspread — the resulting animation smoothly returns this card to its
+            // canonical position, so we don't need to call ResetToFanPosition() here
+            FanLayout fanLayout = GetComponentInParent<FanLayout>();
+            if (fanLayout != null)
             {
-                transform.SetSiblingIndex(hoverOriginalSiblingIndex);
-                hoverOriginalSiblingIndex = -1; // Reset
+                fanLayout.OnHoverExit(transform);
             }
-
-            ResetToFanPosition();
+            else
+            {
+                // Fallback if no FanLayout found
+                ResetToFanPosition();
+            }
         }
     }
 
@@ -315,6 +318,17 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         ResetToFanPosition();
     }
 
+    // Called after a click-without-drag: restores fan rotation and re-applies hover lift
+    public void ReapplyHoverLift()
+    {
+        FanLayout fanLayout = GetComponentInParent<FanLayout>();
+        if (fanLayout != null && isGameplayCard)
+        {
+            transform.localRotation = fanLayout.GetCanonicalRotation(transform);
+            transform.localPosition = fanLayout.GetCanonicalPosition(transform) + Vector3.up * 50f;
+        }
+    }
+
     public bool IsGameplayCard()
     {
         return isGameplayCard;
@@ -332,7 +346,7 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (container != null && checkmark != null)
         {
-            checkmark.gameObject.SetActive(true); // Enable the checkmark so it�s visible
+            checkmark.gameObject.SetActive(true); // Enable the checkmark so it�s visible
 
             Animator anim = container.GetComponent<Animator>(); // Corrected: Animator is on AnimatedContainer
 

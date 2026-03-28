@@ -49,8 +49,11 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             cardDisplay.OnPointerExit(null); // Force exit hover state
         }
 
-        // Store the original sibling index (layer order)
-        originalSiblingIndex = transform.GetSiblingIndex();
+        // Store the natural sibling index using FanLayout's stable sort-by-X order,
+        // since SetAsLastSibling() from hover may have already modified the current index
+        originalSiblingIndex = fanLayout != null
+            ? fanLayout.GetNaturalSiblingIndex(transform)
+            : transform.GetSiblingIndex();
 
         // Store the current anchored position (not world position)
         originalAnchoredPosition = rectTransform.anchoredPosition;
@@ -294,6 +297,9 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             eventSystem.enabled = true;
         }
 
+        // Notify FanLayout that drag is done so it stops excluding this card from animations
+        if (fanLayout != null) fanLayout.OnCardDragEnd(transform);
+
         // Re-enable interactions after animation completes
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -388,13 +394,14 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         isPressed = false;
 
-        // If we're not dragging (just a click), restore fan rotation and unlock all cards
+        // If we're not dragging (just a click), restore fan rotation/lift and unlock all cards
         if (eventData.dragging == false)
         {
             PowerUpCardDisplay display = GetComponent<PowerUpCardDisplay>();
             if (display != null)
             {
-                display.ResetToFanPosition();
+                // Re-applies canonical rotation + hover lift (card is still under the cursor)
+                display.ReapplyHoverLift();
             }
 
             // Re-enable all cards since no drag occurred
