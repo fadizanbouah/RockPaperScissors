@@ -8,6 +8,7 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] private UpgradeButtonController maxHealthUpgrade;
     [SerializeField] private UpgradeButtonController baseDamageUpgrade;
     [SerializeField] private UpgradeButtonController dodgeChanceUpgrade;
+    [SerializeField] private UpgradeButtonController critChanceUpgrade;
 
     private void Awake()
     {
@@ -53,5 +54,14 @@ public class UpgradeManager : MonoBehaviour
 
         // Fallback: 5% per level
         return PlayerProgressData.Instance.dodgeChanceLevel * 5f;
+    }
+
+    public float GetCritChanceBonus()
+    {
+        if (critChanceUpgrade != null)
+            return critChanceUpgrade.GetTotalStatIncrease();
+
+        // Fallback: 5% per level
+        return PlayerProgressData.Instance.critChanceLevel * 5f;
     }
 }

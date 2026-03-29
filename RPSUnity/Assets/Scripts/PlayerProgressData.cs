@@ -10,6 +10,7 @@ public class PlayerProgressData
     public int baseDamageLevel = 0;
     public int damageReductionLevel = 0;
     public int dodgeChanceLevel = 0;
+    public int critChanceLevel = 0;
 
     // New: Passive PowerUp Bonuses (persist until run reset)
     public int bonusBaseDamage = 0;

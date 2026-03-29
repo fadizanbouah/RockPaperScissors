@@ -252,6 +252,7 @@ public class HandController : MonoBehaviour
                 paperDamage += damageUpgrade;
                 scissorsDamage += damageUpgrade;
                 dodgeChance += UpgradeManager.Instance.GetDodgeChanceBonus();
+                critChance += UpgradeManager.Instance.GetCritChanceBonus();
                 Debug.Log($"[USING UPGRADE MANAGER] Applied UpgradeManager bonuses");
             }
             else

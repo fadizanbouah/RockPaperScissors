@@ -39,6 +39,7 @@ public class UpgradeButtonController : MonoBehaviour
             UpgradeType.MaxHealth => PlayerProgressData.Instance.maxHealthLevel,
             UpgradeType.BaseDamage => PlayerProgressData.Instance.baseDamageLevel,
             UpgradeType.DodgeChance => PlayerProgressData.Instance.dodgeChanceLevel,
+            UpgradeType.CritChance => PlayerProgressData.Instance.critChanceLevel,
             _ => 0
         };
     }
@@ -55,6 +56,9 @@ public class UpgradeButtonController : MonoBehaviour
                 break;
             case UpgradeType.DodgeChance:
                 PlayerProgressData.Instance.dodgeChanceLevel = newLevel;
+                break;
+            case UpgradeType.CritChance:
+                PlayerProgressData.Instance.critChanceLevel = newLevel;
                 break;
         }
     }
@@ -157,5 +161,6 @@ public enum UpgradeType
 {
     MaxHealth,
     BaseDamage,
-    DodgeChance
+    DodgeChance,
+    CritChance
 }
