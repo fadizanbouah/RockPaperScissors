@@ -7,6 +7,7 @@ public class UpgradeManager : MonoBehaviour
     [Header("Upgrade Controllers")]
     [SerializeField] private UpgradeButtonController maxHealthUpgrade;
     [SerializeField] private UpgradeButtonController baseDamageUpgrade;
+    [SerializeField] private UpgradeButtonController dodgeChanceUpgrade;
 
     private void Awake()
     {
@@ -43,5 +44,14 @@ public class UpgradeManager : MonoBehaviour
 
         // Fallback to old system if upgrade controller not found
         return PlayerProgressData.Instance.baseDamageLevel * 2;
+    }
+
+    public float GetDodgeChanceBonus()
+    {
+        if (dodgeChanceUpgrade != null)
+            return dodgeChanceUpgrade.GetTotalStatIncrease();
+
+        // Fallback: 5% per level
+        return PlayerProgressData.Instance.dodgeChanceLevel * 5f;
     }
 }

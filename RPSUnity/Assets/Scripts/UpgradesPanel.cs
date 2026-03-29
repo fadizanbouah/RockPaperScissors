@@ -7,6 +7,7 @@ public class UpgradesPanel : MonoBehaviour
     [Header("Upgrade Buttons")]
     [SerializeField] private UpgradeButtonController maxHealthUpgrade;
     [SerializeField] private UpgradeButtonController baseDamageUpgrade;
+    [SerializeField] private UpgradeButtonController dodgeChanceUpgrade;
     [HideInInspector] public UpgradesPanel upgradesPanel;
 
 
@@ -27,6 +28,7 @@ public class UpgradesPanel : MonoBehaviour
         // Set upgrade panel reference on each button
         maxHealthUpgrade.upgradesPanel = this;
         baseDamageUpgrade.upgradesPanel = this;
+        dodgeChanceUpgrade.upgradesPanel = this;
 
         ClampUpgradeLevels();
         RefreshAllUpgrades();
@@ -39,10 +41,12 @@ public class UpgradesPanel : MonoBehaviour
 
         refundAmount += maxHealthUpgrade.GetTotalSpentCoins();
         refundAmount += baseDamageUpgrade.GetTotalSpentCoins();
+        refundAmount += dodgeChanceUpgrade.GetTotalSpentCoins();
 
         // Reset upgrade levels
         PlayerProgressData.Instance.maxHealthLevel = 0;
         PlayerProgressData.Instance.baseDamageLevel = 0;
+        PlayerProgressData.Instance.dodgeChanceLevel = 0;
 
         // Refund coins
         PlayerProgressData.Instance.coins += refundAmount;
@@ -67,6 +71,7 @@ public class UpgradesPanel : MonoBehaviour
     {
         maxHealthUpgrade.RefreshUI();
         baseDamageUpgrade.RefreshUI();
+        dodgeChanceUpgrade.RefreshUI();
         RefreshCoinDisplay();
     }
 
@@ -74,6 +79,7 @@ public class UpgradesPanel : MonoBehaviour
     {
         PlayerProgressData.Instance.maxHealthLevel = Mathf.Clamp(PlayerProgressData.Instance.maxHealthLevel, 0, maxHealthUpgrade.maxLevel);
         PlayerProgressData.Instance.baseDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.baseDamageLevel, 0, baseDamageUpgrade.maxLevel);
+        PlayerProgressData.Instance.dodgeChanceLevel = Mathf.Clamp(PlayerProgressData.Instance.dodgeChanceLevel, 0, dodgeChanceUpgrade.maxLevel);
     }
 
     public void RefreshCoinDisplay()

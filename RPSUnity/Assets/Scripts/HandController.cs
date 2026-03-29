@@ -251,6 +251,7 @@ public class HandController : MonoBehaviour
                 rockDamage += damageUpgrade;
                 paperDamage += damageUpgrade;
                 scissorsDamage += damageUpgrade;
+                dodgeChance += UpgradeManager.Instance.GetDodgeChanceBonus();
                 Debug.Log($"[USING UPGRADE MANAGER] Applied UpgradeManager bonuses");
             }
             else
