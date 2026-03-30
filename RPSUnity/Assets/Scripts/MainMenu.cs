@@ -81,7 +81,7 @@ public class MainMenu : MonoBehaviour
             Debug.LogWarning("CreditsPanel reference is missing!");
         }
 
-        mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main);
+        mainMenuPanel.gameObject.SetActive(panelType == PanelType.Main || panelType == PanelType.Upgrades);
         settingsPanel?.gameObject.SetActive(panelType == PanelType.Settings);
         creditsPanel?.gameObject.SetActive(panelType == PanelType.Credits);
         upgradesPanel?.gameObject.SetActive(panelType == PanelType.Upgrades);
