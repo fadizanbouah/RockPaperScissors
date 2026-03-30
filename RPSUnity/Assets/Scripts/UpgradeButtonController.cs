@@ -8,6 +8,10 @@ public class UpgradeButtonController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI upgradeLabel;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private TextMeshProUGUI statText;
+
+    [Header("Stat Display")]
+    [SerializeField] private bool showAsPercentage = false;
     [SerializeField] private Button upgradeButton;
     [HideInInspector] public UpgradesPanel upgradesPanel;
 
@@ -118,6 +122,12 @@ public class UpgradeButtonController : MonoBehaviour
 
         if (upgradeButton != null)
             upgradeButton.interactable = currentLevel < maxLevel;
+
+        if (statText != null)
+        {
+            int total = GetTotalStatIncrease();
+            statText.text = showAsPercentage ? $"{total}%" : $"{total}";
+        }
     }
 
     public int GetTotalSpentCoins()

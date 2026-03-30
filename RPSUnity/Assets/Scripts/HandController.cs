@@ -245,25 +245,25 @@ public class HandController : MonoBehaviour
             // Apply upgrades to health
             if (UpgradeManager.Instance != null)
             {
-                maxHealth = baseMaxHealth + UpgradeManager.Instance.GetMaxHealthBonus();
-                // Apply base damage upgrade to all sign types
-                int damageUpgrade = UpgradeManager.Instance.GetBaseDamageBonus();
-                rockDamage += damageUpgrade;
-                paperDamage += damageUpgrade;
-                scissorsDamage += damageUpgrade;
+                maxHealth = Mathf.RoundToInt(baseMaxHealth * (1f + UpgradeManager.Instance.GetMaxHealthBonus() / 100f));
+                // Apply base damage upgrade to all sign types as a percentage
+                float damageMultiplier = 1f + UpgradeManager.Instance.GetBaseDamageBonus() / 100f;
+                rockDamage = Mathf.RoundToInt(rockDamage * damageMultiplier);
+                paperDamage = Mathf.RoundToInt(paperDamage * damageMultiplier);
+                scissorsDamage = Mathf.RoundToInt(scissorsDamage * damageMultiplier);
                 dodgeChance += UpgradeManager.Instance.GetDodgeChanceBonus();
                 critChance += UpgradeManager.Instance.GetCritChanceBonus();
                 Debug.Log($"[USING UPGRADE MANAGER] Applied UpgradeManager bonuses");
             }
             else
             {
-                // Fallback to old hardcoded system
-                maxHealth = baseMaxHealth + (PlayerProgressData.Instance.maxHealthLevel * 5);
-                int damageUpgrade = PlayerProgressData.Instance.baseDamageLevel * 2;
-                rockDamage += damageUpgrade;
-                paperDamage += damageUpgrade;
-                scissorsDamage += damageUpgrade;
-                Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (baseDamageLevel * 2 = {damageUpgrade})");
+                // Fallback to old hardcoded system (assumes 25% per level)
+                maxHealth = Mathf.RoundToInt(baseMaxHealth * (1f + (PlayerProgressData.Instance.maxHealthLevel * 25) / 100f));
+                float damageMultiplier = 1f + (PlayerProgressData.Instance.baseDamageLevel * 25) / 100f;
+                rockDamage = Mathf.RoundToInt(rockDamage * damageMultiplier);
+                paperDamage = Mathf.RoundToInt(paperDamage * damageMultiplier);
+                scissorsDamage = Mathf.RoundToInt(scissorsDamage * damageMultiplier);
+                Debug.Log($"[USING FALLBACK] Applied PlayerProgressData bonuses (damageMultiplier = {damageMultiplier})");
             }
 
             Debug.Log($"[FINAL] rockDamage: {rockDamage}, paperDamage: {paperDamage}, scissorsDamage: {scissorsDamage}");
