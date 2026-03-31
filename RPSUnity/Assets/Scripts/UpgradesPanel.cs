@@ -9,6 +9,7 @@ public class UpgradesPanel : MonoBehaviour
     [SerializeField] private UpgradeButtonController baseDamageUpgrade;
     [SerializeField] private UpgradeButtonController dodgeChanceUpgrade;
     [SerializeField] private UpgradeButtonController critChanceUpgrade;
+    [SerializeField] private UpgradeButtonController startingCardsUpgrade;
     [HideInInspector] public UpgradesPanel upgradesPanel;
 
 
@@ -31,6 +32,7 @@ public class UpgradesPanel : MonoBehaviour
         baseDamageUpgrade.upgradesPanel = this;
         dodgeChanceUpgrade.upgradesPanel = this;
         critChanceUpgrade.upgradesPanel = this;
+        startingCardsUpgrade.upgradesPanel = this;
 
         ClampUpgradeLevels();
         RefreshAllUpgrades();
@@ -45,12 +47,14 @@ public class UpgradesPanel : MonoBehaviour
         refundAmount += baseDamageUpgrade.GetTotalSpentCoins();
         refundAmount += dodgeChanceUpgrade.GetTotalSpentCoins();
         refundAmount += critChanceUpgrade.GetTotalSpentCoins();
+        refundAmount += startingCardsUpgrade.GetTotalSpentCoins();
 
         // Reset upgrade levels
         PlayerProgressData.Instance.maxHealthLevel = 0;
         PlayerProgressData.Instance.baseDamageLevel = 0;
         PlayerProgressData.Instance.dodgeChanceLevel = 0;
         PlayerProgressData.Instance.critChanceLevel = 0;
+        PlayerProgressData.Instance.startingCardsLevel = 0;
 
         // Refund coins
         PlayerProgressData.Instance.coins += refundAmount;
@@ -77,6 +81,7 @@ public class UpgradesPanel : MonoBehaviour
         baseDamageUpgrade.RefreshUI();
         dodgeChanceUpgrade.RefreshUI();
         critChanceUpgrade.RefreshUI();
+        startingCardsUpgrade.RefreshUI();
         RefreshCoinDisplay();
     }
 
@@ -86,6 +91,7 @@ public class UpgradesPanel : MonoBehaviour
         PlayerProgressData.Instance.baseDamageLevel = Mathf.Clamp(PlayerProgressData.Instance.baseDamageLevel, 0, baseDamageUpgrade.maxLevel);
         PlayerProgressData.Instance.dodgeChanceLevel = Mathf.Clamp(PlayerProgressData.Instance.dodgeChanceLevel, 0, dodgeChanceUpgrade.maxLevel);
         PlayerProgressData.Instance.critChanceLevel = Mathf.Clamp(PlayerProgressData.Instance.critChanceLevel, 0, critChanceUpgrade.maxLevel);
+        PlayerProgressData.Instance.startingCardsLevel = Mathf.Clamp(PlayerProgressData.Instance.startingCardsLevel, 0, startingCardsUpgrade.maxLevel);
     }
 
     public void RefreshCoinDisplay()

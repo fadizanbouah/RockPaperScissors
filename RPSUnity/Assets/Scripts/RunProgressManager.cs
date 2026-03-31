@@ -124,6 +124,10 @@ public class RunProgressManager : MonoBehaviour
         PaperDodgeStackEffect.ResetForNewRun();
         ScissorsCritChanceStackEffect.ResetForNewRun();
 
+        // Grant any starting cards from permanent upgrades (runs after acquiredPowerUps.Clear())
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.GrantStartingCards();
+
         Debug.Log("[RunProgressManager] Run reset: Favor, power-ups, and effects cleared.");
         Debug.Log("[RunProgressManager] ===== RESET RUN COMPLETE =====");
     }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] private UpgradeButtonController baseDamageUpgrade;
     [SerializeField] private UpgradeButtonController dodgeChanceUpgrade;
     [SerializeField] private UpgradeButtonController critChanceUpgrade;
+    [SerializeField] private UpgradeButtonController startingCardsUpgrade;
+
+    [Header("Starting Card Pool")]
+    [SerializeField] private PowerUpData[] startingCardPool;
 
     private void Awake()
     {
@@ -63,5 +68,35 @@ public class UpgradeManager : MonoBehaviour
 
         // Fallback: 5% per level
         return PlayerProgressData.Instance.critChanceLevel * 5f;
+    }
+
+    public int GetStartingCardsCount()
+    {
+        if (startingCardsUpgrade != null)
+            return startingCardsUpgrade.GetTotalStatIncrease();
+
+        // Fallback: 1 card per level
+        return PlayerProgressData.Instance.startingCardsLevel;
+    }
+
+    public void GrantStartingCards()
+    {
+        int count = GetStartingCardsCount();
+        if (count <= 0 || startingCardPool == null || startingCardPool.Length == 0) return;
+
+        // Build a copy of the pool and pick without duplicates using Fisher-Yates partial shuffle
+        List<PowerUpData> pool = new List<PowerUpData>(startingCardPool);
+        int toGrant = Mathf.Min(count, pool.Count);
+
+        for (int i = 0; i < toGrant; i++)
+        {
+            int randomIndex = Random.Range(i, pool.Count);
+            PowerUpData chosen = pool[randomIndex];
+            pool[randomIndex] = pool[i];
+            pool[i] = chosen;
+
+            RunProgressManager.Instance.AddAcquiredPowerUp(chosen);
+            Debug.Log($"[UpgradeManager] Granted starting card: {chosen.powerUpName}");
+        }
     }
 }
