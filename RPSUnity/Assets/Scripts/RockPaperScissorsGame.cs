@@ -113,6 +113,7 @@ public class RockPaperScissorsGame : MonoBehaviour
         SetSubstate(GameSubstate.Selecting);
 
         PowerUpEffectManager.Instance?.OnRoundStart();
+        NarratorManager.Instance?.TryPlay("RoundStart");
         Debug.Log("[TEST] About to start round - checking if GamblerEffect OnRoundStart gets called");
 
         // Update Impulsive Gambler tracker immediately

@@ -2090,18 +2090,17 @@ MonoBehaviour:
   narratorVolume: 0.5
   entries:
   - entryName: CriticalHitPlayer
-    chance: 1
+    chance: 0.2
     clips:
     - {fileID: 8300000, guid: 39c483ea7987e38489b1236465fc45db, type: 3}
   - entryName: CriticalHitEnemy
-    chance: 1
+    chance: 0.2
     clips:
     - {fileID: 8300000, guid: 4ec5c33e2538e3242984cacd473889e8, type: 3}
     - {fileID: 8300000, guid: b1edb6647dd03374191d9ba2ca4e91be, type: 3}
   - entryName: RoundStart
     chance: 1
-    clips:
-    - {fileID: 8300000, guid: 8825e8664d8525148bb1828a5f27237f, type: 3}
+    clips: []
 --- !u!4 &639315300
 Transform:
   m_ObjectHideFlags: 0
