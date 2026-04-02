@@ -429,6 +429,7 @@ public class RockPaperScissorsGame : MonoBehaviour
                 // Apply the power-up effect
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
                 RunProgressManager.Instance.RemoveAcquiredPowerUp(data);
+                NarratorManager.Instance?.TryPlay("CardActivation");
                 Debug.Log($"[PowerUp] Applied effect from card: {data.powerUpName}");
 
                 // MODIFIED: Only add icon to combat tracker if statusIcon is not null

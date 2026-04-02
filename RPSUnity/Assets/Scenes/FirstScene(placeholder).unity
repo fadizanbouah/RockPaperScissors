@@ -1972,7 +1972,7 @@ GameObject:
   - component: {fileID: 639315299}
   - component: {fileID: 639315298}
   m_Layer: 0
-  m_Name: NaratorManager
+  m_Name: NarratorManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2087,7 +2087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   narratorSource: {fileID: 639315298}
-  narratorVolume: 0.5
+  narratorVolume: 0.7
   entries:
   - entryName: CriticalHitPlayer
     chance: 0.2
@@ -2101,6 +2101,18 @@ MonoBehaviour:
   - entryName: RoundStart
     chance: 1
     clips: []
+  - entryName: BoonSelection
+    chance: 1
+    clips:
+    - {fileID: 8300000, guid: eaa6048a5c3c1894187713b5d1f723e2, type: 3}
+  - entryName: CardActivation
+    chance: 0.1
+    clips:
+    - {fileID: 8300000, guid: 02a827add5b49ac4bb860b8e7457f9eb, type: 3}
+  - entryName: LaunchGame
+    chance: 1
+    clips:
+    - {fileID: 8300000, guid: 170ca39908928884e9fbb56783895e97, type: 3}
 --- !u!4 &639315300
 Transform:
   m_ObjectHideFlags: 0
@@ -7170,7 +7182,7 @@ MonoBehaviour:
   sfxSource: {fileID: 1575547704}
   musicVolume: 0.1
   crossfadeDuration: 1.5
-  sfxVolume: 1
+  sfxVolume: 0.7
   soundLibrary:
   - soundName: SignReveal
     clip: {fileID: 8300000, guid: ff858068f3084794d86710edf2370eb4, type: 3}
