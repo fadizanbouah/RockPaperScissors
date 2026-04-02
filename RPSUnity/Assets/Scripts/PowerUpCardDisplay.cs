@@ -215,6 +215,8 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (isGameplayCard)
         {
+            AudioManager.Instance?.PlaySoundByName("CardHover");
+
             FanLayout fanLayout = GetComponentInParent<FanLayout>();
             if (fanLayout != null)
             {

@@ -381,6 +381,7 @@ public class PowerUpCardDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (!isDraggable) return;
 
         isPressed = true;
+        AudioManager.Instance?.PlaySoundByName("CardClick");
 
         // Straighten the card when pressed
         transform.localRotation = Quaternion.identity;

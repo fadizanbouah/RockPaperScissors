@@ -2127,6 +2127,7 @@ MonoBehaviour:
     playOncePerSession: 0
     clips:
     - {fileID: 8300000, guid: 46ed6ed7267c1354cba7dd45e949c67c, type: 3}
+    - {fileID: 8300000, guid: cb3c23c095e6c6143a9e779c2c6fa051, type: 3}
 --- !u!4 &639315300
 Transform:
   m_ObjectHideFlags: 0
@@ -7194,7 +7195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1575547705}
   sfxSource: {fileID: 1575547704}
-  musicVolume: 0.1
+  musicVolume: 0.01
   crossfadeDuration: 1.5
   sfxVolume: 0.7
   soundLibrary:
@@ -7207,6 +7208,12 @@ MonoBehaviour:
   - soundName: DeathSound
     clip: {fileID: 8300000, guid: 2a566680d775a9147afac2103e6e1e22, type: 3}
     volume: 0.8
+  - soundName: CardHover
+    clip: {fileID: 8300000, guid: 7d5dd4d6886f8494d9ed8f48e3731e15, type: 3}
+    volume: 1
+  - soundName: CardClick
+    clip: {fileID: 8300000, guid: a19009a40bc919f4f80e8579a1ae1ef9, type: 3}
+    volume: 0.4
 --- !u!4 &1575547707
 Transform:
   m_ObjectHideFlags: 0
