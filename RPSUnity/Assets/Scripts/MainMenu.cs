@@ -40,6 +40,7 @@ public class MainMenu : MonoBehaviour
         InitializeSettings();
         UpdateCoinDisplay();
         ShowMainMenu();
+        NarratorManager.Instance?.TryPlay("LaunchGame");
     }
 
     private void InitializeSettings()

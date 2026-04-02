@@ -534,6 +534,9 @@ public class HandController : MonoBehaviour
         if (isDying) return;
         isDying = true;
 
+        if (isPlayer)
+            NarratorManager.Instance?.TryPlay("PlayerDeath");
+
         Debug.Log($"{gameObject.name} has been defeated!");
 
         if (OnDeath != null)

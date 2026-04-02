@@ -6,6 +6,7 @@ public class NarratorEntry
 {
     public string entryName;
     [Range(0f, 1f)] public float chance = 1f;
+    public bool playOncePerSession = false;
     public AudioClip[] clips;
 }
 
@@ -20,6 +21,8 @@ public class NarratorManager : MonoBehaviour
 
     [Header("Narrator Entries")]
     [SerializeField] private NarratorEntry[] entries;
+
+    private HashSet<string> _sessionPlayedEntries = new HashSet<string>();
 
     private void Awake()
     {
@@ -47,6 +50,9 @@ public class NarratorManager : MonoBehaviour
             return;
         }
 
+        if (entry.playOncePerSession && _sessionPlayedEntries.Contains(entryName))
+            return;
+
         if (narratorSource.isPlaying)
             return;
 
@@ -59,6 +65,9 @@ public class NarratorManager : MonoBehaviour
             Debug.LogWarning($"[NarratorManager] Entry '{entryName}' has no valid clips.");
             return;
         }
+
+        if (entry.playOncePerSession)
+            _sessionPlayedEntries.Add(entryName);
 
         narratorSource.PlayOneShot(clip, narratorVolume);
     }

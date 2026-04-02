@@ -2091,28 +2091,42 @@ MonoBehaviour:
   entries:
   - entryName: CriticalHitPlayer
     chance: 0.2
+    playOncePerSession: 0
     clips:
     - {fileID: 8300000, guid: 39c483ea7987e38489b1236465fc45db, type: 3}
   - entryName: CriticalHitEnemy
     chance: 0.2
+    playOncePerSession: 0
     clips:
     - {fileID: 8300000, guid: 4ec5c33e2538e3242984cacd473889e8, type: 3}
     - {fileID: 8300000, guid: b1edb6647dd03374191d9ba2ca4e91be, type: 3}
   - entryName: RoundStart
     chance: 1
+    playOncePerSession: 0
     clips: []
   - entryName: BoonSelection
     chance: 1
+    playOncePerSession: 0
     clips:
     - {fileID: 8300000, guid: eaa6048a5c3c1894187713b5d1f723e2, type: 3}
   - entryName: CardActivation
     chance: 0.1
+    playOncePerSession: 0
     clips:
     - {fileID: 8300000, guid: 02a827add5b49ac4bb860b8e7457f9eb, type: 3}
   - entryName: LaunchGame
     chance: 1
+    playOncePerSession: 1
     clips:
     - {fileID: 8300000, guid: 170ca39908928884e9fbb56783895e97, type: 3}
+    - {fileID: 8300000, guid: d7f312db7a8d73c488bcd3399f8b0c6e, type: 3}
+    - {fileID: 8300000, guid: a97e96401445af74688c3174f4a22f74, type: 3}
+    - {fileID: 8300000, guid: 2e80c5b92d467da47977873e26fd801b, type: 3}
+  - entryName: PlayerDeath
+    chance: 1
+    playOncePerSession: 0
+    clips:
+    - {fileID: 8300000, guid: 46ed6ed7267c1354cba7dd45e949c67c, type: 3}
 --- !u!4 &639315300
 Transform:
   m_ObjectHideFlags: 0
