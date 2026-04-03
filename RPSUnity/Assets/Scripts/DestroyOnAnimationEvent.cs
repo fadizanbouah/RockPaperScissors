@@ -4,7 +4,7 @@ public class DestroyOnAnimationEvent : MonoBehaviour
 {
     public void DestroySelf()
     {
-        Debug.Log("[PowerUpCard] Activation animation ended — destroying self.");
+        Debug.Log("[PowerUpCard] Activation animation ended ï¿½ destroying self.");
         Destroy(gameObject);
 
         if (RockPaperScissorsGame.Instance != null &&
@@ -13,5 +13,10 @@ public class DestroyOnAnimationEvent : MonoBehaviour
             Debug.Log("[PowerUp] Activation animation complete.");
             RockPaperScissorsGame.Instance.OnPowerUpActivationComplete();
         }
+    }
+
+    public void PlaySound(string soundName)
+    {
+        AudioManager.Instance?.PlaySoundByName(soundName);
     }
 }
