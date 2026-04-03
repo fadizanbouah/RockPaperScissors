@@ -73,11 +73,14 @@ public class PredictionUI : MonoBehaviour
             return;
         }
 
-        // NEW: Play shuffle animation whenever prediction updates
-        SignShuffleUI shuffleUI = FindObjectOfType<SignShuffleUI>();
-        if (shuffleUI != null)
+        // Play shuffle animation only on refreshes (not on the very first setup)
+        if (!isFirstSetup)
         {
-            shuffleUI.PlayShuffleAnimation();
+            SignShuffleUI shuffleUI = FindObjectOfType<SignShuffleUI>();
+            if (shuffleUI != null)
+            {
+                shuffleUI.PlayShuffleAnimation();
+            }
         }
 
         // Shuffle the sequence for display
@@ -133,11 +136,15 @@ public class PredictionUI : MonoBehaviour
     {
         isAnimating = true;
 
+        // Copy the sequence BEFORE clearing slots, because ClearSlots() calls
+        // displayedSequence.Clear() and 'sequence' may be the same list reference.
+        List<string> localSequence = new List<string>(sequence);
+
         // Clear any existing slots
         ClearSlots();
 
-        // Set the sequence
-        displayedSequence = new List<string>(sequence);
+        // Set the sequence from the local copy (not the now-cleared original reference)
+        displayedSequence = localSequence;
 
         // Create slots but start them hidden (flipped out)
         CreateSlots(displayedSequence, true); // true = start hidden

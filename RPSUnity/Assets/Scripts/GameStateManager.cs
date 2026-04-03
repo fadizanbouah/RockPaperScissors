@@ -103,7 +103,6 @@ public class GameStateManager : MonoBehaviour
                         }
                     }
 
-                    StartCoroutine(WaitForRoomAndInitializeGame());
                 }
                 else
                 {
@@ -199,26 +198,13 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForRoomAndInitializeGame()
-    {
-        Debug.Log("Waiting for the room to be ready...");
-
-        while (RoomManager.Instance.GetCurrentEnemy() == null)
-        {
-            yield return null;
-        }
-
-        Debug.Log("Room and enemy are ready. Initializing game...");
-        currentEnemyInstance = RoomManager.Instance.GetCurrentEnemy();
-        rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
-        rockPaperScissorsGame.StartGame();
-    }
 
     public void UpdateEnemy(HandController newEnemy)
     {
         Debug.Log($"Updating GameStateManager enemy reference: {newEnemy.name}");
         currentEnemyInstance = newEnemy;
         rockPaperScissorsGame.InitializeGame(playerInstance, currentEnemyInstance);
+        rockPaperScissorsGame.StartGame();
     }
 
     public void BeginRoomTransition()

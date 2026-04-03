@@ -2089,6 +2089,38 @@ MonoBehaviour:
   narratorSource: {fileID: 639315298}
   narratorVolume: 0.7
   entries:
+  - entryName: 3TimesWin
+    chance: 1
+    playOncePerSession: 1
+    clips:
+    - {fileID: 8300000, guid: 79508d99b306738428acb3828f74a7d2, type: 3}
+    - {fileID: 8300000, guid: d5af574243d00124587abe0783ef98ef, type: 3}
+    - {fileID: 8300000, guid: bcb2fcb8b8de54643a5770d5ad24da55, type: 3}
+  - entryName: 5TimesWin
+    chance: 1
+    playOncePerSession: 0
+    clips:
+    - {fileID: 8300000, guid: 1ac75c0645f73984a910fbaf748006bb, type: 3}
+    - {fileID: 8300000, guid: 78470afa289a32d438d9be518072e37c, type: 3}
+  - entryName: 7TimesWin
+    chance: 1
+    playOncePerSession: 0
+    clips:
+    - {fileID: 8300000, guid: 65d83bb85e4fa604c88e86316971631b, type: 3}
+    - {fileID: 8300000, guid: 3590b8b0f7fc63d49aa58b5b0083c8e9, type: 3}
+    - {fileID: 8300000, guid: fc2b3747d3bbd9f4e8aef132976a2c4f, type: 3}
+  - entryName: 8TimesWin
+    chance: 1
+    playOncePerSession: 0
+    clips:
+    - {fileID: 8300000, guid: d8a5d13b9ae60ed47ad4dde67945448b, type: 3}
+    - {fileID: 8300000, guid: 72c612e9c046f504f9c3dd2b1a868ea0, type: 3}
+  - entryName: LosingStreak
+    chance: 1
+    playOncePerSession: 0
+    clips:
+    - {fileID: 8300000, guid: 3cf13d5e1313d5a4aa94e2bb0744e44b, type: 3}
+    - {fileID: 8300000, guid: de9bd577155ca1c46934acbe936e2009, type: 3}
   - entryName: CriticalHitPlayer
     chance: 0.2
     playOncePerSession: 0
