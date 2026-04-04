@@ -26,6 +26,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
+  narratorEntryName: BoonSelection_ScissorsCritChanceStackEffect
   passiveTrackerIcon: {fileID: 21300000, guid: c55e3d3a46e48c54992da66744bfe6cb, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []

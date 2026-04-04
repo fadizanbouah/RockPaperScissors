@@ -26,6 +26,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
+  narratorEntryName: BoonSelection_TheGambler
   passiveTrackerIcon: {fileID: 21300000, guid: 3539682fbe0cd8145a63a3c79849fae2, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []

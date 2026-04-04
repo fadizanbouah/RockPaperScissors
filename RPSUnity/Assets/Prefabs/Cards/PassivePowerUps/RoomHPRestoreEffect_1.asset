@@ -25,6 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
+  narratorEntryName: BoonSelection_RoomHpRestoreEffect
   passiveTrackerIcon: {fileID: 21300000, guid: f455cdbbe4569a94696d746b4b83a9ce, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels:

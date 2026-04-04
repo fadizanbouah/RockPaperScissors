@@ -25,6 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
+  narratorEntryName: BoonSelection_CheatDeath
   passiveTrackerIcon: {fileID: 21300000, guid: 06e1dc207536f34419c4f0be7dd31fa7, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels: []

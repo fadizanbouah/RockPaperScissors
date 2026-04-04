@@ -25,6 +25,7 @@ MonoBehaviour:
   prerequisitePowerUps: []
   blocksThesePowerUps: []
   sellValue: 1
+  narratorEntryName: BoonSelection_PassiveIncreasePaperDamage
   passiveTrackerIcon: {fileID: 21300000, guid: e9ba489a1d4345748b2df034a1f114db, type: 3}
   statusIcon: {fileID: 0}
   upgradeLevels:
