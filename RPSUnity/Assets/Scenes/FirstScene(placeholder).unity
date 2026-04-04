@@ -2092,6 +2092,7 @@ MonoBehaviour:
   - entryName: 3TimesWin
     chance: 1
     playOncePerSession: 1
+    priority: 1
     clips:
     - {fileID: 8300000, guid: 79508d99b306738428acb3828f74a7d2, type: 3}
     - {fileID: 8300000, guid: d5af574243d00124587abe0783ef98ef, type: 3}
@@ -2099,12 +2100,14 @@ MonoBehaviour:
   - entryName: 5TimesWin
     chance: 1
     playOncePerSession: 0
+    priority: 1
     clips:
     - {fileID: 8300000, guid: 1ac75c0645f73984a910fbaf748006bb, type: 3}
     - {fileID: 8300000, guid: 78470afa289a32d438d9be518072e37c, type: 3}
   - entryName: 7TimesWin
     chance: 1
     playOncePerSession: 0
+    priority: 1
     clips:
     - {fileID: 8300000, guid: 65d83bb85e4fa604c88e86316971631b, type: 3}
     - {fileID: 8300000, guid: 3590b8b0f7fc63d49aa58b5b0083c8e9, type: 3}
@@ -2112,12 +2115,14 @@ MonoBehaviour:
   - entryName: 8TimesWin
     chance: 1
     playOncePerSession: 0
+    priority: 1
     clips:
     - {fileID: 8300000, guid: d8a5d13b9ae60ed47ad4dde67945448b, type: 3}
     - {fileID: 8300000, guid: 72c612e9c046f504f9c3dd2b1a868ea0, type: 3}
   - entryName: LosingStreak
     chance: 1
     playOncePerSession: 0
+    priority: 1
     clips:
     - {fileID: 8300000, guid: 3cf13d5e1313d5a4aa94e2bb0744e44b, type: 3}
     - {fileID: 8300000, guid: de9bd577155ca1c46934acbe936e2009, type: 3}
@@ -2125,20 +2130,94 @@ MonoBehaviour:
   - entryName: RoundStart
     chance: 1
     playOncePerSession: 0
+    priority: 0
     clips: []
   - entryName: BoonSelection
-    chance: 1
+    chance: 0.5
     playOncePerSession: 0
+    priority: 0
     clips:
     - {fileID: 8300000, guid: eaa6048a5c3c1894187713b5d1f723e2, type: 3}
+    - {fileID: 8300000, guid: 453b0b58667026d44ba2450633bafcd6, type: 3}
+    - {fileID: 8300000, guid: bbdd4102146e5b2458f26724f5d477b0, type: 3}
+  - entryName: BoonSelection_TheGambler
+    chance: 1
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: e5f84862ddd4aa64a804947c97e92533, type: 3}
+  - entryName: BoonSelection_CheatDeath
+    chance: 1
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 1790727ee1f4d6146b5861be20e2b3dd, type: 3}
+    - {fileID: 8300000, guid: e33e874ecf703de47b14dfe3291b65da, type: 3}
+  - entryName: BoonSelection_RockDRStackEffect
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 1
+    clips:
+    - {fileID: 8300000, guid: f23bae170c4e88b48891a661f3b2e5b3, type: 3}
+  - entryName: BoonSelection_PaperDodgeStackEffect
+    chance: 1
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: fec3ea8d22d89b84ab24616f1742186a, type: 3}
+  - entryName: BoonSelection_ScissorsCritChanceStackEffect
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 3289944b3d9814e4980033bc8daceb1f, type: 3}
+  - entryName: BoonSelection_PassiveIncreaseDamage
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: c25556c133ff4ed4d84eeef84e83fad6, type: 3}
+  - entryName: BoonSelection_PassiveIncreaseRockDamage
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 9be60c23264d6c34d9d23fd5fa1f84b9, type: 3}
+  - entryName: BoonSelection_PassiveIncreasePaperDamage
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 3467898285c701c408092b7cb3609412, type: 3}
+  - entryName: BoonSelection_PassiveIncreaseScissorsDamage
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 06a4f3a4634137e42b4e9f44af2e4468, type: 3}
+  - entryName: BoonSelection_RoomHpRestoreEffect
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: bfaf99400c04bb34d8dfddf843e7e4c5, type: 3}
+  - entryName: BoonSelection_StarterPack
+    chance: 0.5
+    playOncePerSession: 1
+    priority: 0
+    clips:
+    - {fileID: 8300000, guid: 09b710393cc91cf4385eec16092d0925, type: 3}
+    - {fileID: 8300000, guid: 25ae26b438023bb43a4d538c97fd91f9, type: 3}
   - entryName: CardActivation
     chance: 0.1
     playOncePerSession: 0
+    priority: 0
     clips:
     - {fileID: 8300000, guid: 02a827add5b49ac4bb860b8e7457f9eb, type: 3}
   - entryName: LaunchGame
     chance: 1
     playOncePerSession: 1
+    priority: 0
     clips:
     - {fileID: 8300000, guid: 170ca39908928884e9fbb56783895e97, type: 3}
     - {fileID: 8300000, guid: d7f312db7a8d73c488bcd3399f8b0c6e, type: 3}
@@ -2147,9 +2226,17 @@ MonoBehaviour:
   - entryName: PlayerDeath
     chance: 1
     playOncePerSession: 0
+    priority: 0
     clips:
     - {fileID: 8300000, guid: 46ed6ed7267c1354cba7dd45e949c67c, type: 3}
     - {fileID: 8300000, guid: cb3c23c095e6c6143a9e779c2c6fa051, type: 3}
+  - entryName: OnEnterArea1
+    chance: 1
+    playOncePerSession: 1
+    priority: 1
+    clips:
+    - {fileID: 8300000, guid: de9e074d270c9264b89c8b27f49dd19e, type: 3}
+    - {fileID: 8300000, guid: d5421f3cda5c2b94e89fdee950fb7727, type: 3}
 --- !u!4 &639315300
 Transform:
   m_ObjectHideFlags: 0
@@ -7256,7 +7343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1575547705}
   sfxSource: {fileID: 1575547704}
-  musicVolume: 0.02
+  musicVolume: 0.05
   crossfadeDuration: 1.5
   sfxVolume: 0.7
   soundLibrary:

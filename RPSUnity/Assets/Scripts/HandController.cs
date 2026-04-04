@@ -377,10 +377,7 @@ public class HandController : MonoBehaviour
             finalDamage = Mathf.RoundToInt(finalDamage * critDamageMultiplier);
             Debug.Log($"[{gameObject.name} CRITICAL HIT!] {critRoll:F1} < {critChance:F1}% - Damage: {finalDamage}");
 
-            if (isPlayer)
-                NarratorManager.Instance?.TryPlay("CriticalHitPlayer");
-            else
-                NarratorManager.Instance?.TryPlay("CriticalHitEnemy");
+
         }
 
         return finalDamage;

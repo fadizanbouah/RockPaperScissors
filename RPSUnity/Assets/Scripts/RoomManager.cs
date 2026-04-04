@@ -82,6 +82,9 @@ public class RoomManager : MonoBehaviour
         ApplyPersistentPowerUps();
         PowerUpEffectManager.Instance?.TriggerRoomStart();
 
+        if (currentAreaIndex == 0 && poolDepthForCurrentRoom == 0)
+            NarratorManager.Instance?.TryPlay("OnEnterArea1");
+
         // Clear combat tracker effects for new room
         PlayerCombatTracker tracker = FindObjectOfType<PlayerCombatTracker>();
         if (tracker != null)

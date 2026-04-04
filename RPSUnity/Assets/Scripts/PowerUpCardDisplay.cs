@@ -277,7 +277,8 @@ public class PowerUpCardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (data.isPassive)
             {
                 RunProgressManager.Instance.ApplyPowerUpEffect(data);
-                NarratorManager.Instance?.TryPlay("BoonSelection");
+                string narratorEntry = !string.IsNullOrEmpty(data.narratorEntryName) ? data.narratorEntryName : "BoonSelection";
+                NarratorManager.Instance?.TryPlay(narratorEntry);
                 Debug.Log($"[PowerUpCardDisplay] Applied passive power-up: {data.powerUpName}");
                 if (panelManager != null)
                 {

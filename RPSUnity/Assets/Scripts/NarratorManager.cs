@@ -7,6 +7,7 @@ public class NarratorEntry
     public string entryName;
     [Range(0f, 1f)] public float chance = 1f;
     public bool playOncePerSession = false;
+    public int priority = 0;
     public AudioClip[] clips;
 }
 
@@ -23,6 +24,7 @@ public class NarratorManager : MonoBehaviour
     [SerializeField] private NarratorEntry[] entries;
 
     private HashSet<string> _sessionPlayedEntries = new HashSet<string>();
+    private int _currentPriority = 0;
 
     private void Awake()
     {
@@ -41,6 +43,12 @@ public class NarratorManager : MonoBehaviour
             Instance = null;
     }
 
+    private void Update()
+    {
+        if (!narratorSource.isPlaying)
+            _currentPriority = 0;
+    }
+
     public void TryPlay(string entryName)
     {
         NarratorEntry entry = System.Array.Find(entries, e => e.entryName == entryName);
@@ -53,7 +61,7 @@ public class NarratorManager : MonoBehaviour
         if (entry.playOncePerSession && _sessionPlayedEntries.Contains(entryName))
             return;
 
-        if (narratorSource.isPlaying)
+        if (narratorSource.isPlaying && entry.priority <= _currentPriority)
             return;
 
         if (Random.value > entry.chance)
@@ -69,7 +77,11 @@ public class NarratorManager : MonoBehaviour
         if (entry.playOncePerSession)
             _sessionPlayedEntries.Add(entryName);
 
-        narratorSource.PlayOneShot(clip, narratorVolume);
+        narratorSource.Stop();
+        narratorSource.clip = clip;
+        narratorSource.volume = narratorVolume;
+        narratorSource.Play();
+        _currentPriority = entry.priority;
     }
 
     private AudioClip PickClip(NarratorEntry entry)

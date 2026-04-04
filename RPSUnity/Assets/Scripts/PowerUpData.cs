@@ -40,6 +40,10 @@ public class PowerUpData : ScriptableObject
     [Tooltip("How much favor the player gets when selling this power-up")]
     public int sellValue = 1;
 
+    [Header("Narrator")]
+    [Tooltip("If set, plays this NarratorManager entry when this passive is chosen. Falls back to 'BoonSelection' if left empty.")]
+    public string narratorEntryName = "";
+
     [Header("UI Display")]
     public Sprite passiveTrackerIcon; // Optional: specific icon for the tracker, falls back to regular icon
 
