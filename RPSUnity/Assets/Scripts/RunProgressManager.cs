@@ -82,6 +82,9 @@ public class RunProgressManager : MonoBehaviour
         powerUpLevels.Clear();
         blockedPowerUps.Clear();
 
+        // Reset win streak for new run
+        RockPaperScissorsGame.Instance?.ResetWinStreak();
+
         // Clean up activeEffects list (but objects may already be destroyed)
         foreach (var effect in activeEffects)
         {

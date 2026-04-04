@@ -41,6 +41,8 @@ public class RockPaperScissorsGame : MonoBehaviour
     private bool playerHitDone = false;
     private bool enemyHitDone = false;
 
+    private int consecutiveWins = 0;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -245,6 +247,7 @@ public class RockPaperScissorsGame : MonoBehaviour
                 enemyHandController.OnRoundComplete();
             }
 
+            UpdateWinStreak(result);
             EnterIdleState();
             yield break;
         }
@@ -266,6 +269,8 @@ public class RockPaperScissorsGame : MonoBehaviour
         {
             enemyHandController.OnRoundComplete();
         }
+
+        UpdateWinStreak(result);
 
         if (enemyHandController != null && enemyHandController.CurrentHealth <= 0)
         {
@@ -612,6 +617,35 @@ public class RockPaperScissorsGame : MonoBehaviour
     public bool IsInCombat()
     {
         return currentSubstate != GameSubstate.Idle;
+    }
+
+    private void UpdateWinStreak(RoundResult result)
+    {
+        if (result == RoundResult.Win)
+        {
+            consecutiveWins++;
+
+            switch (consecutiveWins)
+            {
+                case 3: NarratorManager.Instance?.TryPlay("3TimesWin"); break;
+                case 5: NarratorManager.Instance?.TryPlay("5TimesWin"); break;
+                case 7: NarratorManager.Instance?.TryPlay("7TimesWin"); break;
+                case 8: NarratorManager.Instance?.TryPlay("8TimesWin"); break;
+            }
+        }
+        else if (result == RoundResult.Lose)
+        {
+            if (consecutiveWins >= 8)
+                NarratorManager.Instance?.TryPlay("LosingStreak");
+
+            consecutiveWins = 0;
+        }
+        // Draw: streak is preserved, no action needed
+    }
+
+    public void ResetWinStreak()
+    {
+        consecutiveWins = 0;
     }
 
     public void LockPlayerSign(string sign)
