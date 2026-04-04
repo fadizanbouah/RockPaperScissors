@@ -107,22 +107,8 @@ public class GamblerUI : MonoBehaviour
     {
         if (playerHealthBar == null || player == null) return;
 
-        // Create a preview of what the health would look like
-        int currentHealth = player.CurrentHealth;
-        int previewHealth = currentHealth - betAmount;
-
-        // You might want to add a preview overlay to the health bar
-        // For now, we'll use the fill amount preview
-        float currentFillAmount = (float)currentHealth / player.maxHealth;
-        float previewFillAmount = (float)previewHealth / player.maxHealth;
-
-        // This is a simple approach - you might want to add a semi-transparent overlay
-        // to show the "at risk" HP instead
-        if (betAmount > 0)
-        {
-            // Show some visual feedback that HP is at risk
-            // This could be a different color overlay or a dotted line
-        }
+        int previewHealth = player.CurrentHealth - betAmount;
+        playerHealthBar.SetHealthInstant(previewHealth, player.maxHealth);
     }
 
     public void Show()

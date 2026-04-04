@@ -33,6 +33,23 @@ public class HealthBar : MonoBehaviour
         animationCoroutine = StartCoroutine(AnimateHealthBar());
     }
 
+    // Instant update with no animation — used for live previews (e.g. Gambler bet slider)
+    public void SetHealthInstant(float currentHealth, float maxHealth)
+    {
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+            animationCoroutine = null;
+        }
+
+        float fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
+        healthBarFill.fillAmount = fillAmount;
+        targetFillAmount = fillAmount;
+
+        if (playerHealthText != null)
+            playerHealthText.text = currentHealth + "/" + maxHealth;
+    }
+
     private IEnumerator AnimateHealthBar()
     {
         float startFill = healthBarFill.fillAmount;

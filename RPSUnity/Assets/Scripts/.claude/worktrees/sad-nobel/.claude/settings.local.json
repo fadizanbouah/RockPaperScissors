@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\\\Personal Projects\\\\RockPaperScissors\\\\RPSUnity\\\\Assets\\\\Scripts\\\\HealthBar.cs\")"
+    ]
+  }
+}

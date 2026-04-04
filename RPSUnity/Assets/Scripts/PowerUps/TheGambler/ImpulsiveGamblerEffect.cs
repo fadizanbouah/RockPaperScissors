@@ -269,9 +269,12 @@ public class ImpulsiveGamblerEffect : PowerUpEffectBase, IGamblerEffect
 
         UpdateUIProgress();
 
-        // IMPORTANT: Reset the bet state for the next round
+        // Reset bet state for the next round
         hasBetThisRound = false;
-        // Keep currentBetAmount so player can see their last bet, but reset the "used" flag
+        currentBetAmount = 0;
+        if (gamblerUI != null)
+            gamblerUI.ResetSlider();
+
         Debug.Log($"[ImpulsiveGamblerEffect] Round complete. Bet state reset for next round.");
     }
 
